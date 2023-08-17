@@ -4,10 +4,12 @@ import "express-async-errors"; //permitir errores en funciones asyncronas
 import {ApiError} from './errors';
 
 import PersonaRouter from "./routes/persona.routes";
+import { ZodError } from 'zod';
 
 export const app = express();
 
 const port: number = Number(process.env.BACK_PORT) | 3000;
+const host = process.env.HOST ? process.env.HOST : "localhost";
 
 //Necesesario para que no tire error de CORS
 app.use(cors());
@@ -27,6 +29,16 @@ app.use((err: Error, req: Request, res:Response, next: NextFunction) => {
     console.log("message: ", err.message);
     console.log("stack: ", err.stack);
     
+    if (err instanceof ZodError){
+        let json_err = JSON.parse(err.message)
+
+        return res.status(400).json({
+            success: false,
+            error: "ValidationError",
+            message: json_err
+        })
+    } 
+
     if (err instanceof ApiError) return res.status(err.status).json({
         success: false,
         error: err.name,
@@ -41,5 +53,5 @@ app.use((err: Error, req: Request, res:Response, next: NextFunction) => {
 })
 
 app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
+    console.log(`[server]: Server is running at http://${host}:${port}`);
 });

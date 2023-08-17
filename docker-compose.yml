@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mariadb:10.9.4
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MARIADB_ROOT_PASSWORD=$DB_PASS
+      - MYSQL_PASSWORD=$DB_PASS
+    ports:
+      - $DB_PORT:$DB_PORT
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d #Crear las tablas automaticamente al iniciar
+      - ./mysql:/var/lib/mysql #Mantener la misma data de mi base de datos local
+  
+  api:
+    depends_on:
+      mysqldb:
+        condition: service_started
+    build: 
+      dockerfile: ./Dockerfile
+    env_file: ./.env
+    ports:
+      - $BACK_PUBLIC_PORT:$BACK_PORT
+    environment:
+      - DB_HOST=mysqldb
+    command: npm run dev
+    volumes:
+     - ./src:/app/src
