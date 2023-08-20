@@ -32,3 +32,9 @@ export class Duplicated extends ApiError {
         super(404, message, "Duplicated");
     }
 }
+
+export class InternalError extends ApiError {
+    constructor(message: string){
+        super(500, message, "InternalError");
+    }
+}

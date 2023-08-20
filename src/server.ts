@@ -34,21 +34,24 @@ app.use((err: Error, req: Request, res:Response, next: NextFunction) => {
 
         return res.status(400).json({
             success: false,
-            error: "ValidationError",
-            message: json_err
+            errors: json_err
         })
     } 
 
     if (err instanceof ApiError) return res.status(err.status).json({
         success: false,
-        error: err.name,
-        message: err.message
+        errors: [{
+            code: err.name,
+            message: err.message
+        }]
     })
 
     return res.status(500).json({
         success: false,
-        error: "Internal Server Error",
-        message: err.message
+        errors: [{
+            code: "Internal Server Error",
+            message: err.message
+        }]
     })
 })
 

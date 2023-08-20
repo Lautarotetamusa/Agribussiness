@@ -1,6 +1,6 @@
 import {sql} from '../db'
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { ValidationError, NotFound, NothingChanged, Duplicated } from '../errors';
+import { ValidationError, NotFound, NothingChanged, Duplicated, InternalError } from '../errors';
 
 export class BaseModel{
     /*
@@ -62,11 +62,11 @@ export class BaseModel{
         return new (this as any)(rows[0] as RT) as MT; 
     }
 
-    protected static async find_all<RT>(req?: object): Promise<RT[]>{
+    protected static async find_all<RT>(req?: object, fields?: string[]): Promise<RT[]>{
         let {where_query, where_list} = this.format_where(req);
 
         const query = `
-            SELECT ${this.fields ? this.fields.join(',') : "*"} 
+            SELECT ${fields ? fields.join(',') : "*"} 
             FROM ${this.table_name}
             ${where_query}`;
 
@@ -77,21 +77,28 @@ export class BaseModel{
     protected static async _insert<CT, MT>(_req: CT): Promise<MT>{
         const query = `INSERT INTO ${this.table_name} SET ?`;
 
-        const [result] = await sql.query<ResultSetHeader>(query, _req);
+        try {
+            const [result] = await sql.query<ResultSetHeader>(query, _req);
 
-        return new (this as any)({
-            ..._req,
-            id: result.insertId            
-        }) as MT;
+            return new (this as any)({
+                ..._req,
+                id: result.insertId            
+            }) as MT;
+        } catch (error: any) {
+            if ('code' in error && error.code == "ER_DUP_ENTRY")
+                throw new ValidationError(`Ya existe una ${this.table_name} con esta clave`);
+            throw new InternalError(error.message);
+        }
     }
 
-    protected static async _update<UT>(_req: UT, _where: object){        
+    protected static async _update<UT extends object>(_req: UT, _where: object){        
         let {where_query, where_list} = this.format_where(_where);
 
         const query = `
             UPDATE ${this.table_name}
             SET ?
             ${where_query}`
+        console.log(query);
 
         const [result] = await sql.query<ResultSetHeader>(query, [_req].concat(where_list));
 
