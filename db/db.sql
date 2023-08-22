@@ -35,3 +35,23 @@ CREATE TABLE Departamentos(
 
     PRIMARY KEY (id_depto)
 );
+
+CREATE TABLE Productos(
+    id_producto INT NOT NULL AUTO_INCREMENT,
+    precio DECIMAL (10, 2) NOT NULL,
+    nombre VARCHAR(255) NOT NULL,
+    presentacion VARCHAR(128) NOT NULL,
+    descripcion VARCHAR(512) NOT NULL,
+
+    PRIMARY KEY (id_producto)
+);
+
+CREATE TABLE FichaTecnica(
+    id_ficha INT NOT NULL AUTO_INCREMENT,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    archivo VARCHAR(255) NOT NULL,
+    id_producto INT NOT NULL,
+
+    PRIMARY KEY (id_ficha),
+    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
+);

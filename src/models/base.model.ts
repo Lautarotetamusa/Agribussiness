@@ -2,15 +2,22 @@ import {sql} from '../db'
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { ValidationError, NotFound, NothingChanged, Duplicated, InternalError } from '../errors';
 
+
+
 export class BaseModel{
     /*
         DECLARATIONS
     */
     static table_name: string;
     static fields?: string[];
+    static pk: string;
     /*
         IMPLEMENTATIONS
     */
+    describe(): Array<string>{
+        return Object.getOwnPropertyNames(this);
+    }
+
     protected static format_where(req: object | undefined){
         let where_query = "";
         let where_list: any[] = []
@@ -79,11 +86,12 @@ export class BaseModel{
 
         try {
             const [result] = await sql.query<ResultSetHeader>(query, _req);
+            console.log(result);
 
-            return new (this as any)({
-                ..._req,
-                id: result.insertId            
-            }) as MT;
+            let model = new (this as any)(_req) as MT;
+            if (this.pk)
+                model[this.pk as keyof typeof model] = result.insertId as any;
+            return model;
         } catch (error: any) {
             if ('code' in error && error.code == "ER_DUP_ENTRY")
                 throw new ValidationError(`Ya existe una ${this.table_name} con esta clave`);
@@ -97,8 +105,7 @@ export class BaseModel{
         const query = `
             UPDATE ${this.table_name}
             SET ?
-            ${where_query}`
-        console.log(query);
+            ${where_query}`;
 
         const [result] = await sql.query<ResultSetHeader>(query, [_req].concat(where_list));
 
@@ -118,7 +125,6 @@ export class BaseModel{
 
         const [result] = await sql.query<ResultSetHeader>(query, where_list);
         return result;
-        //await this._update({is_deleted: 1}, _where);
     }
 
     protected static async _bulk_insert<CT extends {}>(_req: CT[]){
