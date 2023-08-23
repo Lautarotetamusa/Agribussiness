@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { Secret } from "jsonwebtoken";
-import { RolesKeys } from "../schemas/persona.schema";
+import { RolesKeys, RolesValues, rolesKeys, roles } from "../schemas/persona.schema";
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const token: string | undefined = req.header("Authorization")?.replace('Bearer ', '');
@@ -22,17 +22,16 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-export const check_rol = (roles: Array<RolesKeys>) => {
+export const check_rol = (accepted_roles: Array<RolesValues>) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         //Get the user ID from previous midleware
         const persona = res.locals.user;
-        console.log("persona", persona);
         
         //Check if array of authorized roles includes the user's role
-        if (roles.indexOf(persona.rol) > -1) next();
+        if (accepted_roles.indexOf(roles[persona.rol as keyof typeof roles]) > -1) next();
         else res.status(403).json({
             success: false,
-            error: "La persona no tiene permiso para acceder a este recurso, se necesita permiso ".concat(roles.join(', '))
+            error: "La persona no tiene permiso para acceder a este recurso, se necesita permiso ".concat(accepted_roles.map(a => rolesKeys[a as keyof typeof rolesKeys]).join(','))
         });
     };
 };

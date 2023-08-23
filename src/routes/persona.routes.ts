@@ -1,10 +1,10 @@
 import express from "express"
 import personaController from "../controllers/persona.controller";
 import { auth, check_rol } from "../middlewares/auth";
-import { rolesKeys, roles } from "../schemas/persona.schema";
+import { roles } from "../schemas/persona.schema";
 const router = express.Router();
 
-router.get('/', auth, check_rol([rolesKeys[roles.admin]]), personaController.get_all);
+router.get('/', auth, check_rol([roles.admin]), personaController.get_all);
 
 router.post('/', personaController.create);
 

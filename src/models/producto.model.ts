@@ -1,4 +1,4 @@
-import { BuildProducto, CreateProducto } from '../schemas/producto.schema';
+import { BuildProducto, CreateProducto, UpdateProducto, createProducto } from '../schemas/producto.schema';
 import {BaseModel} from './base.model';
 
 export class Producto extends BaseModel{
@@ -26,12 +26,19 @@ export class Producto extends BaseModel{
         return await this.find_one<BuildProducto, Producto>({cedula: cedula})
     }
 
-    static async get_all(): Promise<CreateProducto[]>{
-        
-        return await this.find_all<CreateProducto>();
+    static async get_all(): Promise<BuildProducto[]>{ 
+        return await this.find_all<BuildProducto>();
     }
 
     static async create(body: CreateProducto): Promise<Producto>{
         return await Producto._insert<CreateProducto, Producto>(body);
+    }
+
+    static async update(body: UpdateProducto, id_producto: number) {
+        await Producto._update<UpdateProducto>(body, {id_producto: id_producto});
+    }
+
+    static async bulk_insert(req: CreateProducto[]): Promise<void> {
+        return await Producto._bulk_insert<CreateProducto>(req);
     }
 }

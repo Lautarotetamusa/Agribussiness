@@ -4,7 +4,9 @@ import "express-async-errors"; //permitir errores en funciones asyncronas
 import {ApiError} from './errors';
 
 import PersonaRouter from "./routes/persona.routes";
+import ProductoRouter from "./routes/producto.routes";
 import { ZodError } from 'zod';
+import { MulterError } from 'multer';
 
 export const app = express();
 
@@ -18,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true,}));
 
 app.use('/persona/', PersonaRouter);
+app.use('/producto/', ProductoRouter);
 
 app.use('*', (req, res) => res.status(404).json({
     success: false,
@@ -30,7 +33,7 @@ app.use((err: Error, req: Request, res:Response, next: NextFunction) => {
     console.log("stack: ", err.stack);
     
     if (err instanceof ZodError){
-        let json_err = JSON.parse(err.message)
+        let json_err: Array<object> = JSON.parse(err.message);
 
         return res.status(400).json({
             success: false,
@@ -46,10 +49,20 @@ app.use((err: Error, req: Request, res:Response, next: NextFunction) => {
         }]
     })
 
+    if (err instanceof MulterError){
+        return res.status(400).json({
+            success: false,
+            errors: [{
+                code: err.name,
+                message: `Unexpected field '${err.field}', expected 'file'`
+            }]
+        })
+    }
+        
     return res.status(500).json({
         success: false,
         errors: [{
-            code: "Internal Server Error",
+            code: err.name,
             message: err.message
         }]
     })
