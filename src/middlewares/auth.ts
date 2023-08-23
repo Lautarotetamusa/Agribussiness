@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { Secret } from "jsonwebtoken";
-import { RolesKeys, RolesValues, rolesKeys, roles } from "../schemas/persona.schema";
+import { RolesValues, rolesKeys, roles } from "../schemas/persona.schema";
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const token: string | undefined = req.header("Authorization")?.replace('Bearer ', '');

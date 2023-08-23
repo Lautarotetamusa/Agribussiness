@@ -28,3 +28,4 @@ services:
     command: npm run dev
     volumes:
      - ./src:/app/src
+     - ./files/price_lists:/app/files/price_lists

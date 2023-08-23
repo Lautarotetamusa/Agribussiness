@@ -4,7 +4,9 @@ import { ValidationError } from "../errors";
 let storage = multer.diskStorage({
     destination: "files/price_lists/",
     filename: (req, file, cb) => {;
-        cb(null, file.originalname);
+        const uniqueSuffix = Date.now()
+        const [name, format] = file.originalname.split('.')
+        cb(null,  `${name}_${uniqueSuffix}.${format}`);
     }
 });
 
