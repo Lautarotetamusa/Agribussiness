@@ -14,4 +14,6 @@ router.get('/:cedula', auth, personaController.user_info);
 
 router.put('/:cedula', auth, personaController.update);
 
+router.delete('/:cedula', auth, personaController.delet);
+
 export default router;

@@ -1,16 +1,15 @@
-import {number, z} from "zod";
+import {z} from "zod";
 
 type ObjectValues<T> = T[keyof T];
 type ObjectKeys<T> = keyof T;
 
 export const roles = {
-    'admin': 0,
-    'cliente': 1,
-    'colaborador': 2
+    admin: 'admin',
+    cliente: 'cliente',
+    colaborador: 'colaborador'
 } as const;
-export type RolesValues = ObjectValues<typeof roles>;
 export type RolesKeys = ObjectKeys<typeof roles>;
-export const rolesKeys = Object.keys(roles) as [RolesKeys];
+const rolesKeys = Object.keys(roles) as [RolesKeys];
 
 export const createUser = z.object({
     cedula: z.string(),
@@ -40,11 +39,6 @@ export const updateUser = z.object({
     direccion: z.string().optional(),
 });
 
-export const buildUser = createUser.extend({
-    rol: number()
-});
-
 export type CreateUser = z.infer<typeof createUser>;
-export type BuildUser = z.infer<typeof buildUser>;
 export type LoginUser = z.infer<typeof loginUser>;
 export type UpdateUser = z.infer<typeof updateUser>;

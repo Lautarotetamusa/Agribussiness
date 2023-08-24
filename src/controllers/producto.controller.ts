@@ -16,7 +16,7 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
     if (!req.file) throw new ValidationError("El archivo no se subio correctamente");
     
     const productos = csv2arr<CreateProducto>(req.file.path, createProducto);
-    await Producto.bulk_insert(productos);
+    let _: void = await Producto.bulk_insert(productos);
 
     return res.status(201).json({
         success: true,
@@ -26,7 +26,7 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body: CreateProducto = createProducto.parse(req.body);
-    const producto = await Producto.create(body);
+    const producto: Producto = await Producto.create(body);
 
     return res.status(201).json({
         success: true,
@@ -40,7 +40,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     if (Object.keys(body).length == 0) throw new ValidationError("Nada para actualizar");
     if (Number(req.params.id) === null) throw new ValidationError("Parametro url invalido");
 
-    await Producto.update(body, Number(req.params));
+    let _: void = await Producto.update(body, Number(req.params));
 
     return res.status(201).json({
         success: true,

@@ -11,7 +11,7 @@ import { ValidationError } from "../errors";
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createUser.parse(req.body);
 
-    if (roles[body.rol] == roles.admin) return res.status(400).json({
+    if (body.rol == roles.admin) return res.status(400).json({
         success: false,
         error: "No se puede crear una persona con rol 'admin'"
     })
@@ -39,11 +39,11 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     const body = updateUser.parse(req.body);
     if (Object.keys(body).length == 0) throw new ValidationError("Nada para actualizar");
 
-    const user = await Persona.get_one(res.locals.user.cedula);
-    const depto = body.id_depto ? await Departamento.get_one(body.id_depto) : await Departamento.get_one(user.id_depto);
-    const zona  = body.cod_zona ? await Zona.get_one(body.cod_zona) : await Zona.get_one(user.cod_zona);
+    const user: Persona = await Persona.get_one(res.locals.user.cedula);
+    const depto: Departamento = body.id_depto ? await Departamento.get_one(body.id_depto) : await Departamento.get_one(user.id_depto);
+    const zona: Zona = body.cod_zona ? await Zona.get_one(body.cod_zona) : await Zona.get_one(user.cod_zona);
 
-    await user.update(body);
+    let _:void = await user.update(body);
 
     return res.status(201).json({
         success: true,
@@ -56,13 +56,29 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     })
 }
 
+const delet = async (req: Request, res: Response): Promise<Response> => {
+    const cedula = req.params.cedula;
+
+    const persona: Persona = await Persona.get_one(cedula);
+
+    if (persona.rol == roles.admin)
+        throw new ValidationError("No se puede borrar un persona admin");
+
+    let _: void = await persona.delete();
+    
+    return res.status(201).json({
+        success: true,
+        message: "Persona eliminada correctamente"
+    });
+}
+
 const login = async (req: Request, res: Response): Promise<Response> => {
     const body = loginUser.parse(req.body)
 
-    const persona = await Persona.get_one(body.cedula);
+    const persona: Persona = await Persona.get_one(body.cedula);
     console.log("persona:", persona);
 
-    let match = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
+    let match: boolean = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
     
     if (!match) return res.status(401).json({
         success: false,
@@ -96,8 +112,8 @@ const user_info = async (req: Request, res: Response): Promise<Response> => {
         error: "No estas autorizado a acceder a un recurso de otra persona"
     });
     
-    const zona = await Zona.get_one(persona.cod_zona);
-    const depto = await Departamento.get_one(persona.id_depto);
+    const zona: Zona = await Zona.get_one(persona.cod_zona);
+    const depto: Departamento = await Departamento.get_one(persona.id_depto);
 
     return res.status(200).json({
         ...persona,
@@ -109,13 +125,13 @@ const user_info = async (req: Request, res: Response): Promise<Response> => {
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const personas = await Persona.get_all();
-
     return res.status(200).json(personas)
 }
 
 export default {
     create,
     login,
+    delet,
     user_info,
     get_all,
     update

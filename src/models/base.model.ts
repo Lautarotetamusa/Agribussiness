@@ -39,8 +39,8 @@ export class BaseModel{
         }
     }
 
-    protected static async _exists(req?: object): Promise<boolean>{
-        let {where_query, where_list} = this.format_where(req);
+    protected static async _exists(where?: object): Promise<boolean>{
+        let {where_query, where_list} = this.format_where(where);
 
         const query = `
             SELECT COUNT(*) AS count
@@ -53,8 +53,8 @@ export class BaseModel{
         return rows[0].count > 0;
     }
 
-    protected static async find_one<RT, MT>(req?: object): Promise<MT>{
-        let {where_query, where_list} = this.format_where(req);
+    protected static async find_one<RT, MT>(where?: object): Promise<MT>{
+        let {where_query, where_list} = this.format_where(where);
         
         const query = `
             SELECT ${this.fields ? this.fields.join(',') : "*"}
@@ -69,8 +69,8 @@ export class BaseModel{
         return new (this as any)(rows[0] as RT) as MT; 
     }
 
-    protected static async find_all<RT>(req?: object, fields?: string[]): Promise<RT[]>{
-        let {where_query, where_list} = this.format_where(req);
+    protected static async find_all<RT>(where?: object, fields?: string[]): Promise<RT[]>{
+        let {where_query, where_list} = this.format_where(where);
 
         const query = `
             SELECT ${fields ? fields.join(',') : "*"} 

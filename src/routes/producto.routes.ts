@@ -8,10 +8,7 @@ const router = express.Router();
 
 router.post('/', auth, check_rol([roles.admin]), productoController.create);
 
-router.post('/list', auth, check_rol([
-    roles.admin, 
-    roles.cliente
-]), uploadFile, productoController.file_insert);
+router.post('/list', auth, check_rol([roles.admin]), uploadFile, productoController.file_insert);
 
 router.get('/', auth, check_rol([roles.admin]), productoController.get_all);
 
