@@ -105,21 +105,22 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 
 const user_info = async (req: Request, res: Response): Promise<Response> => {
     const cedula = req.params.cedula;
-    const persona = res.locals.user;
+    const token = res.locals.user;
 
-    if (cedula != persona.cedula) return res.status(403).json({
+    if (cedula != token.cedula) return res.status(403).json({
         success: false,
         error: "No estas autorizado a acceder a un recurso de otra persona"
     });
-    
+
+    const persona = await Persona.get_one(res.locals.user.cedula);
     const zona: Zona = await Zona.get_one(persona.cod_zona);
     const depto: Departamento = await Departamento.get_one(persona.id_depto);
 
+    let {password, ...p} = {...persona}
     return res.status(200).json({
-        ...persona,
+        ...p,
         zona: zona,
         depto: depto
-
     })
 }
 

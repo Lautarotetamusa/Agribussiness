@@ -1,12 +1,13 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import cors from 'cors';
 import "express-async-errors"; //permitir errores en funciones asyncronas
-import {ApiError} from './errors';
+import {handle_errors} from './errors';
 
+//Routers
 import PersonaRouter from "./routes/persona.routes";
 import ProductoRouter from "./routes/producto.routes";
-import { ZodError } from 'zod';
-import { MulterError } from 'multer';
+import FichaTecnicaRouter from './routes/ficha_tecnica.routes';
+import DeptoRouter from "./routes/departamento.routes";
 
 export const app = express();
 
@@ -21,52 +22,15 @@ app.use(express.urlencoded({extended: true,}));
 
 app.use('/persona/', PersonaRouter);
 app.use('/producto/', ProductoRouter);
+app.use('/ficha_tecnica/', FichaTecnicaRouter);
+app.use('/departamento/', DeptoRouter);
 
 app.use('*', (req, res) => res.status(404).json({
     success: false,
     error: "Esta ruta no hace nada negro"
 }));
 
-app.use((err: Error, req: Request, res:Response, next: NextFunction) => {
-    console.log("ERROR: ");
-    console.log("message: ", err.message);
-    console.log("stack: ", err.stack);
-    
-    if (err instanceof ZodError){
-        let json_err: Array<object> = JSON.parse(err.message);
-
-        return res.status(400).json({
-            success: false,
-            errors: json_err
-        })
-    } 
-
-    if (err instanceof ApiError) return res.status(err.status).json({
-        success: false,
-        errors: [{
-            code: err.name,
-            message: err.message
-        }]
-    })
-
-    if (err instanceof MulterError){
-        return res.status(400).json({
-            success: false,
-            errors: [{
-                code: err.name,
-                message: `Unexpected field '${err.field}', expected 'file'`
-            }]
-        })
-    }
-        
-    return res.status(500).json({
-        success: false,
-        errors: [{
-            code: err.name,
-            message: err.message
-        }]
-    })
-})
+app.use(handle_errors);
 
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://${host}:${port}`);

@@ -55,3 +55,14 @@ CREATE TABLE FichaTecnica(
     PRIMARY KEY (id_ficha),
     FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
 );
+
+CREATE TABLE Promociones(
+    id_promo INT NOT NULL AUTO_INCREMENT,
+    cod_zona INT NOT NULL,
+    titulo VARCHAR(255) NOT NULL,
+    fecha_expiracion DATE NOT NULL,
+    descripcion VARCHAR NOT NULL,
+
+    PRIMARY KEY id_promo,
+    FOREIGN KEY cod_zona REFERENCES Zonas(cod_zona)
+);
