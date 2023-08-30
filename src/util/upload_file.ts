@@ -12,10 +12,12 @@ let price_list_storage = multer.diskStorage({
 
 let ficha_storage = multer.diskStorage({
     destination: "files/fichas_tecnicas/",
-    filename: (req, file, cb) => {;
-        const uniqueSuffix = Date.now()
+    filename: (req, file, cb) => {
+        const id = Number(req.params.id);
+        if (!id) throw new ValidationError(`Parametro '${req.params.id}' url invalido`);
+        const date = Date.now()
         const [name, format] = file.originalname.split('.')
-        cb(null,  `${name}.${format}`);
+        cb(null,  `${id}_${date}_${name}.${format}`);
     }
 });
 

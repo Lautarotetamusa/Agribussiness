@@ -6,7 +6,6 @@ import {handle_errors} from './errors';
 //Routers
 import PersonaRouter from "./routes/persona.routes";
 import ProductoRouter from "./routes/producto.routes";
-import FichaTecnicaRouter from './routes/ficha_tecnica.routes';
 import DeptoRouter from "./routes/departamento.routes";
 
 export const app = express();
@@ -22,7 +21,6 @@ app.use(express.urlencoded({extended: true,}));
 
 app.use('/persona/', PersonaRouter);
 app.use('/producto/', ProductoRouter);
-app.use('/ficha_tecnica/', FichaTecnicaRouter);
 app.use('/departamento/', DeptoRouter);
 
 app.use('*', (req, res) => res.status(404).json({

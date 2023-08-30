@@ -80,6 +80,18 @@ export class Duplicated extends ApiError {
     }
 }
 
+export class Forbidden extends ApiError {
+    constructor(message: string){
+        super(403, message, "Forbidden");
+    }
+}
+
+export class Unauthorized extends ApiError {
+    constructor(message: string){
+        super(401, message, "Unauthorized");
+    }
+}
+
 export class InternalError extends ApiError {
     constructor(message: string){
         super(500, message, "InternalError");

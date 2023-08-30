@@ -11,11 +11,13 @@ export const updateProducto = z.object({
     precio: z.number().optional(),
     nombre: z.string().optional(),
     presentacion: z.string().optional(),
-    descripcion: z.string().optional()
+    descripcion: z.string().optional(),
+    ficha_tecnica: z.string().optional()
 })
 
 const buildProducto = createProducto.extend({
-    id_producto: z.number()
+    id_producto: z.number(),
+    ficha_tecnica: z.string().optional()
 })
 
 export type CreateProducto = z.infer<typeof createProducto>;

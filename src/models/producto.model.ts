@@ -3,7 +3,7 @@ import {BaseModel} from './base.model';
 
 export class Producto extends BaseModel{
     static table_name: string = "Productos";
-    static fields = ["id_producto", "precio", "nombre", "presentacion", "descripcion", "descripcion"];
+    static fields = ["id_producto", "precio", "nombre", "presentacion", "descripcion", "descripcion", "ficha_tecnica"];
     static pk = "id_producto";
 
     id_producto: number;
@@ -11,6 +11,7 @@ export class Producto extends BaseModel{
     nombre: string;
     presentacion: string;
     descripcion: string;
+    ficha_tecnica?: string;
 
     constructor(body: BuildProducto){
         super();
@@ -20,10 +21,11 @@ export class Producto extends BaseModel{
         this.nombre = body.nombre;
         this.presentacion = body.presentacion;
         this.descripcion = body.descripcion;
+        this.ficha_tecnica = body.ficha_tecnica;
     }
 
-    static async get_one(cedula: string): Promise<Producto>{
-        return await this.find_one<BuildProducto, Producto>({cedula: cedula})
+    static async get_one(id_producto: number): Promise<Producto>{
+        return await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
     }
 
     static async get_all(): Promise<BuildProducto[]>{ 

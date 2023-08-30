@@ -9,7 +9,13 @@ import { csv2arr } from "../util/csv_to_arr";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const productos = await Producto.get_all();
-    return res.status(201).json(productos);
+    return res.status(200).json(productos);
+}
+
+const get_one = async (req: Request, res: Response): Promise<Response> => {
+    const id: number = res.locals.id;
+    const producto = await Producto.get_one(id);
+    return res.status(200).json(producto);
 }
 
 const file_insert = async (req: Request, res: Response): Promise<Response> => {
@@ -20,7 +26,21 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
 
     return res.status(201).json({
         success: true,
+        message: "Productos subidos correctamente",
         data: productos
+    });
+}
+
+const create_ficha_tecnica = async (req: Request, res: Response): Promise<Response> => {
+    if (!req.file) throw new ValidationError("El archivo no se subio correctamente");
+    const id: number = res.locals.id;
+
+    //const producto = await Producto.get_one(req.params.id);
+    let _:void = await Producto.update({ficha_tecnica: req.file.path}, id);
+
+    return res.status(201).json({
+        success: true,
+        message: "Ficha tecnica subida correctamente"
     });
 }
 
@@ -38,9 +58,9 @@ const create = async (req: Request, res: Response): Promise<Response> => {
 const update = async (req: Request, res: Response): Promise<Response> => {
     const body = updateProducto.parse(req.body);
     if (Object.keys(body).length == 0) throw new ValidationError("Nada para actualizar");
-    if (Number(req.params.id) === null) throw new ValidationError("Parametro url invalido");
+    const id: number = res.locals.id;
 
-    let _: void = await Producto.update(body, Number(req.params));
+    let _: void = await Producto.update(body, id);
 
     return res.status(201).json({
         success: true,
@@ -50,7 +70,9 @@ const update = async (req: Request, res: Response): Promise<Response> => {
 
 export default {
     get_all,
+    get_one,
     create,
     update,
-    file_insert
+    file_insert,
+    create_ficha_tecnica
 }

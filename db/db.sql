@@ -42,18 +42,9 @@ CREATE TABLE Productos(
     nombre VARCHAR(255) NOT NULL,
     presentacion VARCHAR(128) NOT NULL,
     descripcion VARCHAR(512) NOT NULL,
+    ficha_tecnica VARCHAR(256) DEFAULT NULL
 
     PRIMARY KEY (id_producto)
-);
-
-CREATE TABLE FichaTecnica(
-    id_ficha INT NOT NULL AUTO_INCREMENT,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    archivo VARCHAR(255) NOT NULL,
-    id_producto INT NOT NULL,
-
-    PRIMARY KEY (id_ficha),
-    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
 );
 
 CREATE TABLE Promociones(

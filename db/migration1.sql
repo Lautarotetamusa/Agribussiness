@@ -12,3 +12,7 @@ ALTER TABLE Personas
 DROP COLUMN rol;
 
 ALTER TABLE Personas CHANGE nuevo_rol rol ENUM("admin", "cliente", "colaborador") NOT NULL;
+
+ALTER TABLE Productos ADD COLUMN ficha_tecnica VARCHAR(256) DEFAULT NULL;
+
+-- DROP TABLE FichaTecnica;
