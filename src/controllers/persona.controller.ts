@@ -1,38 +1,42 @@
 import { Request, Response } from "express";
 import {
+    createColaborador,
     createUser, 
     loginUser, 
     roles, 
+    updateColaborador, 
     updateUser
 } from "../schemas/persona.schema";
-import {Persona} from "../models/persona.model";
-import { Zona } from "../models/zona.model";
-import { Departamento } from "../models/departamento.model";
+import {Colaborador, Persona, Cliente} from "../models/persona.model";
+
 
 import bcrypt from "bcrypt";
 import jwt, {Secret} from "jsonwebtoken";
 import { Unauthorized, ValidationError } from "../errors";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
-    const body = createUser.parse(req.body);
+    const rol = createUser.shape.rol.parse(req.body.rol);
+    let persona, body;
 
-    if (body.rol == roles.admin) throw new ValidationError("No se puede crear una persona con rol 'admin'");
+    if (rol == roles.admin){
+        throw new ValidationError("No se puede crear una persona con rol 'admin'");
 
-    const zona = await Zona.get_one(body.cod_zona);
-    const depto = await Departamento.get_one(body.id_depto);
+    }else if(rol == roles.colaborador){
+        body = createColaborador.parse(req.body);
+        body.password = await bcrypt.hash(body.password, 10);
+        persona = await Colaborador.create(body);
 
-    body.password = await bcrypt.hash(body.password, 10);
+    }else if (rol == roles.cliente){
+        body = createUser.parse(req.body);
+        body.password = await bcrypt.hash(body.password, 10);
+        persona = await Cliente.create(body);
 
-    const persona = await Persona.create(body);
-
+    }else{ rol satisfies never }
+    
     return res.status(201).json({
         success: true,
         message: "Persona creada correctamente",
-        data: {
-            ...persona,
-            zona: zona,
-            depto: depto
-        }
+        data: persona
     })
 }
 
@@ -57,28 +61,27 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 }
 
 const update = async (req: Request, res: Response): Promise<Response> => {
-    const body = updateUser.parse(req.body);
-    if (Object.keys(body).length == 0) throw new ValidationError("Nada para actualizar");
-    
-    const user: Persona = await Persona.get_one(res.locals.user.cedula);
-    const depto: Departamento = body.id_depto ? await Departamento.get_one(body.id_depto) : await Departamento.get_one(user.id_depto);
-    const zona: Zona = body.cod_zona ? await Zona.get_one(body.cod_zona) : await Zona.get_one(user.cod_zona);
+    const user = await Persona.get_one(res.locals.user.cedula);
+    let body;
 
-    let _:void = await user.update(body);
+    if (user.rol == roles.colaborador){
+        body = updateColaborador.parse(req.body);
+    }else{
+        body = updateUser.parse(req.body);
+    }
+
+    if (Object.keys(body).length == 0) throw new ValidationError("Nada para actualizar");
+        let _:void = await user.update(body);
 
     return res.status(201).json({
         success: true,
         message: "Persona actualizada correctamente",
-        data: {
-            ...user,
-            zona: zona,
-            depto: depto
-        }
+        data: user
     })
 }
 
 const delet = async (req: Request, res: Response): Promise<Response> => {
-    const persona: Persona = await Persona.get_one(req.params.cedula);
+    const persona = await Persona.get_one(req.params.cedula);
 
     if (persona.rol == roles.admin)
         throw new ValidationError("No se puede borrar un persona admin");
@@ -93,15 +96,14 @@ const delet = async (req: Request, res: Response): Promise<Response> => {
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const persona = await Persona.get_one(req.params.cedula);
-    const zona: Zona = await Zona.get_one(persona.cod_zona);
-    const depto: Departamento = await Departamento.get_one(persona.id_depto);
+
+    if (persona.rol == roles.colaborador){
+        let _:void = await persona.get_zona();
+        let a:void = await persona.get_depto();
+    }
 
     let {password, ...p} = {...persona}
-    return res.status(200).json({
-        ...p,
-        zona: zona,
-        depto: depto
-    })
+    return res.status(200).json(p);
 }
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
@@ -112,7 +114,6 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
 export default {
     get_all,
     get_one,
-    //user_info,
     login,
     create,
     delet,

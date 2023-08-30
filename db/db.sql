@@ -7,8 +7,8 @@ USE Agribussiness;
 CREATE TABLE Personas(
     cedula CHAR(10) NOT NULL,
     password BINARY(60) NOT NULL,
-    id_depto INT NOT NULL,
-    cod_zona INT NOT NULL,
+    id_depto INT,
+    cod_zona INT,
     nombre VARCHAR(60) NOT NULL,
     correo VARCHAR(255) NOT NULL,
     telefono VARCHAR(15),

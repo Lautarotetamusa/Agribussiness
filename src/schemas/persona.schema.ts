@@ -18,7 +18,7 @@ export const createUser = z.object({
     rol: z.enum(rolesKeys)
 });
 
-const createColaborador = createUser.extend({
+export const createColaborador = createUser.extend({
     id_depto: z.number(),
     cod_zona: z.number()
 });
@@ -37,7 +37,7 @@ export const updateUser = z.object({
     direccion: z.string().optional(),
 });
 
-const updateColaborador = updateUser.extend({
+export const updateColaborador = updateUser.extend({
     id_depto: z.number().optional(),
     cod_zona: z.number().optional()
 });
@@ -45,3 +45,5 @@ const updateColaborador = updateUser.extend({
 export type CreateUser = z.infer<typeof createUser>;
 export type LoginUser = z.infer<typeof loginUser>;
 export type UpdateUser = z.infer<typeof updateUser>;
+export type CreateColaborador = z.infer<typeof createColaborador>;
+export type UpdateColaborador = z.infer<typeof updateColaborador>;

@@ -16,3 +16,6 @@ ALTER TABLE Personas CHANGE nuevo_rol rol ENUM("admin", "cliente", "colaborador"
 ALTER TABLE Productos ADD COLUMN ficha_tecnica VARCHAR(256) DEFAULT NULL;
 
 -- DROP TABLE FichaTecnica;
+
+ALTER TABLE Personas MODIFY id_depto INT;
+ALTER TABLE Personas MODIFY cod_zona INT;

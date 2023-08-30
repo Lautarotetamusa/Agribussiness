@@ -69,6 +69,27 @@ export class BaseModel{
         return new (this as any)(rows[0] as RT) as MT; 
     }
 
+    /**
+     * 
+     * @param where 
+     * @returns Devuelve las filas tal cual como las saca de la base de datos
+     */
+    protected static async _get_one<RT extends object>(where?: object): Promise<RT>{
+        let {where_query, where_list} = this.format_where(where);
+        
+        const query = `
+            SELECT ${this.fields ? this.fields.join(',') : "*"}
+            FROM ${this.table_name}
+            ${where_query}`;
+
+        const [rows] = await sql.query<RowDataPacket[]>(query, where_list);
+
+        if (rows.length <= 0)
+            throw new NotFound(`No se encontro el item de la tabla ${this.table_name}`);
+
+        return rows[0] as RT; 
+    }
+
     protected static async find_all<RT extends object>(where?: object, fields?: string[]): Promise<RT[]>{
         let {where_query, where_list} = this.format_where(where);
 
