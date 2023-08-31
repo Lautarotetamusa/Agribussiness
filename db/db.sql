@@ -52,8 +52,8 @@ CREATE TABLE Promociones(
     cod_zona INT NOT NULL,
     titulo VARCHAR(255) NOT NULL,
     fecha_expiracion DATE NOT NULL,
-    descripcion VARCHAR NOT NULL,
+    descripcion VARCHAR(512) NOT NULL,
 
-    PRIMARY KEY id_promo,
-    FOREIGN KEY cod_zona REFERENCES Zonas(cod_zona)
+    PRIMARY KEY (id_promo),
+    FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona)
 );

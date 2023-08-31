@@ -21,7 +21,8 @@ export class BaseModel{
     protected static format_where(req: object | undefined){
         let where_query = "";
         let where_list: any[] = []
-        if (req){
+        if (req && Object.keys(req).length > 0){
+                        
             type key = keyof typeof req;
             where_query = "WHERE ";
             for (let field in req){ 
@@ -31,6 +32,8 @@ export class BaseModel{
             where_query = where_query.substring(0, where_query.length-4);
             console.log(where_query);
             console.log(where_list);
+        }else{
+            throw new ValidationError("El body esta vacio");
         }
 
         return {
@@ -74,11 +77,11 @@ export class BaseModel{
      * @param where 
      * @returns Devuelve las filas tal cual como las saca de la base de datos
      */
-    protected static async _get_one<RT extends object>(where?: object): Promise<RT>{
+    protected static async _get_one<RT extends object>(where?: object, fields?: string[]): Promise<RT>{
         let {where_query, where_list} = this.format_where(where);
         
         const query = `
-            SELECT ${this.fields ? this.fields.join(',') : "*"}
+            SELECT ${fields ? fields.join(',') : "*"}
             FROM ${this.table_name}
             ${where_query}`;
 
@@ -90,11 +93,11 @@ export class BaseModel{
         return rows[0] as RT; 
     }
 
-    protected static async find_all<RT extends object>(where?: object, fields?: string[]): Promise<RT[]>{
+    protected static async find_all<RT extends object>(where?: object): Promise<RT[]>{
         let {where_query, where_list} = this.format_where(where);
 
         const query = `
-            SELECT ${fields ? fields.join(',') : "*"} 
+            SELECT ${this.fields ? this.fields.join(',') : "*"} 
             FROM ${this.table_name}
             ${where_query}`;
 
@@ -120,7 +123,7 @@ export class BaseModel{
         }
     }
 
-    protected static async _update<UT extends object>(_req: UT, _where: object){        
+    protected static async _update<UT extends object>(_req: object, _where: object){        
         let {where_query, where_list} = this.format_where(_where);
 
         const query = `

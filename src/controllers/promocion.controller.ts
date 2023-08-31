@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Promocion } from "../models/promocion.model";
 import { ValidationError } from "../errors";
-import { createPromocion } from "../schemas/promocion.schema";
+import { createPromocion, uPromocion } from "../schemas/promocion.schema";
 import { Zona } from "../models/zona.model";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
@@ -22,16 +22,28 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
 }
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
-    const id = Number(req.params.id);
-    if (!id) throw new ValidationError("El id pasado no es correcto o no existe, debe ser un numero");
+    const id: number = res.locals.id;
 
     const promo = await Promocion.get_one(id);
     let _:void = await promo.get_colaboradores();
     return res.status(200).json(promo);
 }
 
+const update = async (req: Request, res: Response): Promise<Response> => {
+    const id: number = res.locals.id;
+    const body = uPromocion.parse(req.body);
+
+    const promo = await Promocion.update(id, body);
+    return res.status(201).json({
+        success: true,
+        message: "Promocion actualizada correctamente",
+        data: promo
+    })
+}
+
 export default {
     create,
     get_one,
-    get_all
+    get_all,
+    update
 }

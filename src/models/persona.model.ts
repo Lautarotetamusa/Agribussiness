@@ -8,9 +8,10 @@ import { Departamento } from './departamento.model';
 
 export class Persona extends BaseModel{
     static table_name: string = "Personas";
+    static fields = ["cedula", "id_depto", "cod_zona", "nombre", "correo", "telefono", "direccion", "rol"];
 
     cedula: string;
-    password: string;
+    //password: string;
     nombre: string;
     correo: string;
     telefono?: string;
@@ -20,7 +21,7 @@ export class Persona extends BaseModel{
     constructor(body: CreateUser){
         super();
         this.cedula = body.cedula;
-        this.password = body.password;
+        //this.password = body.password;
         this.nombre = body.nombre;
         this.correo = body.correo;
         this.telefono = body.telefono;
@@ -38,9 +39,22 @@ export class Persona extends BaseModel{
         return new Admin(persona);
     }
 
-    static async get_all(): Promise<CreateColaborador[]>{
-        const fields = ["cedula", "id_depto", "cod_zona", "nombre", "correo", "telefono", "direccion", "rol"];
-        return await this.find_all<CreateColaborador>({is_deleted: 0}, fields);
+    static async get_password(cedula: string): Promise<{
+        password: string,
+        rol: RolesKeys
+    }>{
+        const fields = ["password", "rol"];
+        return this._get_one({cedula: cedula, is_deleted: 0}, fields);
+    }
+
+    static async get_all(rol?: RolesKeys): Promise<CreateColaborador[]>{
+        if (rol)
+            return await this.find_all<CreateColaborador>({
+                is_deleted: 0,
+                rol: rol
+            });
+
+        return await this.find_all<CreateColaborador>({is_deleted: 0});
     }
 
     async update(_req: UpdateUser){
@@ -68,36 +82,25 @@ export class Colaborador extends Persona{
     }
 
     static async create(body: CreateColaborador): Promise<Colaborador>{
+        let zona = await Zona.get_one(body.cod_zona);
+        let departamento = await Departamento.get_one(body.id_depto);
+
         const colaborador = await Persona._insert<CreateColaborador, Colaborador>(body);
-        colaborador.zona = await Zona.get_one(colaborador.cod_zona);
-        colaborador.departamento = await Departamento.get_one(colaborador.id_depto);
+        colaborador.zona = zona;
+        colaborador.departamento = departamento;
         return colaborador;
     }
 
-    static async get_all(): Promise<CreateColaborador[]>{
-        const fields = ["cedula", "id_depto", "cod_zona", "nombre", "correo", "telefono", "direccion", "rol"];
-        return await this.find_all<CreateColaborador>({
-            rol: roles.colaborador,
-            is_deleted: 0
-        }, fields);
-    }
-
     async update(body: UpdateColaborador){
-        await Persona._update<UpdateColaborador>(body, {cedula: this.cedula, is_deleted: 0});    
-
         for (let i in body){
             let value = body[i as keyof typeof body];
             this[i as keyof typeof this] = value as never;
         }
-
+        
         let _:void = await this.get_zona();
         let a:void = await this.get_depto();
-
-        /*this.id_depto = body.id_depto || this.id_depto;
-        this.id_depto = body.id_depto || this.id_depto;
-
-        this.departamento = body.id_depto ? await Departamento.get_one(body.id_depto) : await Departamento.get_one(this.id_depto);
-        this.zona = body.cod_zona ? await Zona.get_one(body.cod_zona) : await Zona.get_one(this.cod_zona);*/
+        
+        await Persona._update<UpdateColaborador>(body, {cedula: this.cedula, is_deleted: 0});
     }
 
     async delete(){
@@ -109,7 +112,7 @@ export class Colaborador extends Persona{
     }
 
     async get_depto(){
-        if (!this.zona) this.departamento = await Departamento.get_one(this.id_depto);
+        if (!this.departamento) this.departamento = await Departamento.get_one(this.id_depto);
     }
 }
 
@@ -124,14 +127,6 @@ export class Cliente extends Persona{
         return await Persona._insert<CreateUser, Cliente>(body);
     }
 
-    static async get_all(): Promise<CreateColaborador[]>{
-        const fields = ["cedula", "id_depto", "cod_zona", "nombre", "correo", "telefono", "direccion", "rol"];
-        return await this.find_all<CreateColaborador>({
-            rol: roles.cliente,
-            is_deleted: 0
-        }, fields);
-    }
-
     async delete(){
         let _: void = await Persona._update({is_deleted: 1}, {cedula: this.cedula});
     }
@@ -142,13 +137,5 @@ export class Admin extends Persona{
 
     constructor(body: CreateUser){
         super(body);
-    }
-
-    static async get_all(): Promise<CreateColaborador[]>{
-        const fields = ["cedula", "id_depto", "cod_zona", "nombre", "correo", "telefono", "direccion", "rol"];
-        return await this.find_all<CreateColaborador>({
-            rol: roles.admin,
-            is_deleted: 0
-        }, fields);
     }
 }

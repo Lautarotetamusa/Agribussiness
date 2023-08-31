@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+    RolesKeys,
     createColaborador,
     createUser, 
     loginUser, 
@@ -9,10 +10,11 @@ import {
 } from "../schemas/persona.schema";
 import {Colaborador, Persona, Cliente} from "../models/persona.model";
 
-
 import bcrypt from "bcrypt";
 import jwt, {Secret} from "jsonwebtoken";
 import { Unauthorized, ValidationError } from "../errors";
+import { Departamento } from "../models/departamento.model";
+import { Zona } from "../models/zona.model";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const rol = createUser.shape.rol.parse(req.body.rol);
@@ -42,13 +44,13 @@ const create = async (req: Request, res: Response): Promise<Response> => {
 
 const login = async (req: Request, res: Response): Promise<Response> => {
     const body = loginUser.parse(req.body)
-    const persona: Persona = await Persona.get_one(body.cedula);
+    const persona = await Persona.get_password(body.cedula);
 
     let match: boolean = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
     if (!match) throw new Unauthorized("Contraseña incorrecta");
 
     const token = jwt.sign({
-        cedula: persona.cedula,
+        cedula: body.cedula,
         rol: persona.rol
     }, process.env.JWT_SECRET as Secret, 
     { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -61,7 +63,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 }
 
 const update = async (req: Request, res: Response): Promise<Response> => {
-    const user = await Persona.get_one(res.locals.user.cedula);
+    const user = await Persona.get_one(req.params.cedula);
     let body;
 
     if (user.rol == roles.colaborador){
@@ -102,12 +104,16 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
         let a:void = await persona.get_depto();
     }
 
-    let {password, ...p} = {...persona}
-    return res.status(200).json(p);
+    return res.status(200).json(persona);
 }
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
-    const personas = await Persona.get_all();
+    let rol;
+    if (req.query.rol){
+        rol = createUser.shape.rol.parse(req.query.rol);
+    }
+
+    const personas = await Persona.get_all(rol);
     return res.status(200).json(personas);
 }
 

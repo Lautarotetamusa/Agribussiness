@@ -19,3 +19,14 @@ ALTER TABLE Productos ADD COLUMN ficha_tecnica VARCHAR(256) DEFAULT NULL;
 
 ALTER TABLE Personas MODIFY id_depto INT;
 ALTER TABLE Personas MODIFY cod_zona INT;
+
+CREATE TABLE Promociones(
+    id_promo INT NOT NULL AUTO_INCREMENT,
+    cod_zona INT NOT NULL,
+    titulo VARCHAR(255) NOT NULL,
+    fecha_expiracion DATE NOT NULL,
+    descripcion VARCHAR(512) NOT NULL,
+
+    PRIMARY KEY id_promo,
+    FOREIGN KEY cod_zona REFERENCES Zonas(cod_zona)
+);
