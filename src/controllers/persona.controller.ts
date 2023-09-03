@@ -99,6 +99,7 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
 
     if (persona.rol == roles.colaborador){
         let a:void = await persona.get_depto();
+        let b:void = await persona.get_cargo();
     }
 
     return res.status(200).json(persona);

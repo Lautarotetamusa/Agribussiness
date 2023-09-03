@@ -7,6 +7,7 @@ import {handle_errors} from './errors';
 import PersonaRouter from "./routes/persona.routes";
 import ProductoRouter from "./routes/producto.routes";
 import DeptoRouter from "./routes/departamento.routes";
+import CargoRouter from "./routes/cargo.routes";
 import PromocionRouter from "./routes/promocion.routes";
 import ProveedorRouter from "./routes/proveedor.routes";
 
@@ -26,6 +27,7 @@ app.use('/producto/', ProductoRouter);
 app.use('/departamento/', DeptoRouter);
 app.use('/promocion/', PromocionRouter);
 app.use('/proveedor/', ProveedorRouter);
+app.use('/cargo', CargoRouter);
 
 app.use('*', (req, res) => res.status(404).json({
     success: false,

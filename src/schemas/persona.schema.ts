@@ -21,6 +21,7 @@ export const createUser = z.object({
 
 export const createColaborador = createUser.extend({
     id_depto: z.number(),
+    cod_cargo: z.number()
 });
 
 export const loginUser = z.object({
@@ -40,6 +41,7 @@ export const updateUser = z.object({
 
 export const updateColaborador = updateUser.extend({
     id_depto: z.number().optional(),
+    cod_cargo: z.number().optional()
 });
 
 export type CreateUser = z.infer<typeof createUser>;

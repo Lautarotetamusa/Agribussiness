@@ -46,7 +46,10 @@ const zodKeys = (schema: z.ZodType): string[] => {  // Adjusted: Signature now u
  * @param schema Zod object that parse the csv data
  * @returns Array of objects with correct types
  */
-export function csv2arr<T>(file_path: string, schema: z.ZodType): Array<T> {
+export function csv2arr<T>(
+        file_path: string, 
+        schema: z.Schema<T>
+    ): Array<T> {
     const data = fs.readFileSync(file_path, 'utf-8').split(/\r?\n/);
     const keys = zodKeys(schema);
     let faltantes: string[] = Object.assign([], keys);
@@ -78,9 +81,8 @@ export function csv2arr<T>(file_path: string, schema: z.ZodType): Array<T> {
             object[key] = val ? val : values[values_keys[key]];
         }
 
-        schema.parse(object);
-        objects.push(object as T);
+        objects.push(schema.parse(object));
     }
 
-    return objects as T[];
+    return objects;
 }

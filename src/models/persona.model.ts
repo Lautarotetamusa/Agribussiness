@@ -5,10 +5,11 @@ import {
 } from "../schemas/persona.schema";
 import { Zona } from './zona.model';
 import { Departamento } from './departamento.model';
+import { Cargo } from './cargo.model';
 
 export class Persona extends BaseModel{
     static table_name: string = "Personas";
-    static fields = ["cedula", "id_depto", "cod_zona", "nombre", "correo", "telefono", "direccion", "rol"];
+    static fields = ["cedula", "id_depto", "cod_zona", "cod_cargo", "nombre", "correo", "telefono", "direccion", "rol"];
 
     cedula: string;
     cod_zona: number;
@@ -77,22 +78,26 @@ export class Persona extends BaseModel{
 export class Colaborador extends Persona{
     id_depto: number;
     departamento?: Departamento;
+    cod_cargo: number;
+    cargo?: Cargo;
     rol = roles.colaborador;
 
     constructor(body: CreateColaborador){
         super(body);
 
         this.id_depto = body.id_depto;
-        this.cod_zona = body.cod_zona;
+        this.cod_cargo = body.cod_cargo;
     }
 
     static async create(body: CreateColaborador): Promise<Colaborador>{
         let zona = await Zona.get_one(body.cod_zona);
         let departamento = await Departamento.get_one(body.id_depto);
+        let cargo = await Cargo.get_one(body.cod_cargo);
 
         const colaborador = await Persona._insert<CreateColaborador, Colaborador>(body);
         colaborador.zona = zona;
         colaborador.departamento = departamento;
+        colaborador.cargo = cargo;
         return colaborador;
     }
 
@@ -104,6 +109,7 @@ export class Colaborador extends Persona{
         
         let _:void = await this.get_zona();
         let a:void = await this.get_depto();
+        let b:void = await this.get_cargo();
         
         await Persona._update<UpdateColaborador>(body, {cedula: this.cedula, is_deleted: 0});
     }
@@ -114,6 +120,10 @@ export class Colaborador extends Persona{
 
     async get_depto(){
         if (!this.departamento) this.departamento = await Departamento.get_one(this.id_depto);
+    }
+
+    async get_cargo(){
+        if (!this.cargo) this.cargo = await Cargo.get_one(this.cod_cargo);
     }
 }
 

@@ -51,3 +51,32 @@ ALTER TABLE Proveedores CHANGE photo_path photo VARCHAR(256) NOT NULL;
 UPDATE Personas SET cod_zona=1 WHERE cod_zona is NULL;
 ALTER TABLE Personas MODIFY cod_zona INT NOT NULL;
 ALTER TABLE Personas ADD CONSTRAINT FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona);
+
+CREATE TABLE Cargos(
+    cod_cargo INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(128) NOT NULL,
+
+    PRIMARY KEY(cod_cargo)
+);
+INSERT INTO Cargos (nombre) VALUES 
+    ("Gerente General"),
+    ("Gerente Administrativo"), 
+    ("Coordinador de Ventas y Desarollo"), 
+    ("Representante Técnico Comercial"),  
+    ("Asistente Técnico Comercial"),
+    ("Asistente de Gerencia"),
+    ("Asistente de Despacho"), 
+    ("Encargado de Marketing"),
+    ("Encargada de Logística");
+
+ALTER TABLE Personas ADD COLUMN cod_cargo INT;
+ALTER TABLE Personas ADD CONSTRAINT FOREIGN KEY (cod_cargo) REFERENCES Cargos(cod_cargo);
+UPDATE Personas
+SET cod_cargo = 1
+WHERE cod_cargo is NULL AND rol = "colaborador";
+UPDATE Personas SET cod_cargo = NULL where rol != "colaborador";
+
+CREATE TABLE ListaPrecios(
+    id_lista INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(128) NOT NULL,
+);

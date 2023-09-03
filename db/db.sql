@@ -9,6 +9,7 @@ CREATE TABLE Personas(
     password BINARY(60) NOT NULL,
     id_depto INT,
     cod_zona INT NOT NULL,
+    cod_cargo INT,
     nombre VARCHAR(60) NOT NULL,
     correo VARCHAR(255) NOT NULL,
     telefono VARCHAR(15),
@@ -18,7 +19,8 @@ CREATE TABLE Personas(
 
     PRIMARY KEY (cedula),
     FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto),
-    FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona)
+    FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona),
+    FOREIGN KEY (cod_cargo) REFERENCES Cargos(cod_cargo)
 );
 
 CREATE TABLE Zonas(
@@ -68,3 +70,20 @@ CREATE TABLE Proveedores(
 
     PRIMARY KEY (id_proveedor)
 );
+
+CREATE TABLE Cargos(
+    cod_cargo INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(128) NOT NULL,
+
+    PRIMARY KEY(cod_cargo)
+);
+INSERT INTO Cargos (nombre) VALUES 
+    ("Gerente General"),
+    ("Gerente Administrativo"), 
+    ("Coordinador de Ventas y Desarollo"), 
+    ("Representante Técnico Comercial"),  
+    ("Asistente Técnico Comercial"),
+    ("Asistente de Gerencia"),
+    ("Asistente de Despacho"), 
+    ("Encargado de Marketing"),
+    ("Encargada de Logística");

@@ -22,7 +22,7 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
 const file_insert = async (req: Request, res: Response): Promise<Response> => {
     if (!req.file) throw new ValidationError("El archivo no se subio correctamente");
     
-    const productos = csv2arr<CreateProducto>(req.file.path, createProducto);
+    const productos = csv2arr(req.file.path, createProducto);
     let _: void = await Producto.bulk_insert(productos);
 
     return res.status(201).json({

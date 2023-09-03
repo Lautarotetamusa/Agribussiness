@@ -8,8 +8,7 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
 }
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
-    const id = Number(req.params.id);
-    if (!id) throw new ValidationError("El id pasado no es correcto o no existe, debe ser un numero");
+    const id = Number(res.locals.id);
 
     const depto = await Departamento.get_one(id);
     let _:void = await depto.get_colaboradores();
