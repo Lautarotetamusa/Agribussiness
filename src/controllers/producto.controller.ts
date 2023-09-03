@@ -6,6 +6,7 @@ import {
     CreateProducto
 } from "../schemas/producto.schema";
 import { csv2arr } from "../util/csv_to_arr";
+import { Proveedor } from "../models/proveedor.model";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const productos = await Producto.get_all();
@@ -23,6 +24,9 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
     if (!req.file) throw new ValidationError("El archivo no se subio correctamente");
     
     const productos = csv2arr(req.file.path, createProducto);
+    for (const producto of productos){
+        await Proveedor.get_one(producto.id_proveedor);
+    }
     let _: void = await Producto.bulk_insert(productos);
 
     return res.status(201).json({

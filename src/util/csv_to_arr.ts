@@ -77,8 +77,14 @@ export function csv2arr<T>(
 
         let object: Record<string, any> = {};
         for (const key of keys){
-            let val = Number(values[values_keys[key]]);
-            object[key] = val ? val : values[values_keys[key]];
+            const str_val = values[values_keys[key]];
+            if (str_val === ""){
+                delete object[key]
+                continue;
+            }
+            
+            let number_val = Number(str_val); //Hago esto porque Number("") = 0 y no quiero que los campos vacios se completen con 0
+            object[key] = Number.isNaN(number_val) ? str_val : number_val;
         }
 
         objects.push(schema.parse(object));
