@@ -32,8 +32,6 @@ export class BaseModel{
             where_query = where_query.substring(0, where_query.length-4);
             console.log(where_query);
             console.log(where_list);
-        }else{
-            throw new ValidationError("El body esta vacio");
         }
 
         return {

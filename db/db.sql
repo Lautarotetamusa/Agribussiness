@@ -8,12 +8,12 @@ CREATE TABLE Personas(
     cedula CHAR(10) NOT NULL,
     password BINARY(60) NOT NULL,
     id_depto INT,
-    cod_zona INT,
+    cod_zona INT NOT NULL,
     nombre VARCHAR(60) NOT NULL,
     correo VARCHAR(255) NOT NULL,
     telefono VARCHAR(15),
     direccion VARCHAR(255),
-    rol TINYINT NOT NULL,
+    rol ENUM("admin", "cliente", "colaborador") NOT NULL,
     is_deleted BOOLEAN DEFAULT false,
 
     PRIMARY KEY (cedula),
@@ -38,13 +38,15 @@ CREATE TABLE Departamentos(
 
 CREATE TABLE Productos(
     id_producto INT NOT NULL AUTO_INCREMENT,
+    id_proveedor INT NOT NULL,
     precio DECIMAL (10, 2) NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     presentacion VARCHAR(128) NOT NULL,
     descripcion VARCHAR(512) NOT NULL,
     ficha_tecnica VARCHAR(256) DEFAULT NULL
 
-    PRIMARY KEY (id_producto)
+    PRIMARY KEY (id_producto),
+    FOREIGN KEY (id_proveedor) REFERENCES Proveedores(id_proveedor)
 );
 
 CREATE TABLE Promociones(
@@ -56,4 +58,13 @@ CREATE TABLE Promociones(
 
     PRIMARY KEY (id_promo),
     FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona)
+);
+
+CREATE TABLE Proveedores(
+    id_proveedor INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(128) NOT NULL,
+    photo VARCHAR(256),
+    ficha_tecnica VARCHAR(256),
+
+    PRIMARY KEY (id_proveedor)
 );

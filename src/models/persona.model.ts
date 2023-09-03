@@ -11,7 +11,8 @@ export class Persona extends BaseModel{
     static fields = ["cedula", "id_depto", "cod_zona", "nombre", "correo", "telefono", "direccion", "rol"];
 
     cedula: string;
-    //password: string;
+    cod_zona: number;
+    zona?: Zona;
     nombre: string;
     correo: string;
     telefono?: string;
@@ -21,7 +22,7 @@ export class Persona extends BaseModel{
     constructor(body: CreateUser){
         super();
         this.cedula = body.cedula;
-        //this.password = body.password;
+        this.cod_zona = body.cod_zona;
         this.nombre = body.nombre;
         this.correo = body.correo;
         this.telefono = body.telefono;
@@ -58,19 +59,23 @@ export class Persona extends BaseModel{
     }
 
     async update(_req: UpdateUser){
-        await Persona._update<UpdateUser>(_req, {cedula: this.cedula, is_deleted: 0});    
-
         for (let i in _req){
             let value = _req[i as keyof typeof _req];
             this[i as keyof typeof this] = value as never;
         }
+        
+        let _:void = await this.get_zona();
+
+        await Persona._update<UpdateUser>(_req, {cedula: this.cedula, is_deleted: 0});    
+    }
+
+    async get_zona(){
+        if (!this.zona) this.zona = await Zona.get_one(this.cod_zona);
     }
 }
 
 export class Colaborador extends Persona{
     id_depto: number;
-    cod_zona: number;
-    zona?: Zona;
     departamento?: Departamento;
     rol = roles.colaborador;
 
@@ -107,10 +112,6 @@ export class Colaborador extends Persona{
         let _: void = await Persona._update({is_deleted: 1}, {cedula: this.cedula});
     }
 
-    async get_zona(){
-        if (!this.zona) this.zona = await Zona.get_one(this.cod_zona);
-    }
-
     async get_depto(){
         if (!this.departamento) this.departamento = await Departamento.get_one(this.id_depto);
     }
@@ -124,7 +125,10 @@ export class Cliente extends Persona{
     }
 
     static async create(body: CreateUser): Promise<Cliente>{
-        return await Persona._insert<CreateUser, Cliente>(body);
+        let zona: Zona = await Zona.get_one(body.cod_zona);
+        const cliente = await Persona._insert<CreateUser, Cliente>(body);
+        cliente.zona = zona;
+        return cliente;
     }
 
     async delete(){

@@ -4,7 +4,8 @@ export const createProducto = z.object({
     precio: z.number(),
     nombre: z.string(),
     presentacion: z.string(),
-    descripcion: z.string()
+    descripcion: z.string(),
+    id_proveedor: z.number()
 });
 
 export const updateProducto = z.object({
@@ -12,7 +13,8 @@ export const updateProducto = z.object({
     nombre: z.string().optional(),
     presentacion: z.string().optional(),
     descripcion: z.string().optional(),
-    ficha_tecnica: z.string().optional()
+    ficha_tecnica: z.string().optional(),
+    id_proveedor: z.number().optional()
 })
 
 const buildProducto = createProducto.extend({

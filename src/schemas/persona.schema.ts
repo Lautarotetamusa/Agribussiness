@@ -10,6 +10,7 @@ const rolesKeys = Object.keys(roles) as [RolesKeys];
 
 export const createUser = z.object({
     cedula: z.string(),
+    cod_zona: z.number(),
     password: z.string(),
     nombre: z.string(),
     correo: z.string().email(),
@@ -20,7 +21,6 @@ export const createUser = z.object({
 
 export const createColaborador = createUser.extend({
     id_depto: z.number(),
-    cod_zona: z.number()
 });
 
 export const loginUser = z.object({
@@ -30,6 +30,7 @@ export const loginUser = z.object({
 
 export const updateUser = z.object({
     cedula: z.string().optional(),
+    cod_zona: z.number().optional(),
     password: z.string().optional(),
     nombre: z.string().optional(),
     correo: z.string().email().optional(),
@@ -39,7 +40,6 @@ export const updateUser = z.object({
 
 export const updateColaborador = updateUser.extend({
     id_depto: z.number().optional(),
-    cod_zona: z.number().optional()
 });
 
 export type CreateUser = z.infer<typeof createUser>;

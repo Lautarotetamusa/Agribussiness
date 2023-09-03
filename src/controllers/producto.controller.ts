@@ -15,6 +15,7 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const id: number = res.locals.id;
     const producto = await Producto.get_one(id);
+    let _:void = await producto.get_proveedor();
     return res.status(200).json(producto);
 }
 
@@ -35,12 +36,13 @@ const create_ficha_tecnica = async (req: Request, res: Response): Promise<Respon
     if (!req.file) throw new ValidationError("El archivo no se subio correctamente");
     const id: number = res.locals.id;
 
-    //const producto = await Producto.get_one(req.params.id);
-    let _:void = await Producto.update({ficha_tecnica: req.file.path}, id);
+    const producto = await Producto.get_one(id);
+    let _:void = await producto.update({ficha_tecnica: req.file.path});
 
     return res.status(201).json({
         success: true,
-        message: "Ficha tecnica subida correctamente"
+        message: "Ficha tecnica subida correctamente",
+        data: producto
     });
 }
 
@@ -60,11 +62,13 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     if (Object.keys(body).length == 0) throw new ValidationError("Nada para actualizar");
     const id: number = res.locals.id;
 
-    let _: void = await Producto.update(body, id);
+    const producto = await Producto.get_one(id);
+    let _:void = await producto.update(body);
 
     return res.status(201).json({
         success: true,
-        message: "Producto actualizado correctamente"
+        message: "Producto actualizado correctamente",
+        data: producto
     });
 }
 

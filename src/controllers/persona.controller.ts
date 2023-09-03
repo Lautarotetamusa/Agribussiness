@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import {
-    RolesKeys,
     createColaborador,
     createUser, 
     loginUser, 
@@ -13,8 +12,6 @@ import {Colaborador, Persona, Cliente} from "../models/persona.model";
 import bcrypt from "bcrypt";
 import jwt, {Secret} from "jsonwebtoken";
 import { Unauthorized, ValidationError } from "../errors";
-import { Departamento } from "../models/departamento.model";
-import { Zona } from "../models/zona.model";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const rol = createUser.shape.rol.parse(req.body.rol);
@@ -98,9 +95,9 @@ const delet = async (req: Request, res: Response): Promise<Response> => {
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const persona = await Persona.get_one(req.params.cedula);
+    let _:void = await persona.get_zona();
 
     if (persona.rol == roles.colaborador){
-        let _:void = await persona.get_zona();
         let a:void = await persona.get_depto();
     }
 
