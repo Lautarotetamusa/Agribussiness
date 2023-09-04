@@ -3,25 +3,31 @@ import { BaseModel } from "./base.model"
 import { z } from "zod";
 import { Persona } from "./persona.model";
 import { roles } from "../schemas/persona.schema";
-import { ColaboradoresDepto } from "../schemas/departamento.schema";
+import { ColaboradoresDepto, RetrieveDepartamento } from "../schemas/departamento.schema";
+import { Departamento } from "./departamento.model";
+import { RowDataPacket } from "mysql2";
 
 const iCargo = z.object({
     cod_cargo: z.number(),
+    id_depto: z.number(),
     nombre: z.string()
 });
-type iCargo = z.infer<typeof iCargo>;
+export type iCargo = z.infer<typeof iCargo>;
 
 export class Cargo extends BaseModel{
     static table_name = "Cargos";
     static pk = "cod_cargo";
 
     cod_cargo: number;
+    id_depto: number;
     nombre: string;
     colaboradores?: ColaboradoresDepto;
+    depto?: Departamento;
 
     constructor(body: iCargo){
         super();
         this.cod_cargo = body.cod_cargo,
+        this.id_depto = body.id_depto;
         this.nombre = body.nombre;
     }
 
@@ -31,6 +37,17 @@ export class Cargo extends BaseModel{
 
     static async get_one(cod_cargo: number){
         return await this.find_one<iCargo, Cargo>({cod_cargo: cod_cargo});
+    }
+
+    async get_depto(){
+        /*const [rows] = await sql.query<RowDataPacket[]>(`
+            SELECT id_depto, nombre, telefono FROM ${Departamento.table_name} D
+            WHERE id_depto = ?
+        `, [this.id_depto]);*/
+
+        //return rows[0] as RetrieveDepartamento;
+
+        this.depto = await Departamento.get_one(this.id_depto);
     }
 
     async get_colaboradores(){

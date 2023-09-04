@@ -7,7 +7,7 @@ USE Agribussiness;
 CREATE TABLE Personas(
     cedula CHAR(10) NOT NULL,
     password BINARY(60) NOT NULL,
-    id_depto INT,
+    --id_depto INT,
     cod_zona INT NOT NULL,
     cod_cargo INT,
     nombre VARCHAR(60) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE Personas(
     is_deleted BOOLEAN DEFAULT false,
 
     PRIMARY KEY (cedula),
-    FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto),
+    --FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto),
     FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona),
     FOREIGN KEY (cod_cargo) REFERENCES Cargos(cod_cargo)
 );
@@ -73,17 +73,29 @@ CREATE TABLE Proveedores(
 
 CREATE TABLE Cargos(
     cod_cargo INT NOT NULL AUTO_INCREMENT,
+    id_depto INT NOT NULL
     nombre VARCHAR(128) NOT NULL,
 
-    PRIMARY KEY(cod_cargo)
+    PRIMARY KEY(cod_cargo),
+    FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto)
 );
-INSERT INTO Cargos (nombre) VALUES 
-    ("Gerente General"),
-    ("Gerente Administrativo"), 
-    ("Coordinador de Ventas y Desarollo"), 
-    ("Representante Técnico Comercial"),  
-    ("Asistente Técnico Comercial"),
-    ("Asistente de Gerencia"),
-    ("Asistente de Despacho"), 
-    ("Encargado de Marketing"),
-    ("Encargada de Logística");
+
+INSERT INTO Departamentos(nombre, telefono) VALUES
+    ("GERENCIA GENERAL", "1234")
+    ("VENTAS Y DESAROLLO", "2345")
+    ("MARKETING", "3456")
+    ("LOGÍSTICA", "4567")
+    ("ADMISTRACION Y FINANZAS", "5678")
+    ("COMPRAS", "6789");
+
+INSERT INTO Cargos (nombre, id_depto) VALUES 
+    ("Gerente General", 1),
+    ("Gerente Administrativo", 5), 
+    ("Coordinador de Ventas y Desarollo", 2), 
+    ("Representante Técnico Comercial", 2),  
+    ("Asistente Técnico Comercial", 2),
+    ("Asistente de Gerencia", 1),
+    ("Asistente de Despacho", 4), 
+    ("Encargado de Marketing", 3),
+    ("Encargado de Logística", 4),
+    ("Encargado de compras", 6);

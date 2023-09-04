@@ -20,32 +20,17 @@ export const createUser = z.object({
 });
 
 export const createColaborador = createUser.extend({
-    id_depto: z.number(),
     cod_cargo: z.number()
 });
 
-export const loginUser = z.object({
-    cedula: z.string(),
-    password: z.string()
-});
+export const loginUser = createUser.pick({cedula: true, password: true});
 
-export const updateUser = z.object({
-    cedula: z.string().optional(),
-    cod_zona: z.number().optional(),
-    password: z.string().optional(),
-    nombre: z.string().optional(),
-    correo: z.string().email().optional(),
-    telefono: z.string().min(10).optional(),
-    direccion: z.string().optional(),
-});
+export const updateUser = createUser.omit({rol: true}).partial();
 
-export const updateColaborador = updateUser.extend({
-    id_depto: z.number().optional(),
-    cod_cargo: z.number().optional()
-});
+export const updateColaborador = createColaborador.partial();
 
 export type CreateUser = z.infer<typeof createUser>;
 export type LoginUser = z.infer<typeof loginUser>;
-export type UpdateUser = z.infer<typeof updateUser>;
+export type UpdateUser = Partial<CreateUser>;
 export type CreateColaborador = z.infer<typeof createColaborador>;
-export type UpdateColaborador = z.infer<typeof updateColaborador>;
+export type UpdateColaborador = Partial<CreateColaborador>;

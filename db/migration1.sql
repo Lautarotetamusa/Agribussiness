@@ -80,3 +80,6 @@ CREATE TABLE ListaPrecios(
     id_lista INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(128) NOT NULL,
 );
+
+
+--Cambiar

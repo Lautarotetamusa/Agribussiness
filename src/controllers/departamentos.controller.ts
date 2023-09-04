@@ -12,6 +12,7 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
 
     const depto = await Departamento.get_one(id);
     let _:void = await depto.get_colaboradores();
+    _ = await depto.get_cargos();
     return res.status(200).json(depto);
 }
 

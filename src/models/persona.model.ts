@@ -76,8 +76,6 @@ export class Persona extends BaseModel{
 }
 
 export class Colaborador extends Persona{
-    id_depto: number;
-    departamento?: Departamento;
     cod_cargo: number;
     cargo?: Cargo;
     rol = roles.colaborador;
@@ -85,18 +83,18 @@ export class Colaborador extends Persona{
     constructor(body: CreateColaborador){
         super(body);
 
-        this.id_depto = body.id_depto;
+        //this.id_depto = body.id_depto;
         this.cod_cargo = body.cod_cargo;
     }
 
     static async create(body: CreateColaborador): Promise<Colaborador>{
         let zona = await Zona.get_one(body.cod_zona);
-        let departamento = await Departamento.get_one(body.id_depto);
+        //let departamento = await Departamento.get_one(body.id_depto);
         let cargo = await Cargo.get_one(body.cod_cargo);
+        await cargo.get_depto();
 
         const colaborador = await Persona._insert<CreateColaborador, Colaborador>(body);
         colaborador.zona = zona;
-        colaborador.departamento = departamento;
         colaborador.cargo = cargo;
         return colaborador;
     }
@@ -108,18 +106,14 @@ export class Colaborador extends Persona{
         }
         
         let _:void = await this.get_zona();
-        let a:void = await this.get_depto();
-        let b:void = await this.get_cargo();
+        _ = await this.get_cargo();
+        _ = await this.cargo?.get_depto();
         
         await Persona._update<UpdateColaborador>(body, {cedula: this.cedula, is_deleted: 0});
     }
 
     async delete(){
         let _: void = await Persona._update({is_deleted: 1}, {cedula: this.cedula});
-    }
-
-    async get_depto(){
-        if (!this.departamento) this.departamento = await Departamento.get_one(this.id_depto);
     }
 
     async get_cargo(){
