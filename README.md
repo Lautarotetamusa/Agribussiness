@@ -1,6 +1,6 @@
 # Agribussiness
 
-# [Api references](./api_references.md)
+# [Api references](https://cronos-software.stoplight.io/docs/agribussiness/branches/main/pgbrbcgazs2m9-agribussiness-api-rest)
 
 # Requerimientos del sistema
 

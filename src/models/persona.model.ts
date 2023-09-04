@@ -9,7 +9,7 @@ import { Cargo } from './cargo.model';
 
 export class Persona extends BaseModel{
     static table_name: string = "Personas";
-    static fields = ["cedula", "id_depto", "cod_zona", "cod_cargo", "nombre", "correo", "telefono", "direccion", "rol"];
+    static fields = ["cedula", "cod_zona", "cod_cargo", "nombre", "correo", "telefono", "direccion", "rol"];
 
     cedula: string;
     cod_zona: number;
