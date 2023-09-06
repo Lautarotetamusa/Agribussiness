@@ -10,6 +10,7 @@ import DeptoRouter from "./routes/departamento.routes";
 import CargoRouter from "./routes/cargo.routes";
 import PromocionRouter from "./routes/promocion.routes";
 import ProveedorRouter from "./routes/proveedor.routes";
+import { fileRouter } from './routes/files.routes';
 
 export const app = express();
 
@@ -22,6 +23,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true,}));
 
+//Servir los archivos estáticos
+app.use('/files', fileRouter);
+
 app.use('/persona/', PersonaRouter);
 app.use('/producto/', ProductoRouter);
 app.use('/departamento/', DeptoRouter);
@@ -29,6 +33,7 @@ app.use('/promocion/', PromocionRouter);
 app.use('/proveedor/', ProveedorRouter);
 app.use('/cargo', CargoRouter);
 
+//Manejo de rutas de la API que no existen
 app.use('*', (req, res) => res.status(404).json({
     success: false,
     error: "Esta ruta no hace nada negro"

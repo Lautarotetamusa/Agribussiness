@@ -75,11 +75,3 @@ UPDATE Personas
 SET cod_cargo = 1
 WHERE cod_cargo is NULL AND rol = "colaborador";
 UPDATE Personas SET cod_cargo = NULL where rol != "colaborador";
-
-CREATE TABLE ListaPrecios(
-    id_lista INT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(128) NOT NULL,
-);
-
-
---Cambiar

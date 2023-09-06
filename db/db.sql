@@ -7,7 +7,6 @@ USE Agribussiness;
 CREATE TABLE Personas(
     cedula CHAR(10) NOT NULL,
     password BINARY(60) NOT NULL,
-    --id_depto INT,
     cod_zona INT NOT NULL,
     cod_cargo INT,
     nombre VARCHAR(60) NOT NULL,
@@ -18,7 +17,6 @@ CREATE TABLE Personas(
     is_deleted BOOLEAN DEFAULT false,
 
     PRIMARY KEY (cedula),
-    --FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto),
     FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona),
     FOREIGN KEY (cod_cargo) REFERENCES Cargos(cod_cargo)
 );
@@ -93,6 +91,14 @@ CREATE TABLE Solicitudes(
     FOREIGN KEY (solicitado) REFERENCES Personas(cedula)
 );
 
+CREATE TABLE LineasNegocio(
+    id_linea INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(128) NOT NULL,
+    image VARCHAR(256) NOT NULL,
+
+    PRIMARY KEY (id_linea)
+);
+
 INSERT INTO Departamentos(nombre, telefono) VALUES
     ("GERENCIA GENERAL", "1234")
     ("VENTAS Y DESAROLLO", "2345")
@@ -112,3 +118,13 @@ INSERT INTO Cargos (nombre, id_depto) VALUES
     ("Encargado de Marketing", 3),
     ("Encargado de Logística", 4),
     ("Encargado de compras", 6);
+
+INSERT INTO LineasNegocio(nombre, image) VALUES
+    ("Turbas", ),
+    ("Semillas", ),
+    ("Bandejas", ),
+    ("Maquinarias", ),
+    ("Trampas", ),
+    ("Productos Eco"),
+    ("Entutorado", ),
+    ("Otros", )
