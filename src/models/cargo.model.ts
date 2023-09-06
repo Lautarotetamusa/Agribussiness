@@ -3,9 +3,8 @@ import { BaseModel } from "./base.model"
 import { z } from "zod";
 import { Persona } from "./persona.model";
 import { roles } from "../schemas/persona.schema";
-import { ColaboradoresDepto, RetrieveDepartamento } from "../schemas/departamento.schema";
+import { ColaboradoresDepto } from "../schemas/departamento.schema";
 import { Departamento } from "./departamento.model";
-import { RowDataPacket } from "mysql2";
 
 const iCargo = z.object({
     cod_cargo: z.number(),

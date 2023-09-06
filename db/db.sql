@@ -80,6 +80,19 @@ CREATE TABLE Cargos(
     FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto)
 );
 
+CREATE TABLE Solicitudes(
+    cod_solicitud INT NOT NULL AUTO_INCREMENT,
+    solicitante CHAR(10) NOT NULL,
+    solicitado CHAR(10) NOT NULL,
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    descripcion TEXT NOT NULL,
+    aceptada BOOLEAN NOT NULL DEFAULT 0,
+
+    PRIMARY KEY(cod_solicitud),
+    FOREIGN KEY (solicitante) REFERENCES Personas(cedula),
+    FOREIGN KEY (solicitado) REFERENCES Personas(cedula)
+);
+
 INSERT INTO Departamentos(nombre, telefono) VALUES
     ("GERENCIA GENERAL", "1234")
     ("VENTAS Y DESAROLLO", "2345")
