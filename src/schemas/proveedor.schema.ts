@@ -3,8 +3,9 @@ import {z} from "zod";
 const iProveedor = z.object({
     id_proveedor: z.number(),
     nombre: z.string(),
-    photo: z.string().optional(),
-    ficha_tecnica: z.string().optional()
+    photo: z.string(),
+    id_linea: z.number()
+    //ficha_tecnica: z.string().optional()
 });
 export type IProveedor = z.infer<typeof iProveedor>;
 

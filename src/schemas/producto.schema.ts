@@ -8,20 +8,22 @@ export const createProducto = z.object({
     id_proveedor: z.number()
 });
 
-export const updateProducto = z.object({
-    precio: z.number().optional(),
-    nombre: z.string().optional(),
-    presentacion: z.string().optional(),
-    descripcion: z.string().optional(),
-    ficha_tecnica: z.string().optional(),
-    id_proveedor: z.number().optional()
-})
+export const updateProducto = createProducto.partial().extend({
+    ficha_tecnica: z.string().optional()
+});
 
 const buildProducto = createProducto.extend({
     id_producto: z.number(),
-    ficha_tecnica: z.string().optional()
-})
+    ficha_tecnica: z.string().optional().nullable()
+});
+
+export const ListProducto = buildProducto.extend({
+    nombre_proveedor: z.string()
+});
+
+export type ListProducto = z.infer<typeof ListProducto>;
 
 export type CreateProducto = z.infer<typeof createProducto>;
 export type BuildProducto  = z.infer<typeof buildProducto>;
 export type UpdateProducto = z.infer<typeof updateProducto>;
+ 

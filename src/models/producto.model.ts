@@ -1,6 +1,9 @@
+import { RowDataPacket } from 'mysql2';
+import { sql } from '../db';
 import { 
     BuildProducto, 
     CreateProducto, 
+    ListProducto, 
     UpdateProducto 
 } from '../schemas/producto.schema';
 import { BaseModel} from './base.model';
@@ -17,7 +20,7 @@ export class Producto extends BaseModel{
     nombre: string;
     presentacion: string;
     descripcion: string;
-    ficha_tecnica?: string;
+    ficha_tecnica?: string | null;
     proveedor?: Proveedor;
 
     constructor(body: BuildProducto){
@@ -48,8 +51,21 @@ export class Producto extends BaseModel{
         return await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
     }
 
-    static async get_all(): Promise<BuildProducto[]>{ 
-        return await this.find_all<BuildProducto>();
+    static async get_all(): Promise<ListProducto[]>{ 
+        const query = `
+            SELECT Prod.*, Prov.nombre as nombre_proveedor
+            FROM ${this.table_name} Prod
+            INNER JOIN ${Proveedor.table_name} Prov
+                ON Prod.id_proveedor = Prod.id_proveedor
+        ` as const;
+
+        const [rows] = await sql.query<RowDataPacket[]>(query);
+
+        //Omito el precio porque MySQL lo devuelve como un string, debería arreglar esto. TODO!
+        let check = ListProducto.omit({precio: true}).parse(rows[0]); //Validate the response
+        return rows as ListProducto[];
+
+        //return await this.find_all<BuildProducto>();
     }
 
     async update(body: UpdateProducto){

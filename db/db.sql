@@ -120,11 +120,11 @@ INSERT INTO Cargos (nombre, id_depto) VALUES
     ("Encargado de compras", 6);
 
 INSERT INTO LineasNegocio(nombre, image) VALUES
-    ("Turbas", ),
-    ("Semillas", ),
-    ("Bandejas", ),
-    ("Maquinarias", ),
-    ("Trampas", ),
-    ("Productos Eco"),
-    ("Entutorado", ),
-    ("Otros", )
+    ("Turbas", "TURBAS.jpeg"),
+    ("Semillas", "SEMILLAS.png"),
+    ("Bandejas", "BANDEJAS.jpg"),
+    ("Maquinarias", "MAQUINARIA.png"),
+    ("Trampas", "TRAMPAS.jpg"),
+    ("Productos Eco", "PRODUCTOS_ECO.jpg"),
+    ("Entutorado", "ENTUTORADO.png"),
+    ("Otros", "OTROS.jpg");

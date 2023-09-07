@@ -28,13 +28,23 @@ export function handle_errors(err: Error, req: Request, res: Response, next: Nex
         }]
     });
 
-    if (err instanceof MulterError) return res.status(400).json({
-        success: false,
-        errors: [{
-            code: err.name,
-            message: `Unexpected field '${err.field}', expected 'file'`
-        }]
-    });
+    if (err instanceof MulterError){
+        console.log("ERROR from handle: ", err);
+
+        // Esto soluciona un error con multer que al encontrar un error dos veces en el segundo queda una respuesta pendiente sin respuesta
+        // https://github.com/expressjs/multer/issues/1193
+        if ("storageErrors" in err){
+            req.resume()
+        }
+            
+        return res.status(400).json({
+            success: false,
+            errors: [{
+                code: err.name,
+                message: err.message + ": " + err.field
+            }]
+        });
+    } 
         
     return res.status(500).json({
         success: false,

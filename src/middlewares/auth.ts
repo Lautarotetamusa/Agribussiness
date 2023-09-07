@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { Secret, TokenExpiredError } from "jsonwebtoken";
 import { RolesKeys, roles } from "../schemas/persona.schema";
 import { Forbidden, Unauthorized } from "../errors";
 
@@ -13,11 +13,10 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         res.locals.user = decoded;
         next();
     }catch(err: any){
+        if (err instanceof TokenExpiredError)
+            throw new Unauthorized("El token expiro");
+        
         throw new Unauthorized("Invalid Token");
-        /*return res.status(401).json({
-            success: false,
-            error: "Invalid token"
-        });*/
     }
 }
 

@@ -9,4 +9,4 @@ export const fileRouter = express.Router();
 //        Por ejemplo el colaborador no puede ver las imagenes de la linea de negocios
 
 //Servir archivos estaticos
-fileRouter.use('/', auth, express.static(path.join(__dirname, '../../files')));
+fileRouter.use('/', /*auth,*/ express.static(path.join(__dirname, '../../files')));
