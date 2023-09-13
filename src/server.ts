@@ -4,17 +4,8 @@ import "express-async-errors"; //permitir errores en funciones asyncronas
 import {handle_errors} from './errors';
 import {join} from "path"; //Crear path para los archivos estaticos
 
-//Routers
 import { fileRouter } from './routes/files.routes';
-import PersonaRouter from "./routes/persona.routes";
-import ProductoRouter from "./routes/producto.routes";
-import DeptoRouter from "./routes/departamento.routes";
-import CargoRouter from "./routes/cargo.routes";
-import PromocionRouter from "./routes/promocion.routes";
-import ProveedorRouter from "./routes/proveedor.routes";
-import LineaNegocioRouter from "./routes/linea_negocio.routes";
-import EventoRouter from "./routes/evento.routes";
-import SolicitudRouter from "./routes/solicitud.routes";
+import {router} from "./routes";
 
 export const app = express();
 
@@ -36,15 +27,7 @@ app.use(express.urlencoded({extended: true,}));
 //Servir los archivos estáticos
 app.use('/files', fileRouter);
 
-app.use('/persona/', PersonaRouter);
-app.use('/producto/', ProductoRouter);
-app.use('/departamento/', DeptoRouter);
-app.use('/promocion/', PromocionRouter);
-app.use('/proveedor/', ProveedorRouter);
-app.use('/cargo', CargoRouter);
-app.use('/linea', LineaNegocioRouter);
-app.use('/evento', EventoRouter);
-app.use('/solicitud', SolicitudRouter);
+app.use(router);
 
 //Manejo de rutas de la API que no existen
 app.use('*', (req, res) => res.status(404).json({

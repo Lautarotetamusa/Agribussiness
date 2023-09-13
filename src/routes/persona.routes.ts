@@ -1,9 +1,8 @@
-import express from "express"
+import {Router} from "express"
 import personaController from "../controllers/persona.controller";
 import { auth, check_rol, self_or_admin } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
-import solicitudController from "../controllers/solicitud.controller";
-const router = express.Router();
+const router = Router();
 
 router.post('/', personaController.create);
 

@@ -1,10 +1,10 @@
-import express from "express"
+import {Router} from "express"
 import promoController from "../controllers/promocion.controller";
 import { auth, check_rol } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
 import { valid_param } from "../middlewares/validad_param";
 
-const router = express.Router();
+const router = Router();
 
 router.post('/', auth, check_rol([roles.admin]), promoController.create);
 

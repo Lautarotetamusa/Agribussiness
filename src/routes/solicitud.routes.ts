@@ -1,10 +1,10 @@
-import express from "express"
+import {Router} from "express"
 import solicitudController from "../controllers/solicitud.controller";
 import { auth, check_rol } from "../middlewares/auth";
 import { valid_param } from "../middlewares/validad_param";
 import { roles } from "../schemas/persona.schema";
 
-const router = express.Router();
+const router = Router();
 
 //Enviar una solicitud a otro colaborador. el colaborador que la recibe debe ser un gerente
 router.post('/', auth, check_rol([roles.colaborador]), solicitudController.create);

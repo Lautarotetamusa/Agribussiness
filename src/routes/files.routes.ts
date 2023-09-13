@@ -1,6 +1,4 @@
 import express from "express"
-import { auth, check_rol } from '../middlewares/auth';
-import { roles } from '../schemas/persona.schema';
 import path from "path";
 
 export const fileRouter = express.Router();

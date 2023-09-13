@@ -1,11 +1,11 @@
-import express from "express"
+import {Router} from "express"
 import proveedorController from "../controllers/proveedor.controller";
 import { auth, check_rol } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
 import { proveedorUpload } from "../uploads/proveedor.upload";
 import { valid_param } from "../middlewares/validad_param";
 
-const router = express.Router();
+const router = Router();
 
 router.use(auth);
 
