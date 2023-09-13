@@ -2,6 +2,7 @@ import express from "express"
 import personaController from "../controllers/persona.controller";
 import { auth, check_rol, self_or_admin } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
+import solicitudController from "../controllers/solicitud.controller";
 const router = express.Router();
 
 router.post('/', personaController.create);
@@ -9,6 +10,14 @@ router.post('/', personaController.create);
 router.post('/login', personaController.login);
 
 router.get('/', auth, check_rol([roles.admin]), personaController.get_all);
+
+//Obtener todas las solicitudes de esta persona
+router.get('/:cedula/solicitud', 
+    auth, 
+    check_rol([roles.colaborador, roles.admin]), 
+    self_or_admin, 
+    personaController.get_solicitudes
+);
 
 router.get('/:cedula', auth, self_or_admin, personaController.get_one);
 

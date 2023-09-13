@@ -12,6 +12,7 @@ import {Colaborador, Persona, Cliente} from "../models/persona.model";
 import bcrypt from "bcrypt";
 import jwt, {Secret} from "jsonwebtoken";
 import { Unauthorized, ValidationError } from "../errors";
+import { tipoSolicitud } from "../schemas/solicitud.schema";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const rol = createUser.shape.rol.parse(req.body.rol);
@@ -105,6 +106,17 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json(persona);
 }
 
+const get_solicitudes = async (req: Request, res: Response): Promise<Response> => {
+    let tipo = req.query.tipo;
+    if (tipo != tipoSolicitud.enviada && tipo != tipoSolicitud.recibida)
+        throw new ValidationError("Se debe pasar un parametro en la query llamado 'tipo' que debe ser 'enviada' o 'recibida' ");
+        
+    const solicitudes = await Colaborador.get_solicitudes(req.params.cedula, tipo);
+    return res.status(200).json({
+        solicitudes: solicitudes
+    })
+}
+
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     let rol;
     if (req.query.rol){
@@ -121,5 +133,6 @@ export default {
     login,
     create,
     delet,
-    update
+    update,
+    get_solicitudes
 }

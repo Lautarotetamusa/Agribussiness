@@ -13,6 +13,8 @@ import CargoRouter from "./routes/cargo.routes";
 import PromocionRouter from "./routes/promocion.routes";
 import ProveedorRouter from "./routes/proveedor.routes";
 import LineaNegocioRouter from "./routes/linea_negocio.routes";
+import EventoRouter from "./routes/evento.routes";
+import SolicitudRouter from "./routes/solicitud.routes";
 
 export const app = express();
 
@@ -41,6 +43,8 @@ app.use('/promocion/', PromocionRouter);
 app.use('/proveedor/', ProveedorRouter);
 app.use('/cargo', CargoRouter);
 app.use('/linea', LineaNegocioRouter);
+app.use('/evento', EventoRouter);
+app.use('/solicitud', SolicitudRouter);
 
 //Manejo de rutas de la API que no existen
 app.use('*', (req, res) => res.status(404).json({

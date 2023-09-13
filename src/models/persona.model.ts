@@ -4,8 +4,12 @@ import {
     CreateUser, UpdateUser, CreateColaborador, roles, UpdateColaborador
 } from "../schemas/persona.schema";
 import { Zona } from './zona.model';
-import { Departamento } from './departamento.model';
 import { Cargo } from './cargo.model';
+import { sql } from '../db';
+import { RowDataPacket } from 'mysql2';
+import { Solicitud } from './solicitud.model';
+import { TipoSolicitud } from '../schemas/solicitud.schema';
+import { ListSolicitudesColaborador } from '../schemas/solicitud.schema';
 
 export class Persona extends BaseModel{
     static table_name: string = "Personas";
@@ -110,6 +114,27 @@ export class Colaborador extends Persona{
         _ = await this.cargo?.get_depto();
         
         await Persona._update<UpdateColaborador>(body, {cedula: this.cedula, is_deleted: 0});
+    }
+
+    /**
+     * @param cedula cedula de la persona que se busca
+     * @param tipoSolicitud 
+     * enviada  -> se buscan las solicitudes enviadas por esa persona \
+     * recibida -> se buscan las solicitudes recibidas por esa persona 
+     * @returns ListSolicitudesColaborador[]
+     */
+    static async get_solicitudes(cedula: string, tipoSolicitud: TipoSolicitud){
+        let where_key = tipoSolicitud  == "enviada"  ? "solicitante" : "solicitado";
+
+        const query = `
+            SELECT cod_solicitud, solicitante, solicitado, fecha_creacion, descripcion, aceptada
+            FROM ${Solicitud.table_name}
+            WHERE ${where_key} = ?
+            ORDER BY fecha_creacion DESC
+        `;
+
+        const [rows] = await sql.query<RowDataPacket[]>(query, cedula);
+        return rows as ListSolicitudesColaborador[];
     }
 
     async delete(){

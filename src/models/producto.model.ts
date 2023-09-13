@@ -62,6 +62,7 @@ export class Producto extends BaseModel{
         const [rows] = await sql.query<RowDataPacket[]>(query);
 
         //Omito el precio porque MySQL lo devuelve como un string, debería arreglar esto. TODO!
+        //Suponemos que el precio está bien
         let check = ListProducto.omit({precio: true}).parse(rows[0]); //Validate the response
         return rows as ListProducto[];
 

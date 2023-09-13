@@ -35,8 +35,8 @@ export class Solicitud extends BaseModel{
             SELECT COUNT(*) AS count FROM ${Persona.table_name} P
             INNER JOIN Cargos C
                 ON C.cod_cargo = P.cod_cargo
-            WHERE C.nombre IN (${cargos_validos.join(', ')})
-            AND rol = ${roles.colaborador}
+            WHERE C.nombre IN (${cargos_validos.map(c => `"${c}"`).join(', ')})
+            AND rol = '${roles.colaborador}'
             AND P.cedula = ?
         `;
 
@@ -47,9 +47,16 @@ export class Solicitud extends BaseModel{
             throw new ValidationError(`La persona con cedula ${body.solicitante} que envia la solicitud es un gerente y no debe serlo`);
 
         if (solicitados[0].count <= 0)
-            throw new ValidationError(`La persona con cedula  ${body.solicitado} que recibe la solicitud no es un gerente y debe sero`);
+            throw new ValidationError(`La persona con cedula ${body.solicitado} que recibe la solicitud no existe o no es un gerente`);
 
         return await this._insert<CreateSolicitud, Solicitud>(body);
+    }
+
+    async aceptar(){
+        if (this.aceptada)
+            throw new ValidationError("La solicitud ya estaba aprobada")
+        await Solicitud._update({aceptada: true}, {cod_solicitud: this.cod_solicitud})
+        this.aceptada = true;
     }
 
     static async get_all(): Promise<ISolicitud[]>{
