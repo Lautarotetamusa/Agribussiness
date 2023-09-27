@@ -119,8 +119,8 @@ INSERT INTO Departamentos(nombre, telefono) VALUES
 
 INSERT INTO Cargos (nombre, id_depto) VALUES 
     ("Gerente General", 1),
-    ("Gerente Administrativo", 5), 
-    ("Coordinador de Ventas y Desarollo", 2), 
+    ("Gerente Administrativo", 5), // Solo al general
+    ("Coordinador de Ventas y Desarollo", 2), // Gerentes
     ("Representante Técnico Comercial", 2),  
     ("Asistente Técnico Comercial", 2),
     ("Asistente de Gerencia", 1),
