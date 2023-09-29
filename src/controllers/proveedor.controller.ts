@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Proveedor } from "../models/proveedor.model";
 import { cProveedor } from "../schemas/proveedor.schema";
 import { ValidationError } from "../errors";
-import { proveedorUpload } from "../uploads/proveedor.upload";
 
 const create = async (req: Request, res: Response, next: Function): Promise<Response> => {
     if (!req.files) throw new ValidationError("No se subio ningun archivo");
@@ -28,13 +27,19 @@ const create = async (req: Request, res: Response, next: Function): Promise<Resp
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const proveedores = await Proveedor.get_all();
-    return res.status(200).json(proveedores);
+    return res.status(200).json({
+        success: true,
+        data: proveedores
+    });
 }
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const proveedor = await Proveedor.get_one(res.locals.id);
     await proveedor.get_linea();
-    return res.status(200).json(proveedor);
+    return res.status(200).json({
+        success: true,
+        data: proveedor
+    });
 }
 
 export default {

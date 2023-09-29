@@ -18,7 +18,10 @@ const create = async (req: Request, res: Response): Promise<Response> => {
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const promos = await Promocion.get_all();
-    return res.status(200).json(promos);
+    return res.status(200).json({
+        success: true,
+        data: promos
+    });
 }
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
@@ -26,7 +29,10 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
 
     const promo = await Promocion.get_one(id);
     let _:void = await promo.get_colaboradores();
-    return res.status(200).json(promo);
+    return res.status(200).json({
+        success: true,
+        data: promo
+    });
 }
 
 const update = async (req: Request, res: Response): Promise<Response> => {

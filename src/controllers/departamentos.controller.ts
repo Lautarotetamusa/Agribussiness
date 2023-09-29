@@ -4,7 +4,10 @@ import { ValidationError } from "../errors";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const deptos = await Departamento.get_all();
-    return res.status(200).json(deptos)
+    return res.status(200).json({
+        success: true,
+        data: deptos
+    })
 }
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
@@ -13,7 +16,10 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
     const depto = await Departamento.get_one(id);
     let _:void = await depto.get_colaboradores();
     _ = await depto.get_cargos();
-    return res.status(200).json(depto);
+    return res.status(200).json({
+        success: true,
+        data: depto
+    });
 }
 
 export default {

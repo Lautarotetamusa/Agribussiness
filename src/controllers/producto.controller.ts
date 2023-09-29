@@ -10,14 +10,20 @@ import { Proveedor } from "../models/proveedor.model";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const productos = await Producto.get_all();
-    return res.status(200).json(productos);
+    return res.status(200).json({
+        success: true,
+        data: productos
+    });
 }
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const id: number = res.locals.id;
     const producto = await Producto.get_one(id);
     let _:void = await producto.get_proveedor();
-    return res.status(200).json(producto);
+    return res.status(200).json({
+        success: true,
+        data: producto
+    });
 }
 
 const file_insert = async (req: Request, res: Response): Promise<Response> => {

@@ -16,12 +16,18 @@ const create = async (req: Request, res: Response): Promise<Response> => {
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const solicitudes = await Solicitud.get_all();
-    return res.status(200).json(solicitudes);
+    return res.status(200).json({
+        success: true,
+        data: solicitudes
+    });
 }
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const solicitud = await Solicitud.get_one(res.locals.cod_solicitud);
-    return res.status(200).json(solicitud);
+    return res.status(200).json({
+        success: true,
+        data: solicitud
+    });
 }
 
 const aceptar = async (req: Request, res: Response): Promise<Response> => {

@@ -56,7 +56,8 @@ const login = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json({
         success: true,
         message: "login exitoso",
-        token: token
+        token: token,
+        rol: persona.rol,
     });
 }
 
@@ -103,7 +104,10 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
         _ = await persona.cargo?.get_depto();
     }
 
-    return res.status(200).json(persona);
+    return res.status(200).json({
+        success: true, 
+        data: persona
+    });
 }
 
 const get_solicitudes = async (req: Request, res: Response): Promise<Response> => {
@@ -113,7 +117,8 @@ const get_solicitudes = async (req: Request, res: Response): Promise<Response> =
         
     const solicitudes = await Colaborador.get_solicitudes(req.params.cedula, tipo);
     return res.status(200).json({
-        solicitudes: solicitudes
+        success: true,
+        data: solicitudes
     })
 }
 
@@ -124,7 +129,10 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
     }
 
     const personas = await Persona.get_all(rol);
-    return res.status(200).json(personas);
+    return res.status(200).json({
+        success: true,
+        data: personas
+    });
 }
 
 export default {
