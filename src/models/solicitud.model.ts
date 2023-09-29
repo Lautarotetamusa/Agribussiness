@@ -29,25 +29,24 @@ export class Solicitud extends BaseModel{
     }
 
     static async create(body: CreateSolicitud){
-        const cargos_validos = ["Gerente General", "Gerente Administrativo"];
-
-        const query = `
-            SELECT COUNT(*) AS count FROM ${Persona.table_name} P
+        //Buscar niveles del solicitante y solicitado
+        const [niveles] = await sql.query<RowDataPacket[]>(`
+            SELECT C.nivel, P.cedula, C.nombre FROM ${Persona.table_name} P
             INNER JOIN Cargos C
-                ON C.cod_cargo = P.cod_cargo
-            WHERE C.nombre IN (${cargos_validos.map(c => `"${c}"`).join(', ')})
-            AND rol = '${roles.colaborador}'
-            AND P.cedula = ?
-        `;
+                ON C.cod_cargo = P.cod_cargo 
+            WHERE rol = '${roles.colaborador}'
+            AND P.cedula IN (?, ?)
+            `, [body.solicitante, body.solicitado]);
 
-        const [solicitados]  = await sql.query<RowDataPacket[]>(query, [body.solicitado]);
-        const [solicitantes] = await sql.query<RowDataPacket[]>(query, [body.solicitante]);
+        //niveles: [{'392142823': 3, 'Gerente'}, {'492183214': 1, "Encargado"}]
+        let nivel: Record<string, {nivel: number, cargo: string}> = {}; 
+        //nivel: { '392142823': {nivel: 3, cargo: "Gerente"}, '492183214': {nivel: 1, cargo: "Encargado"} }
+        niveles.map(n => {nivel[n.cedula] = {nivel: n.nivel, cargo: n.nombre}}); 
 
-        if (solicitantes[0].count > 0)
-            throw new ValidationError(`La persona con cedula ${body.solicitante} que envia la solicitud es un gerente y no debe serlo`);
-
-        if (solicitados[0].count <= 0)
-            throw new ValidationError(`La persona con cedula ${body.solicitado} que recibe la solicitud no existe o no es un gerente`);
+        if (nivel[body.solicitante].nivel <= nivel[body.solicitado].nivel){
+            const err = `La persona ${body.solicitante} con cargo '${nivel[body.solicitante].cargo}' no puede realizar una solicitud a la persona ${body.solicitado} con cargo '${nivel[body.solicitado].cargo}'`;
+            throw new ValidationError(err);
+        }
 
         return await this._insert<CreateSolicitud, Solicitud>(body);
     }

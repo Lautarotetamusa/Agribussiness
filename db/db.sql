@@ -73,6 +73,7 @@ CREATE TABLE Cargos(
     cod_cargo INT NOT NULL AUTO_INCREMENT,
     id_depto INT NOT NULL
     nombre VARCHAR(128) NOT NULL,
+    nivel INT(2) NOT NULL;
 
     PRIMARY KEY(cod_cargo),
     FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto)
@@ -117,17 +118,17 @@ INSERT INTO Departamentos(nombre, telefono) VALUES
     ("ADMISTRACION Y FINANZAS", "5678")
     ("COMPRAS", "6789");
 
-INSERT INTO Cargos (nombre, id_depto) VALUES 
-    ("Gerente General", 1),
-    ("Gerente Administrativo", 5), // Solo al general
-    ("Coordinador de Ventas y Desarollo", 2), // Gerentes
-    ("Representante Técnico Comercial", 2),  
-    ("Asistente Técnico Comercial", 2),
-    ("Asistente de Gerencia", 1),
-    ("Asistente de Despacho", 4), 
-    ("Encargado de Marketing", 3),
-    ("Encargado de Logística", 4),
-    ("Encargado de compras", 6);
+INSERT INTO Cargos (nombre, id_depto, nivel) VALUES 
+    ("Gerente General", 1, 1),
+    ("Gerente Administrativo", 5, 2), // Solo al general
+    ("Coordinador de Ventas y Desarollo", 2, 3), // Gerentes (de aca para abajo)
+    ("Representante Técnico Comercial", 2, 3),  
+    ("Asistente Técnico Comercial", 2, 3),
+    ("Asistente de Gerencia", 1, 3),
+    ("Asistente de Despacho", 4, 3), 
+    ("Encargado de Marketing", 3, 3),
+    ("Encargado de Logística", 4, 3),
+    ("Encargado de compras", 6, 3);
 
 INSERT INTO LineasNegocio(nombre, image) VALUES
     ("Turbas", "TURBAS.jpeg"),

@@ -9,7 +9,7 @@ const router = Router();
 //Enviar una solicitud a otro colaborador. el colaborador que la recibe debe ser un gerente
 router.post('/', auth, check_rol([roles.colaborador]), solicitudController.create);
 
-//Obtener absolutamente todas las solicitudes, para obtener las solicitudes de un solo colaborador está dentro de colaborador.routes
+//Obtener absolutamente todas las solicitudes, para obtener las solicitudes de un solo colaborador está dentro de persona.routes
 router.get('/', auth, check_rol([roles.admin]), solicitudController.get_all);
 
 //Obtener una solicitud
