@@ -5,3 +5,4 @@ dist/*
 mysql/
 test.csv
 files/*
+front_tests/
