@@ -122,6 +122,16 @@ const get_solicitudes = async (req: Request, res: Response): Promise<Response> =
     })
 }
 
+const get_cotizaciones = async (req: Request, res: Response): Promise<Response> => {
+    const persona = await Persona.get_one(req.params.cedula);
+        
+    const solicitudes = await persona.get_cotizaciones();
+    return res.status(200).json({
+        success: true,
+        data: solicitudes
+    })
+}
+
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     let rol;
     if (req.query.rol){
@@ -142,5 +152,6 @@ export default {
     create,
     delet,
     update,
-    get_solicitudes
+    get_solicitudes,
+    get_cotizaciones
 }

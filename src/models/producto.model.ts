@@ -8,6 +8,7 @@ import {
 } from '../schemas/producto.schema';
 import { BaseModel} from './base.model';
 import { Proveedor } from './proveedor.model';
+import { ValidationError } from '../errors';
 
 export class Producto extends BaseModel{
     static table_name: string = "Productos";
@@ -82,5 +83,13 @@ export class Producto extends BaseModel{
 
     static async bulk_insert(req: CreateProducto[]): Promise<void> {
         return await Producto._bulk_insert<CreateProducto>(req);
+    }
+
+    static async select(ids: number[]) {
+        const productos = await this._bulk_select(ids.map(i => {return {id_producto: i}}));
+        if (productos.length != ids.length){
+            throw new ValidationError("Algun producto no existe en la base de datos");
+        }
+        return productos as BuildProducto[];
     }
 }

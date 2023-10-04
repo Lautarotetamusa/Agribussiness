@@ -4,7 +4,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'teti'@'%' WITH GRANT OPTION;
 CREATE DATABASE IF NOT EXISTS Agribussiness;
 USE Agribussiness;
 
-CREATE TABLE Personas(
+CREATE TABLE IF NOT EXISTS Personas(
     cedula CHAR(10) NOT NULL,
     password BINARY(60) NOT NULL,
     cod_zona INT NOT NULL,
@@ -21,14 +21,14 @@ CREATE TABLE Personas(
     FOREIGN KEY (cod_cargo) REFERENCES Cargos(cod_cargo)
 );
 
-CREATE TABLE Zonas(
+CREATE TABLE IF NOT EXISTS Zonas(
     cod_zona INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(60) NOT NULL,
 
     PRIMARY KEY (cod_zona)
 );
 
-CREATE TABLE Departamentos(
+CREATE TABLE IF NOT EXISTS Departamentos(
     id_depto INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(60) NOT NULL,
     telefono VARCHAR(15) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE Departamentos(
     PRIMARY KEY (id_depto)
 );
 
-CREATE TABLE Productos(
+CREATE TABLE IF NOT EXISTS Productos(
     id_producto INT NOT NULL AUTO_INCREMENT,
     id_proveedor INT NOT NULL,
     precio DECIMAL (10, 2) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE Productos(
     FOREIGN KEY (id_proveedor) REFERENCES Proveedores(id_proveedor)
 );
 
-CREATE TABLE Promociones(
+CREATE TABLE IF NOT EXISTS Promociones(
     id_promo INT NOT NULL AUTO_INCREMENT,
     cod_zona INT NOT NULL,
     titulo VARCHAR(255) NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE Promociones(
     FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona)
 );
 
-CREATE TABLE Proveedores(
+CREATE TABLE IF NOT EXISTS Proveedores(
     id_proveedor INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(128) NOT NULL,
     photo VARCHAR(256),
@@ -69,7 +69,7 @@ CREATE TABLE Proveedores(
     PRIMARY KEY (id_proveedor)
 );
 
-CREATE TABLE Cargos(
+CREATE TABLE IF NOT EXISTS Cargos(
     cod_cargo INT NOT NULL AUTO_INCREMENT,
     id_depto INT NOT NULL
     nombre VARCHAR(128) NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE Cargos(
     FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto)
 );
 
-CREATE TABLE Solicitudes(
+CREATE TABLE IF NOT EXISTS Solicitudes(
     cod_solicitud INT NOT NULL AUTO_INCREMENT,
     solicitante CHAR(10) NOT NULL,
     solicitado CHAR(10) NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE Solicitudes(
     FOREIGN KEY (solicitado) REFERENCES Personas(cedula)
 );
 
-CREATE TABLE LineasNegocio(
+CREATE TABLE IF NOT EXISTS LineasNegocio(
     id_linea INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(128) NOT NULL,
     image VARCHAR(256) NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE LineasNegocio(
     PRIMARY KEY (id_linea)
 );
 
-CREATE TABLE Eventos(
+CREATE TABLE IF NOT EXISTS Eventos(
     id_evento INT NOT NULL AUTO_INCREMENT,
     titulo VARCHAR(128) NOT NULL,
     descripcion VARCHAR(1024),
@@ -108,6 +108,22 @@ CREATE TABLE Eventos(
     image VARCHAR(256) DEFAULT NULL,
 
     PRIMARY KEY (id_evento)
+);
+
+CREATE TABLE IF NOT EXISTS Cotizaciones(
+    nro_cotizacion INT NOT NULL AUTO_INCREMENT
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado ENUM("aprobada", "creada") NOT NULL DEFAULT "creada",
+    colaborador CHAR(10) NOT NULL
+    cliente CHAR(10) NOT NULL,
+    file VARCHAR(256) NOT NULL,
+
+    forma_pago ENUM("Contado", "Credito 15", "Credito 30", "Credito 45") NOT NULL DEFAULT "Contado",
+    tiempo_entrega TINYINT NOT NULL DEFAULT 1, //Tiempo en días
+
+    PRIMARY KEY (nro_cotizacion),
+    FOREIGN KEY (colaborador) REFERENCES Personas(cedula),
+    FOREIGN KEY (cliente) REFERENCES Personas(cedula)
 );
 
 INSERT INTO Departamentos(nombre, telefono) VALUES

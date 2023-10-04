@@ -10,6 +10,9 @@ import { RowDataPacket } from 'mysql2';
 import { Solicitud } from './solicitud.model';
 import { TipoSolicitud } from '../schemas/solicitud.schema';
 import { ListSolicitudesColaborador } from '../schemas/solicitud.schema';
+import { ValidationError } from '../errors';
+import { Cotizacion } from './cotizacion.model';
+import { ICotizacion } from '../schemas/cotizacion.schema';
 
 export class Persona extends BaseModel{
     static table_name: string = "Personas";
@@ -45,6 +48,12 @@ export class Persona extends BaseModel{
         return new Admin(persona);
     }
 
+    static async exists_tipo(cedula: string, rol: RolesKeys){
+        let exists = await this._exists({cedula: cedula, is_deleted: 0, rol: rol});
+        if (!exists)
+            throw new ValidationError(`No existe el ${rol} con cedula ${cedula}`);
+    }
+
     static async get_password(cedula: string): Promise<{
         password: string,
         rol: RolesKeys
@@ -76,6 +85,18 @@ export class Persona extends BaseModel{
 
     async get_zona(){
         if (!this.zona) this.zona = await Zona.get_one(this.cod_zona);
+    }
+
+    async get_cotizaciones(){
+        if (this.rol == roles.admin)
+            throw new ValidationError("El administrador no puede tener cotizaciones");
+            
+        const query = `
+            SELECT * FROM ${Cotizacion.table_name}
+            WHERE '${this.rol}' = ?
+        `;
+        const [rows] = await sql.query<RowDataPacket[]>(query, this.cedula);
+        return rows as ICotizacion[];
     }
 }
 

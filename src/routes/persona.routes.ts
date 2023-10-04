@@ -18,6 +18,16 @@ router.get('/:cedula/solicitud',
     personaController.get_solicitudes
 );
 
+//Obtener todas las cotizaciones de esa persona
+//Si es colaborador, serán las solicitudes que envió
+//Si es cliente, serán las que recibió
+router.get('/:cedula/cotizacion', 
+    auth, 
+    check_rol([roles.colaborador, roles.cliente]), 
+    self_or_admin, 
+    personaController.get_cotizaciones
+);
+
 router.get('/:cedula', auth, self_or_admin, personaController.get_one);
 
 router.put('/:cedula', auth, self_or_admin, personaController.update);
