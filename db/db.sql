@@ -1,8 +1,25 @@
-CREATE USER 'teti'@'%' IDENTIFIED BY 'Lautaro123.';
+CREATE USER IF NOT EXISTS 'teti'@'%' IDENTIFIED BY 'Lautaro123.';
 GRANT ALL PRIVILEGES ON *.* TO 'teti'@'%' WITH GRANT OPTION;
 
 CREATE DATABASE IF NOT EXISTS Agribussiness;
 USE Agribussiness;
+
+CREATE TABLE IF NOT EXISTS Zonas(
+    cod_zona INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(60) NOT NULL,
+
+    PRIMARY KEY (cod_zona)
+);
+
+CREATE TABLE IF NOT EXISTS Cargos(
+    cod_cargo INT NOT NULL AUTO_INCREMENT,
+    id_depto INT NOT NULL
+    nombre VARCHAR(128) NOT NULL,
+    nivel INT(2) NOT NULL;
+
+    PRIMARY KEY(cod_cargo),
+    FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto)
+);
 
 CREATE TABLE IF NOT EXISTS Personas(
     cedula CHAR(10) NOT NULL,
@@ -21,19 +38,21 @@ CREATE TABLE IF NOT EXISTS Personas(
     FOREIGN KEY (cod_cargo) REFERENCES Cargos(cod_cargo)
 );
 
-CREATE TABLE IF NOT EXISTS Zonas(
-    cod_zona INT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(60) NOT NULL,
-
-    PRIMARY KEY (cod_zona)
-);
-
 CREATE TABLE IF NOT EXISTS Departamentos(
     id_depto INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(60) NOT NULL,
     telefono VARCHAR(15) NOT NULL,
 
     PRIMARY KEY (id_depto)
+);
+
+CREATE TABLE IF NOT EXISTS Proveedores(
+    id_proveedor INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(128) NOT NULL,
+    photo VARCHAR(256),
+    ficha_tecnica VARCHAR(256),
+
+    PRIMARY KEY (id_proveedor)
 );
 
 CREATE TABLE IF NOT EXISTS Productos(
@@ -58,25 +77,6 @@ CREATE TABLE IF NOT EXISTS Promociones(
 
     PRIMARY KEY (id_promo),
     FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona)
-);
-
-CREATE TABLE IF NOT EXISTS Proveedores(
-    id_proveedor INT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(128) NOT NULL,
-    photo VARCHAR(256),
-    ficha_tecnica VARCHAR(256),
-
-    PRIMARY KEY (id_proveedor)
-);
-
-CREATE TABLE IF NOT EXISTS Cargos(
-    cod_cargo INT NOT NULL AUTO_INCREMENT,
-    id_depto INT NOT NULL
-    nombre VARCHAR(128) NOT NULL,
-    nivel INT(2) NOT NULL;
-
-    PRIMARY KEY(cod_cargo),
-    FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto)
 );
 
 CREATE TABLE IF NOT EXISTS Solicitudes(

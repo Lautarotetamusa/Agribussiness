@@ -11,7 +11,7 @@ services:
     ports:
       - $DB_PORT:$DB_PORT
     volumes:
-      - ./db:/docker-entrypoint-initdb.d #Crear las tablas automaticamente al iniciar
+      - ./db/init:/docker-entrypoint-initdb.d #Crear las tablas automaticamente al iniciar
       - ./mysql:/var/lib/mysql #Mantener la misma data de mi base de datos local
   
   api:

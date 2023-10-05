@@ -20,7 +20,7 @@ const host = process.env.HOST ? process.env.HOST : "localhost";
 
 //Ruta de la API donde se accede a los archivos estaticos
 export const files_url  = `http://${host}:${public_port}/files` as const;
-// Path donde se almacenan los archivos estaticos dentro del servers
+//Path donde se almacenan los archivos estaticos dentro del server
 export const files_path = join(__dirname, "../files");
 
 //Necesesario para que no tire error de CORS

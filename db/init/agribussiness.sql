@@ -15,6 +15,12 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+CREATE USER IF NOT EXISTS 'teti'@'%' IDENTIFIED BY 'Lautaro123.';
+GRANT ALL PRIVILEGES ON *.* TO 'teti'@'%' WITH GRANT OPTION;
+
+CREATE DATABASE IF NOT EXISTS Agribussiness;
+USE Agribussiness;
+
 --
 -- Table structure for table `Cargos`
 --
@@ -26,6 +32,7 @@ CREATE TABLE `Cargos` (
   `cod_cargo` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(128) NOT NULL,
   `id_depto` int(11) NOT NULL,
+  `nivel` int(2) NOT NULL,
   PRIMARY KEY (`cod_cargo`),
   KEY `id_depto` (`id_depto`),
   CONSTRAINT `Cargos_ibfk_1` FOREIGN KEY (`id_depto`) REFERENCES `Departamentos` (`id_depto`)
@@ -39,17 +46,99 @@ CREATE TABLE `Cargos` (
 LOCK TABLES `Cargos` WRITE;
 /*!40000 ALTER TABLE `Cargos` DISABLE KEYS */;
 INSERT INTO `Cargos` VALUES
-(1,'Gerente General',1),
-(2,'Gerente Administrativo',5),
-(3,'Coordinador de Ventas y Desarrollo',2),
-(4,'Representante Técnico Comercial',2),
-(5,'Asistente Técnico Comercial',2),
-(6,'Asistente de Gerencia',1),
-(7,'Asistente de Despacho',4),
-(8,'Encargado de Marketing',3),
-(9,'Encargada de Logística',4),
-(10,'Encargado de compras',6);
+(1,'Gerente General',1,1),
+(2,'Gerente Administrativo',5,2),
+(3,'Coordinador de Ventas y Desarrollo',2,3),
+(4,'Representante Técnico Comercial',2,3),
+(5,'Asistente Técnico Comercial',2,3),
+(6,'Asistente de Gerencia',1,3),
+(7,'Asistente de Despacho',4,3),
+(8,'Encargado de Marketing',3,3),
+(9,'Encargada de Logística',4,3),
+(10,'Encargado de compras',6,3);
 /*!40000 ALTER TABLE `Cargos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `CotizacionProducto`
+--
+
+DROP TABLE IF EXISTS `CotizacionProducto`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `CotizacionProducto` (
+  `nro_cotizacion` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_final` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`nro_cotizacion`,`id_producto`),
+  KEY `id_producto` (`id_producto`),
+  CONSTRAINT `CotizacionProducto_ibfk_1` FOREIGN KEY (`nro_cotizacion`) REFERENCES `Cotizaciones` (`nro_cotizacion`),
+  CONSTRAINT `CotizacionProducto_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `Productos` (`id_producto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `CotizacionProducto`
+--
+
+LOCK TABLES `CotizacionProducto` WRITE;
+/*!40000 ALTER TABLE `CotizacionProducto` DISABLE KEYS */;
+INSERT INTO `CotizacionProducto` VALUES
+(2,1,3,100.00),
+(2,3,2,102.00),
+(3,1,3,100.00),
+(3,3,2,102.00),
+(4,1,3,100.00),
+(4,3,2,102.00),
+(5,1,3,100.00),
+(5,3,2,102.00),
+(6,1,3,100.00),
+(6,3,2,102.00),
+(7,1,3,100.00),
+(7,3,2,102.00);
+/*!40000 ALTER TABLE `CotizacionProducto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Cotizaciones`
+--
+
+DROP TABLE IF EXISTS `Cotizaciones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Cotizaciones` (
+  `nro_cotizacion` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
+  `estado` enum('aprobada','creada') NOT NULL DEFAULT 'creada',
+  `colaborador` char(10) NOT NULL,
+  `cliente` char(10) NOT NULL,
+  `file` varchar(256) NOT NULL,
+  `forma_pago` enum('Contado','Credito 15','Credito 30','Credito 45') NOT NULL DEFAULT 'Contado',
+  `tiempo_entrega` tinyint(4) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`nro_cotizacion`),
+  KEY `colaborador` (`colaborador`),
+  KEY `cliente` (`cliente`),
+  CONSTRAINT `Cotizaciones_ibfk_1` FOREIGN KEY (`colaborador`) REFERENCES `Personas` (`cedula`),
+  CONSTRAINT `Cotizaciones_ibfk_2` FOREIGN KEY (`cliente`) REFERENCES `Personas` (`cedula`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Cotizaciones`
+--
+
+LOCK TABLES `Cotizaciones` WRITE;
+/*!40000 ALTER TABLE `Cotizaciones` DISABLE KEYS */;
+INSERT INTO `Cotizaciones` VALUES
+(1,'2023-10-04 10:54:04','creada','492183214','43491979','1696416844920.pdf','Contado',1),
+(2,'2023-10-04 10:59:36','creada','492183214','43491979','1696417176084.pdf','Contado',1),
+(3,'2023-10-04 11:00:16','creada','492183214','43491979','1696417216711.pdf','Contado',1),
+(4,'2023-10-04 11:01:47','creada','492183214','43491979','1696417307501.pdf','Contado',1),
+(5,'2023-10-04 11:16:20','creada','492183214','43491979','1696418180753.pdf','Contado',1),
+(6,'2023-10-04 11:16:54','creada','492183214','43491979','1696418214621.pdf','Contado',1),
+(7,'2023-10-04 11:17:39','creada','492183214','43491979','1696418259901.pdf','Contado',1);
+/*!40000 ALTER TABLE `Cotizaciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -257,7 +346,7 @@ CREATE TABLE `Productos` (
 LOCK TABLES `Productos` WRITE;
 /*!40000 ALTER TABLE `Productos` DISABLE KEYS */;
 INSERT INTO `Productos` VALUES
-(1,100.00,'Edulcurante 2','100 ml','edulcorante para el mate ihh',NULL,1),
+(1,100.00,'Edulcurante 2','100 ml','edulcorante para el mate ihh','files/fichas_tecnicas/1_1696424057871_Ficha Técnica - Almar-1.pdf',1),
 (2,100.00,'XD XD XD','10 ml','para la soja','files/fichas_tecnicas/2_1693332259444_Ficha Técnica - Almar-1.pdf',1),
 (3,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
 (4,0.00,'0','0','0',NULL,1),
@@ -400,7 +489,7 @@ CREATE TABLE `Solicitudes` (
   KEY `solicitado` (`solicitado`),
   CONSTRAINT `Solicitudes_ibfk_1` FOREIGN KEY (`solicitante`) REFERENCES `Personas` (`cedula`),
   CONSTRAINT `Solicitudes_ibfk_2` FOREIGN KEY (`solicitado`) REFERENCES `Personas` (`cedula`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -410,7 +499,9 @@ CREATE TABLE `Solicitudes` (
 LOCK TABLES `Solicitudes` WRITE;
 /*!40000 ALTER TABLE `Solicitudes` DISABLE KEYS */;
 INSERT INTO `Solicitudes` VALUES
-(1,'392142823','492183214','2023-09-13 16:18:46','Estoy cansado jefe, necesito unas vacaciones',1);
+(1,'392142823','492183214','2023-09-13 16:18:46','Estoy cansado jefe, necesito unas vacaciones',1),
+(2,'392142823','492183214','2023-09-29 10:21:34','Estoy cansado jefe, necesito unas vacaciones',1),
+(3,'392142823','492183214','2023-09-29 10:59:55','Estoy cansado jefe, necesito unas vacaciones',1);
 /*!40000 ALTER TABLE `Solicitudes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -451,4 +542,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-27 13:47:05
+-- Dump completed on 2023-10-05 17:25:18
