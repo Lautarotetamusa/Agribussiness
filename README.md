@@ -2,6 +2,63 @@
 
 # [Api references](https://cronos-software.stoplight.io/docs/agribussiness/branches/main/pgbrbcgazs2m9-agribussiness-api-rest)
 
+# Instalacion
+
+## Instalar docker
+
+Instalar Docker 
+
+* [Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+* [Windows](https://docs.docker.com/desktop/install/windows-install/)
+
+Agregar docker a sudo (linux)
+`sudo usermod -aG docker $USER`
+
+Levantar el servicio de docker (linux)
+`sudo systemctl start docker`
+
+## Buildear el proyecto
+
+`git clone https://github.com/Lautarotetamusa/Agribussiness.git`
+
+`cd Agribussiness`
+
+Agregar archivo .env
+
+`touch .env`
+
+copiar lo siguiente dentro de .env y guardar:
+
+```properties
+HOST=localhost
+
+DB_HOST=mysqldb
+DB_USER=teti
+DB_PASS=password
+DB_PORT=3306
+DB_NAME=Agribussiness
+
+BACK_PORT=3000
+BACK_PUBLIC_PORT=80
+
+JWT_SECRET=super_secret_jwt_token
+JWT_EXPIRES_IN=60d
+```
+
+podes hacer `cat .env` y verificar que el contenido de .env sea el mismo que arriba
+
+Buildear los contenedores
+`docker compose build`
+
+Levantar el proyecto
+`docker compose up`
+
+listo 👍👍
+
+Si queres parar el proyecto: `docker compose stop`
+
+Si queres levantarlo en segundo plano: `docker compose up -d`
+
 # Requerimientos del sistema
 
 Existen dos tipos de usuarios, colaboradores y clientes. Además hay un administrador, que es como un colaborador pero con funciones especiales. Los colaboradores son las personas que trabajan para la empresa. Los clientes son los clientes de la empresa.

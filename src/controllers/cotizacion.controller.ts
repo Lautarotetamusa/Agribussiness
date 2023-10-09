@@ -33,6 +33,16 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     await Persona.exists_tipo(body.cliente, roles.cliente);
     //await Persona.exists_tipo(body.colaborador, roles.colaborador); No lo valido ya que es la persona loogeada en ese momento, se supone que existe xd
  
+    /*TEST*/
+    const cotizacion = await Cotizacion.get_one(1);
+    let prods_with_names: (CreateProductosCotizacion & {nombre: string})[] = productos.map(p => {return {...p, nombre: ""}});
+    for (let i in productos){
+        prods_with_names[i].nombre = db_prods[i].nombre;
+    }
+    await generate_cotizacion_pdf(cotizacion, prods_with_names);
+    return res.send(`${files_url}/${Cotizacion.file_route}/${cotizacion.file}`);
+    /*TEST*/
+
     try {
         await conn.beginTransaction();
         const inserted = await Cotizacion.create(body, productos);

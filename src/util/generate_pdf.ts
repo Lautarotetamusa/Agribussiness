@@ -6,12 +6,23 @@ import { files_path } from "../server";
  
 export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos: (CreateProductosCotizacion & {nombre: string})[]) { 
   // start pdf document
-  const doc = new PDFDocument(/*{ margin: 30, size: 'A4' }*/);
+
+  const font = "Times-Roman" as const;
+  const bold_font = "Times-Bold" as const;
+  const font_size = 11 as const;
+
+  const doc = new PDFDocument({
+    margins: {
+      top: 30,
+      bottom: 30,
+      left: 90,
+      right: 90
+    }
+  });
   // to save on server
   doc.pipe(fs.createWriteStream(`${files_path}/${Cotizacion.file_route}/${cotizacion.file}`));
 
   console.log("cotizacion: ", cotizacion);
-
   console.log(productos.map(p => [
     p.nombre, 
     String(p.cantidad),
@@ -19,42 +30,130 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
     String(p.cantidad * p.precio_final),
   ]).concat(["", "", "Total: ", "100000"]));
 
-  let total = productos.reduce((acc, p) => acc + p.cantidad * p.precio_final, 0);
-  
+  let subtotal = productos.reduce((acc, p) => acc + p.cantidad * p.precio_final, 0);
   const tableArray = {
-    title: "Productos",
-    headers: ["Producto", "Cantidad", "Precio U", "Subtotal"],
-    rows: productos.map(p => [
-      p.nombre, 
-      String(p.cantidad),
-      String(p.precio_final), 
-      String(p.cantidad * p.precio_final),
-    ]).concat([
-      ["", "", "Total: ", String(total)],
-      ["", "", "IVA 12%", String(total * 1.12)]
+    headers: [
+      {label: "PRODUCTO", property: "producto"}, 
+      {label: "CANTIDAD", property: "cantidad", align: "center", valign: "center"}, 
+      {label: "PRECIO U", property: "precio_final", align: "center"}, 
+      {label: "TOTAL", property: "total", align: "center"}
+    ],
+    datas: productos.map(p => {return {
+      producto: p.nombre, 
+      cantidad: String(p.cantidad),
+      precio_final: {label: "$ " + String(p.precio_final.toFixed(2)), align: "center", font: font}, 
+      total: "$ " + String((p.cantidad * p.precio_final).toFixed(2)),
+    }}).concat([
+      {
+        producto: "",
+        cantidad: "",
+        precio_final: {label: "bold:SUBTOTAL: ", align: "left", font: font},
+        total: "$ " + String(subtotal.toFixed(2))
+      },
+      {
+        producto: "",
+        cantidad: "",
+        precio_final: {label: "bold:IVA 12%", align: "left", font: font},
+        total: "$ " + String((subtotal * 0.12).toFixed(2))
+      },
+      {
+        producto: "",
+        cantidad: "",
+        precio_final: {label: "bold:TOTAL", align: "left", font: font},
+        total: "$ " + String((subtotal * 1.12).toFixed(2))
+      }
     ])
   };
 
-  const table = {
-    headers: ["a", "b"],
-    rows: [
-      ["Numero de cotizacion:", String(cotizacion.nro_cotizacion)],
-      ["Fecha de creacion:", String(cotizacion.fecha_creacion.toISOString().split('T')[0])],
-      ["Cliente:", cotizacion.cliente],
-      ["Forma de pago: ", cotizacion.forma_pago],
-      ["Tiempo de entrega: ", String(cotizacion.tiempo_entrega) + (cotizacion.tiempo_entrega > 1 ? " días" : " día") + " de haber hecho el pedido"],
-    ]
-  };
+  doc.font(font, font_size);
 
-  const options = {
-    title: "Cotizacion",
-    width: 400,
-    hideHeader: true,
-    columnColor: "#f1f1f1"
-  };
+  doc.image(files_path + '/logo.png', {
+    scale: 0.6,
+    width: 164,
+    height: 40,
+    align: 'right',
+    valign: 'center'
+  }).moveDown().moveDown();
 
-  await doc.table(table, options);
-  await doc.table(tableArray, { width: 400 }); // A4 595.28 x 841.89 (portrait) (about width sizes)
+  // YYYY-MM-ID
+  const id_cotizacion = 
+    String(cotizacion.fecha_creacion.getFullYear()) + "-" + 
+    String(cotizacion.fecha_creacion.getMonth()).padStart(2, "0") + "-" + 
+    String(cotizacion.nro_cotizacion).padStart(2, "0");
+
+  doc
+    .font(bold_font)
+    .text(`COTIZACIÓN N° ${id_cotizacion}`, {align: 'right', characterSpacing: 0.3});
+
+  doc
+    .font(bold_font)
+    .text("Fecha:   ", {continued: true, characterSpacing: 0.3})
+    .font(font)
+    .text(String(cotizacion.fecha_creacion.toISOString().split('T')[0]));
+  doc
+    .font(bold_font)
+    .text("Cliente:   ", {continued: true, characterSpacing: 0.3})
+    .font(font)
+    .text(cotizacion.cliente);
+
+  doc
+    .font(bold_font)
+    .text("Atencion:   ", {continued: true, characterSpacing: 0.3})
+    .font(font)
+    .text("Lautaro Teta ")
+    .moveDown()
+    .moveDown();
+
+  doc.text("De acuerdo con lo solicitado adjuntamos la siguiente cotización: ", {characterSpacing: 0.3});
+  doc.moveDown();
+
+  doc.font(font).table(tableArray, {
+    padding: [7, 5, 7, 5], // top right bottom left
+    //columnsSize: [140, 82, 140, 70], //total = 612 - 90 * 2 = 432
+    prepareHeader: () => doc.font(bold_font, font_size),
+    prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
+      const {x, y, width, height} = rectCell || {x: 0, y: 0, width: 0, height: 0};
+
+      // first line 
+      if(indexColumn === 0){
+        doc
+          .lineWidth(.5)
+          .moveTo(x, y)
+          .lineTo(x, y + height)
+          .stroke();  
+      }
+
+      doc
+        .lineWidth(.5)
+        .moveTo(x + width, y)
+        .lineTo(x + width, y + height)
+        .stroke();
+
+      return doc.font(font, font_size)
+    }
+  }); 
+  doc.moveDown();
+  
+  doc.font(bold_font).text("Forma de pago:", {characterSpacing: 0.3}).moveDown();
+  doc.font(font).text(cotizacion.forma_pago, {characterSpacing: 0.3}).moveDown();
+  doc.font(bold_font).text("Tiempo de entrega:", {characterSpacing: 0.3}).moveDown();
+  doc.font(font).text(String(cotizacion.tiempo_entrega) + (cotizacion.tiempo_entrega > 1 ? " días" : " día") + " de haber hecho el pedido", {characterSpacing: 0.3}).moveDown();
+  doc.moveDown().moveDown();
+
+  doc
+    .text("Atentamente", {characterSpacing: 0.3})
+    .text("Carloz Quiroz", {characterSpacing: 0.3})
+    .text("Agribusiness Ecuador Cía. Ltda.", {characterSpacing: 0.3})
+
+  doc
+    .fillColor('#5991d5')
+    .text("Galo Plaza Lasso N67-103 y de los Ciruelos", 20, doc.page.height - 73, {
+      //lineBreak: false,
+      align: "center",
+      characterSpacing: 0.3
+    })
+    .text("Tel: (+593) 2 346 4830 / (+593) 98 357 1889", {align: "center", characterSpacing: 0.3})
+    .text("Email: carolina.cuenca@agrytec.com - Web: www.agriecuador.com", {align: "center", characterSpacing: 0.3})
 
   // done
   doc.end();
