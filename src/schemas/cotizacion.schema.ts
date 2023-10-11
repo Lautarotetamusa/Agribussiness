@@ -30,7 +30,11 @@ const iproductosCotizacion = z.object({
     cantidad: z.number(),
     precio_final: z.number()
 });
-export const  createProductosCotizacion = iproductosCotizacion.omit({nro_cotizacion: true});
+export const createProductosCotizacion = iproductosCotizacion.omit({
+    nro_cotizacion: true
+}).extend({
+    precio_final: z.number().optional()
+});
 
 export const createCotizacion = iCotizacion.omit({
     nro_cotizacion: true,
@@ -45,4 +49,11 @@ export const createCotizacion = iCotizacion.omit({
 export type ICotizacion = z.infer<typeof iCotizacion>;
 export type CreateCotizacion = z.infer<typeof createCotizacion>;
 export type ProductosCotizacion = z.infer<typeof iproductosCotizacion>;
+
+const createProds = createProductosCotizacion.extend({precio_final: z.number()});
 export type CreateProductosCotizacion = z.infer<typeof createProductosCotizacion>;
+const productosCotizacionArchivo = createProductosCotizacion.extend({
+    precio_final: z.number(),
+    nombre: z.string()
+})
+export type ProductosCotizacionArchivo = z.infer<typeof productosCotizacionArchivo>;

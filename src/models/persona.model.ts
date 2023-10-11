@@ -14,6 +14,10 @@ import { ValidationError } from '../errors';
 import { Cotizacion } from './cotizacion.model';
 import { ICotizacion } from '../schemas/cotizacion.schema';
 
+type rolExtend<R extends RolesKeys> = 
+    R extends "colaborador" ? Colaborador : 
+    R extends "admin" ? Admin : Cliente;
+
 export class Persona extends BaseModel{
     static table_name: string = "Personas";
     static fields = ["cedula", "cod_zona", "cod_cargo", "nombre", "correo", "telefono", "direccion", "rol"];
@@ -46,6 +50,12 @@ export class Persona extends BaseModel{
             return new Cliente(persona);
 
         return new Admin(persona);
+    }
+
+    static async get_by_rol<R extends RolesKeys>(cedula: string, rol: R): Promise<rolExtend<R>>
+    {
+        return await this.find_one<CreateColaborador, rolExtend<R>>
+        ({cedula: cedula, is_deleted: 0, rol: rol});
     }
 
     static async exists_tipo(cedula: string, rol: RolesKeys){

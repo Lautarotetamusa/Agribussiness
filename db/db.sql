@@ -126,6 +126,19 @@ CREATE TABLE IF NOT EXISTS Cotizaciones(
     FOREIGN KEY (cliente) REFERENCES Personas(cedula)
 );
 
+CREATE TABLE IF NOT EXISTS CotizacionProducto(
+    nro_cotizacion INT NOT NULL,
+    id_producto INT NOT NULL
+
+    cantidad INT NOT NULL,
+    precio_final DECIMAL (10, 2) NOT NULL
+
+    PRIMARY KEY (nro_cotizacion, id_producto),
+
+    FOREIGN KEY nro_cotizacion Cotizaciones(nro_cotizacion),
+    FOREIGN KEY id_producto Productos(id_producto)
+);
+
 INSERT INTO Departamentos(nombre, telefono) VALUES
     ("GERENCIA GENERAL", "1234")
     ("VENTAS Y DESAROLLO", "2345")

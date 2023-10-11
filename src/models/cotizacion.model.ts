@@ -5,9 +5,11 @@ import {
     EstadoKeys, 
     FormaPago, 
     ICotizacion, 
-    ProductosCotizacion
+    ProductosCotizacion,
+    ProductosCotizacionArchivo
 } from "../schemas/cotizacion.schema";
 import { files_url } from "../server";
+import { Cliente, Colaborador } from "./persona.model";
 
 export class CotizacionProducto extends BaseModel{
     static table_name = "CotizacionProducto";
@@ -38,12 +40,14 @@ export class Cotizacion extends BaseModel{
     nro_cotizacion: number;
     fecha_creacion: Date;
     estado: EstadoKeys;
-    colaborador: string;
-    cliente: string;
+    colaborador_cedula: string;
+    colaborador?: Colaborador;
+    cliente_cedula: string;
     file: string
     forma_pago: FormaPago;
     tiempo_entrega: number;
-    productos?: ProductosCotizacion[];
+    productos?: ProductosCotizacionArchivo[];
+    cliente?: Cliente;
 
     constructor(req: ICotizacion){
         super();
@@ -51,21 +55,25 @@ export class Cotizacion extends BaseModel{
         this.nro_cotizacion = req.nro_cotizacion;
         this.fecha_creacion = req.fecha_creacion;
         this.estado = req.estado;
-        this.colaborador = req.colaborador;
-        this.cliente = req.cliente;
+        this.colaborador_cedula = req.colaborador;
+        this.cliente_cedula = req.cliente;
         this.file = req.file;
         this.forma_pago = req.forma_pago;
         this.tiempo_entrega = req.tiempo_entrega
     }
 
-    static async create(body: CreateCotizacion, productos: CreateProductosCotizacion[]): Promise<Cotizacion>{
+    static async create(body: CreateCotizacion, productos: ProductosCotizacionArchivo[]): Promise<Cotizacion>{
         const cotizacion = await this._insert<CreateCotizacion & {file: string}, Cotizacion>({
             ...body,
             file: String(Date.now()) + '.pdf'
         });
-        let prods = productos.map(p => {return {...p, nro_cotizacion: cotizacion.nro_cotizacion}})
+        //sacarle el nombre y agregar el nro_cotizacion
+        let prods = productos.map(p => {
+            return {...p, nro_cotizacion: cotizacion.nro_cotizacion};
+        })
         await CotizacionProducto.bulk_insert(prods);
-        cotizacion.productos = prods;
+        cotizacion.fecha_creacion = new Date();
+        cotizacion.productos = productos;
         return cotizacion;
     }
 

@@ -21,7 +21,7 @@ Levantar el servicio de docker (linux)
 
 `git clone https://github.com/Lautarotetamusa/Agribussiness.git`
 
-`cd Agribussiness`
+`cd Agribussiness/`
 
 Agregar archivo .env
 
@@ -33,7 +33,7 @@ copiar lo siguiente dentro de .env y guardar:
 HOST=localhost
 
 DB_HOST=mysqldb
-DB_USER=teti
+DB_USER=user
 DB_PASS=password
 DB_PORT=3306
 DB_NAME=Agribussiness

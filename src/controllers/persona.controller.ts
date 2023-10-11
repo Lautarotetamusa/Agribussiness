@@ -42,7 +42,7 @@ const create = async (req: Request, res: Response): Promise<Response> => {
 
 const login = async (req: Request, res: Response): Promise<Response> => {
     const body = loginUser.parse(req.body)
-    const persona = await Persona.get_password(body.cedula);
+    const persona = await Persona.get_password(body.cedula); //This method is only used here to prevent password leaks
 
     let match: boolean = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
     if (!match) throw new Unauthorized("Contraseña incorrecta");

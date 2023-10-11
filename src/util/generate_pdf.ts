@@ -4,7 +4,9 @@ import { CreateProductosCotizacion } from "../schemas/cotizacion.schema";
 import { Cotizacion } from "../models/cotizacion.model";
 import { files_path } from "../server";
  
-export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos: (CreateProductosCotizacion & {nombre: string})[]) { 
+type Prods = CreateProductosCotizacion & {nombre: string, precio_final: number};
+
+export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos: Prods[]) { 
   // start pdf document
 
   const font = "Times-Roman" as const;
@@ -22,13 +24,7 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
   // to save on server
   doc.pipe(fs.createWriteStream(`${files_path}/${Cotizacion.file_route}/${cotizacion.file}`));
 
-  console.log("cotizacion: ", cotizacion);
-  console.log(productos.map(p => [
-    p.nombre, 
-    String(p.cantidad),
-    String(p.precio_final), 
-    String(p.cantidad * p.precio_final),
-  ]).concat(["", "", "Total: ", "100000"]));
+  //console.log("cotizacion: ", cotizacion);
 
   let subtotal = productos.reduce((acc, p) => acc + p.cantidad * p.precio_final, 0);
   const tableArray = {
@@ -94,7 +90,7 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
     .font(bold_font)
     .text("Cliente:   ", {continued: true, characterSpacing: 0.3})
     .font(font)
-    .text(cotizacion.cliente);
+    .text(cotizacion.cliente?.nombre || "");
 
   doc
     .font(bold_font)
@@ -142,7 +138,7 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
 
   doc
     .text("Atentamente", {characterSpacing: 0.3})
-    .text("Carloz Quiroz", {characterSpacing: 0.3})
+    .text(cotizacion.colaborador?.nombre || "", {characterSpacing: 0.3})
     .text("Agribusiness Ecuador Cía. Ltda.", {characterSpacing: 0.3})
 
   doc

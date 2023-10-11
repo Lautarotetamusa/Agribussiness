@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { Cotizacion } from "../models/cotizacion.model";
 import { 
     CreateProductosCotizacion, 
+    ProductosCotizacionArchivo, 
     createCotizacion, 
     createProductosCotizacion
 }from "../schemas/cotizacion.schema";
-import { Persona } from "../models/persona.model";
+import { Colaborador, Persona } from "../models/persona.model";
 import { roles } from "../schemas/persona.schema";
 import { sql } from "../db";
 import { ValidationError } from "../errors";
@@ -26,35 +27,34 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     for (let producto of req.body.productos){
         productos.push(createProductosCotizacion.parse(producto));
     }
+
     //Validar que existan y traer otros datos para generar el archivo
     let db_prods = await Producto.select(productos.map(p => p.id_producto));
 
     //Validar que exista un cliente y colaborador con las cedulas que les pasamos
-    await Persona.exists_tipo(body.cliente, roles.cliente);
+    const cliente = await Persona.get_by_rol(body.cliente, roles.cliente);
     //await Persona.exists_tipo(body.colaborador, roles.colaborador); No lo valido ya que es la persona loogeada en ese momento, se supone que existe xd
  
-    /*TEST*/
-    const cotizacion = await Cotizacion.get_one(1);
-    let prods_with_names: (CreateProductosCotizacion & {nombre: string})[] = productos.map(p => {return {...p, nombre: ""}});
+    //Agregar el nombre y el precio si es que no lo tiene a los productos
+    let prods_archivo = productos.map(p => {return {...p, nombre: "", precio_final: 0}});
     for (let i in productos){
-        prods_with_names[i].nombre = db_prods[i].nombre;
+        const db_prod = db_prods.find(d => d.id_producto == productos[i].id_producto);
+        if (!('precio_final' in productos[i])){
+            productos[i].precio_final = db_prod?.precio
+        }
+        prods_archivo[i].nombre = db_prod?.nombre || "";
+        prods_archivo[i].precio_final = db_prod?.precio || 0;
     }
-    await generate_cotizacion_pdf(cotizacion, prods_with_names);
-    return res.send(`${files_url}/${Cotizacion.file_route}/${cotizacion.file}`);
-    /*TEST*/
 
     try {
         await conn.beginTransaction();
-        const inserted = await Cotizacion.create(body, productos);
-        const cotizacion = await Cotizacion.get_one(inserted.nro_cotizacion);
+        const cotizacion = await Cotizacion.create(body, productos as ProductosCotizacionArchivo[]);
+        cotizacion.cliente = cliente;
+        //La buscamos de nuevo para obtener la fecha de creación
+        //const cotizacion = await Cotizacion.get_one(inserted.nro_cotizacion);
+        cotizacion.colaborador = await Persona.get_one(res.locals.user.cedula) as Colaborador;
 
-        //Agregar el nombre a los productos
-        let prods_with_names: (CreateProductosCotizacion & {nombre: string})[] = productos.map(p => {return {...p, nombre: ""}});
-        for (let i in productos){
-            prods_with_names[i].nombre = db_prods[i].nombre;
-        }
-
-        await generate_cotizacion_pdf(cotizacion, prods_with_names);
+        await generate_cotizacion_pdf(cotizacion, prods_archivo);
         cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
 
         await conn.commit();
