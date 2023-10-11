@@ -80,9 +80,22 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const cotizacion = await Cotizacion.get_one(Number(req.params.nro_cotizacion));
+    let productos = await cotizacion.get_productos();
+
+    if (res.locals.user.rol != roles.admin){
+        console.log(res.locals.user.cedula, cotizacion.colaborador_cedula);
+        
+        if (res.locals.user.cedula != cotizacion.colaborador_cedula){
+            throw new ValidationError("No podes ver una cotizacion generada por otro colaborador, se necesita permiso admin o que se generada por vos");
+        }
+    }
+
     return res.status(200).json({
         success: true,
-        data: cotizacion
+        data: {
+            ...cotizacion,
+            productos: productos
+        }
     })
 }
 

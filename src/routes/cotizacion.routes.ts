@@ -10,6 +10,6 @@ router.post('/', auth, check_rol([roles.colaborador]), cotizacionController.crea
 
 router.get('/', auth, check_rol([roles.admin]), cotizacionController.get_all);
 
-router.get('/:nro_cotizacion', auth, check_rol([roles.admin]), valid_param("nro_cotizacion"), cotizacionController.get_one);
+router.get('/:nro_cotizacion', auth, check_rol([roles.admin, roles.colaborador]), valid_param("nro_cotizacion"), cotizacionController.get_one);
 
 export default router;

@@ -103,8 +103,9 @@ export class Persona extends BaseModel{
             
         const query = `
             SELECT * FROM ${Cotizacion.table_name}
-            WHERE '${this.rol}' = ?
-        `;
+            WHERE ` + this.rol + ` = ?`;
+        console.log(query);
+        
         const [rows] = await sql.query<RowDataPacket[]>(query, this.cedula);
         return rows as ICotizacion[];
     }

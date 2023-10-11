@@ -10,6 +10,10 @@ import {
 } from "../schemas/cotizacion.schema";
 import { files_url } from "../server";
 import { Cliente, Colaborador } from "./persona.model";
+import { Producto } from "./producto.model";
+import { sql } from "../db";
+import { RowDataPacket } from "mysql2";
+import { CreateProducto } from "../schemas/producto.schema";
 
 export class CotizacionProducto extends BaseModel{
     static table_name = "CotizacionProducto";
@@ -41,11 +45,12 @@ export class Cotizacion extends BaseModel{
     fecha_creacion: Date;
     estado: EstadoKeys;
     colaborador_cedula: string;
-    colaborador?: Colaborador;
     cliente_cedula: string;
     file: string
     forma_pago: FormaPago;
     tiempo_entrega: number;
+    
+    colaborador?: Colaborador;
     productos?: ProductosCotizacionArchivo[];
     cliente?: Cliente;
 
@@ -81,6 +86,18 @@ export class Cotizacion extends BaseModel{
         const cotizacion = await this.find_one<ICotizacion, Cotizacion>({nro_cotizacion: nro_cotizacion});
         //cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
         return cotizacion;
+    }
+
+    async get_productos(){
+        const query = `
+            SELECT P.* FROM ${CotizacionProducto.table_name} CP
+            INNER JOIN ${Producto.table_name} P
+                ON P.id_producto = CP.id_producto
+            WHERE CP.nro_cotizacion = ?
+        `;
+        
+        const [productos] = await sql.query<RowDataPacket[]>(query, this.nro_cotizacion);
+        return productos as CreateProducto[];
     }
 
     static async get_all(){
