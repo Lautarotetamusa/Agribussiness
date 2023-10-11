@@ -102,12 +102,28 @@ export class Persona extends BaseModel{
             throw new ValidationError("El administrador no puede tener cotizaciones");
             
         const query = `
-            SELECT * FROM ${Cotizacion.table_name}
+            SELECT CO.*, ${(Cliente.fields.map(f => `C.${f} as ${Cliente.table_name}_${f}`)).join(',')} 
+            FROM ${Cotizacion.table_name} CO
+            INNER JOIN ${Cliente.table_name} C
+                ON CO.cliente = C.cedula
             WHERE ` + this.rol + ` = ?`;
-        console.log(query);
         
         const [rows] = await sql.query<RowDataPacket[]>(query, this.cedula);
-        return rows as ICotizacion[];
+        const cotizaciones = rows.map(row => {
+            const cliente: Record<string, any> = {};
+            for (const key in row) {
+                if (key.startsWith(Cliente.table_name+'_')) {
+                    const fieldName = key.replace(Cliente.table_name+'_', '');
+                    cliente[fieldName] = row[key];
+                    delete row[key];
+                }
+            }
+            return {
+                ...row,
+                cliente,
+            };
+        });
+        return cotizaciones;
     }
 }
 
