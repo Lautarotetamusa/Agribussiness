@@ -6,7 +6,7 @@ export const createProducto = z.object({
     presentacion: z.string(),
     descripcion: z.string(),
     id_proveedor: z.number(),
-    iva: z.number().optional().default(0)
+    iva: z.number().min(0).max(100).optional().default(0)
 });
 
 export const updateProducto = createProducto.partial().extend({

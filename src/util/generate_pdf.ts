@@ -4,7 +4,7 @@ import { CreateProductosCotizacion } from "../schemas/cotizacion.schema";
 import { Cotizacion } from "../models/cotizacion.model";
 import { files_path } from "../server";
  
-type Prods = CreateProductosCotizacion & {nombre: string, precio_final: number};
+type Prods = CreateProductosCotizacion & {nombre: string, precio_final: number, iva: number};
 
 export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos: Prods[]) { 
   // start pdf document
@@ -27,6 +27,11 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
   //console.log("cotizacion: ", cotizacion);
 
   let subtotal = productos.reduce((acc, p) => acc + p.cantidad * p.precio_final, 0);
+
+  const total_iva = productos.reduce((acc, p) => 
+    acc + p.cantidad * p.precio_final * (p.iva/100), 0
+  );
+
   const tableArray = {
     headers: [
       {label: "PRODUCTO", property: "producto"}, 
@@ -50,13 +55,13 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
         producto: "",
         cantidad: "",
         precio_final: {label: "bold:IVA 12%", align: "left", font: font},
-        total: "$ " + String((subtotal * 0.12).toFixed(2))
+        total: "$ " + String(total_iva.toFixed(2))
       },
       {
         producto: "",
         cantidad: "",
         precio_final: {label: "bold:TOTAL", align: "left", font: font},
-        total: "$ " + String((subtotal * 1.12).toFixed(2))
+        total: "$ " + String((subtotal + total_iva).toFixed(2))
       }
     ])
   };

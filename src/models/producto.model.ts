@@ -12,7 +12,7 @@ import { ValidationError } from '../errors';
 
 export class Producto extends BaseModel{
     static table_name: string = "Productos";
-    static fields = ["id_producto", "id_proveedor", "precio", "nombre", "presentacion", "descripcion", "descripcion", "ficha_tecnica"];
+    static fields = ["id_producto", "id_proveedor", "precio", "nombre", "presentacion", "descripcion", "descripcion", "ficha_tecnica", "iva"];
     static pk = "id_producto";
 
     id_producto: number;

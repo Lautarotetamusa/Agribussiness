@@ -36,14 +36,18 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     //await Persona.exists_tipo(body.colaborador, roles.colaborador); No lo valido ya que es la persona loogeada en ese momento, se supone que existe xd
  
     //Agregar el nombre y el precio si es que no lo tiene a los productos
-    let prods_archivo = productos.map(p => {return {...p, nombre: "", precio_final: 0}});
+    let prods_archivo = productos.map(p => {return {...p, nombre: "", precio_final: 0, iva: 0}});
     for (let i in productos){
         const db_prod = db_prods.find(d => d.id_producto == productos[i].id_producto);
+
         if (!('precio_final' in productos[i])){
-            productos[i].precio_final = db_prod?.precio
+            productos[i].precio_final = db_prod?.precio;
+            prods_archivo[i].precio_final = db_prod?.precio as number;
+        }else{
+            prods_archivo[i].precio_final = productos[i].precio_final as number;
         }
         prods_archivo[i].nombre = db_prod?.nombre || "";
-        prods_archivo[i].precio_final = db_prod?.precio || 0;
+        prods_archivo[i].iva = db_prod?.iva || 0;
     }
 
     try {
