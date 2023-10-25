@@ -25,10 +25,12 @@ const zodKeys = (schema: z.ZodType): string[] => {  // Adjusted: Signature now u
         const entries = Object.entries<z.ZodType>(schema.shape) // Adjusted: Uses Zod.ZodType as generic to remove instanceof check. Since .shape returns ZodRawShape which has Zod.ZodType as type for each key.
         // loop through key/value pairs
         return entries.flatMap(([key, value]) => {
+            if (value instanceof z.ZodDefault){
+                return `?${key}`
+            }
+            
             // get nested keys
-            const nested = zodKeys(value).map(
-                (subKey) => `${key}.${subKey}`
-            )
+            const nested = value instanceof z.ZodType ? zodKeys(value).map(subKey => `${key}.${subKey}`) : [];
             // return nested keys
             return nested.length ? nested : key
         })
@@ -52,6 +54,7 @@ export function csv2arr<T>(
     ): Array<T> {
     const data = fs.readFileSync(file_path, 'utf-8').split(/\r?\n/);
     const keys = zodKeys(schema);
+    
     let faltantes: string[] = Object.assign([], keys);
     let values_keys: Record<string, number> = {}; //Headers to position
     let objects: Array<T> = [];
@@ -60,7 +63,7 @@ export function csv2arr<T>(
 
     let position = 0;
     for (const value of data[0].split(',')){
-        if (keys.indexOf(value) > -1){
+        if (keys.indexOf(value) > -1 || keys.indexOf('?'+value) > -1){
             let index = faltantes.indexOf(value);
             faltantes.splice(index, 1);
             values_keys[value] = position;
@@ -68,15 +71,26 @@ export function csv2arr<T>(
         position += 1;
     }
     data.shift(); //Remove headers
-    
-    if (faltantes.length != 0)
-        throw new ValidationError(`El archivo .csv no contiene las columnas ${faltantes}`);
 
+    console.log(keys);
+    
+    let cant_optionales = keys.filter(v => v.split('?').length > 1).length;
+
+    console.log(cant_optionales);
+    console.log(faltantes);
+
+    if (faltantes.length > cant_optionales)
+        throw new ValidationError(`El archivo .csv no contiene las columnas ${faltantes}`);
+    
     for (const line of data){
         const values = line.split(',');
 
         let object: Record<string, any> = {};
-        for (const key of keys){
+        for (let key of keys){
+            
+            if (key.split('?').length > 1){
+                key = key.split('?')[1];
+            }
             const str_val = values[values_keys[key]];
             if (str_val === ""){
                 delete object[key]
@@ -86,7 +100,6 @@ export function csv2arr<T>(
             let number_val = Number(str_val); //Hago esto porque Number("") = 0 y no quiero que los campos vacios se completen con 0
             object[key] = Number.isNaN(number_val) ? str_val : number_val;
         }
-
         objects.push(schema.parse(object));
     }
 

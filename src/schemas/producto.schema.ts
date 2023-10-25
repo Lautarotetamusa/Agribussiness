@@ -5,7 +5,8 @@ export const createProducto = z.object({
     nombre: z.string(),
     presentacion: z.string(),
     descripcion: z.string(),
-    id_proveedor: z.number()
+    id_proveedor: z.number(),
+    iva: z.number().optional().default(0)
 });
 
 export const updateProducto = createProducto.partial().extend({
@@ -27,3 +28,9 @@ export type CreateProducto = z.infer<typeof createProducto>;
 export type BuildProducto  = z.infer<typeof buildProducto>;
 export type UpdateProducto = z.infer<typeof updateProducto>;
  
+
+type Prettify<T> = {
+    [K in keyof T]: T[K];
+  } & {};
+
+type a = Prettify<CreateProducto>

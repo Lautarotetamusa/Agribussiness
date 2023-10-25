@@ -158,7 +158,10 @@ export class BaseModel{
 
         const query = `
             INSERT INTO ${this.table_name} (${keys})
-            VALUES ${parameters}`
+            VALUES ${parameters}`;
+
+        console.log(query);
+        
 
         const [result] = await sql.query<ResultSetHeader>(query, value_list);
     }

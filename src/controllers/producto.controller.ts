@@ -33,7 +33,7 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
     for (const producto of productos){
         await Proveedor.get_one(producto.id_proveedor);
     }
-    let _: void = await Producto.bulk_insert(productos);
+    let _: void = await Producto.bulk_insert((productos as unknown) as CreateProducto[]);
 
     return res.status(201).json({
         success: true,

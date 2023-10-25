@@ -19,6 +19,7 @@ export class Producto extends BaseModel{
     id_proveedor: number;
     precio: number;
     nombre: string;
+    iva?: number;
     presentacion: string;
     descripcion: string;
     ficha_tecnica?: string | null;
@@ -34,6 +35,7 @@ export class Producto extends BaseModel{
         this.presentacion = body.presentacion;
         this.descripcion = body.descripcion;
         this.ficha_tecnica = body.ficha_tecnica;
+        this.iva = body.iva || 0;
     }
 
     static async create(body: CreateProducto): Promise<Producto>{
@@ -61,7 +63,8 @@ export class Producto extends BaseModel{
             SELECT Prod.*, Prov.nombre as nombre_proveedor
             FROM ${this.table_name} Prod
             INNER JOIN ${Proveedor.table_name} Prov
-                ON Prod.id_proveedor = Prod.id_proveedor
+                ON Prod.id_proveedor = Prov.id_proveedor
+            ORDER BY Prod.id_producto ASC
         ` as const;
 
         const [rows] = await sql.query<RowDataPacket[]>(query);
@@ -86,6 +89,8 @@ export class Producto extends BaseModel{
     }
 
     static async bulk_insert(req: CreateProducto[]): Promise<void> {
+        console.log(req);
+        
         return await Producto._bulk_insert<CreateProducto>(req);
     }
 
