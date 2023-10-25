@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS Cotizaciones(
     estado ENUM("aprobada", "creada") NOT NULL DEFAULT "creada",
     colaborador CHAR(10) NOT NULL,
     cliente CHAR(10) NOT NULL,
+    disposiciones VARCHAR(2048) NOT NULL,
     file VARCHAR(256) NOT NULL,
 
     forma_pago ENUM("Contado", "Credito 15", "Credito 30", "Credito 45") NOT NULL DEFAULT "Contado",

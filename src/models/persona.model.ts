@@ -12,7 +12,6 @@ import { TipoSolicitud } from '../schemas/solicitud.schema';
 import { ListSolicitudesColaborador } from '../schemas/solicitud.schema';
 import { ValidationError } from '../errors';
 import { Cotizacion } from './cotizacion.model';
-import { ICotizacion } from '../schemas/cotizacion.schema';
 
 type rolExtend<R extends RolesKeys> = 
     R extends "colaborador" ? Colaborador : 

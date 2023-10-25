@@ -62,7 +62,8 @@ CREATE TABLE IF NOT EXISTS Productos(
     nombre VARCHAR(255) NOT NULL,
     presentacion VARCHAR(128) NOT NULL,
     descripcion VARCHAR(512) NOT NULL,
-    ficha_tecnica VARCHAR(256) DEFAULT NULL
+    ficha_tecnica VARCHAR(256) DEFAULT NULL,
+    iva INT DEFAULT 0,
 
     PRIMARY KEY (id_producto),
     FOREIGN KEY (id_proveedor) REFERENCES Proveedores(id_proveedor)
@@ -114,7 +115,8 @@ CREATE TABLE IF NOT EXISTS Cotizaciones(
     nro_cotizacion INT NOT NULL AUTO_INCREMENT
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     estado ENUM("aprobada", "creada") NOT NULL DEFAULT "creada",
-    colaborador CHAR(10) NOT NULL
+    colaborador CHAR(10) NOT NULL,
+    disposiciones VARCHAR(2048) NOT NULL,
     cliente CHAR(10) NOT NULL,
     file VARCHAR(256) NOT NULL,
 

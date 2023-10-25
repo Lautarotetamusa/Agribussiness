@@ -64,9 +64,9 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
   doc.font(font, font_size);
 
   doc.image(files_path + '/logo.png', {
-    scale: 0.6,
-    width: 164,
-    height: 40,
+    //scale: 0.6,
+    width: 140,
+    height: 30,
     align: 'right',
     valign: 'center'
   }).moveDown().moveDown();
@@ -129,6 +129,9 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
     }
   }); 
   doc.moveDown();
+
+  doc.font(bold_font).text("Disposiciones adicionales:");
+  doc.font(font).text(cotizacion.disposiciones).moveDown();
   
   doc.font(bold_font).text("Forma de pago:", {characterSpacing: 0.3}).moveDown();
   doc.font(font).text(cotizacion.forma_pago, {characterSpacing: 0.3}).moveDown();

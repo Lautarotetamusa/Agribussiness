@@ -49,6 +49,7 @@ export class Cotizacion extends BaseModel{
     file: string
     forma_pago: FormaPago;
     tiempo_entrega: number;
+    disposiciones: string;
     
     colaborador?: Colaborador;
     productos?: ProductosCotizacionArchivo[];
@@ -64,7 +65,8 @@ export class Cotizacion extends BaseModel{
         this.cliente_cedula = req.cliente;
         this.file = req.file;
         this.forma_pago = req.forma_pago;
-        this.tiempo_entrega = req.tiempo_entrega
+        this.tiempo_entrega = req.tiempo_entrega;
+        this.disposiciones = req.disposiciones;
     }
 
     static async create(body: CreateCotizacion, productos: ProductosCotizacionArchivo[]): Promise<Cotizacion>{

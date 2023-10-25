@@ -21,7 +21,8 @@ export const iCotizacion = z.object({
     cliente: z.string().max(10),
     file: z.string(),
     forma_pago: z.enum(Object.keys(formas_pago) as [FormaPago]),
-    tiempo_entrega: z.number().max(9).min(1)
+    tiempo_entrega: z.number().max(9).min(1),
+    disposiciones: z.string()
 });
 
 const iproductosCotizacion = z.object({
