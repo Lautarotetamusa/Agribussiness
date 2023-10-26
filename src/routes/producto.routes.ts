@@ -46,7 +46,15 @@ router.post('/:id/imagen',
     check_rol([roles.admin]),
     uploadImagenProducto,
     valid_param("id"),
-    productoController.create_imagen
+    productoController.create_imagen(false)
+);
+
+router.post('/:id/portada',
+    auth,
+    check_rol([roles.admin]),
+    uploadImagenProducto,
+    valid_param("id"),
+    productoController.create_imagen(true)
 );
 
 router.get('/:id/imagen',

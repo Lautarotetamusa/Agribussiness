@@ -10,12 +10,14 @@ export const createProducto = z.object({
 });
 
 export const updateProducto = createProducto.partial().extend({
-    ficha_tecnica: z.string().optional()
+    ficha_tecnica: z.string().optional(),
+    portada: z.string().optional()
 });
 
 const buildProducto = createProducto.extend({
     id_producto: z.number(),
-    ficha_tecnica: z.string().optional().nullable()
+    ficha_tecnica: z.string().optional().nullable(),
+    portada: z.string().optional().nullable()
 });
 
 export const ListProducto = buildProducto.extend({

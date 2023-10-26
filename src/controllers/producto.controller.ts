@@ -7,6 +7,7 @@ import {
 } from "../schemas/producto.schema";
 import { csv2arr } from "../util/csv_to_arr";
 import { Proveedor } from "../models/proveedor.model";
+import { files_url } from "../server";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const productos = await Producto.get_all();
@@ -56,19 +57,27 @@ const create_ficha_tecnica = async (req: Request, res: Response): Promise<Respon
     });
 }
 
-const create_imagen = async (req: Request, res: Response): Promise<Response> => {
-    if (!req.file) throw new ValidationError("La imagen no se subio correctamente");
-    const id: number = res.locals.id;
-
-    const producto = await Producto.get_one(id);
-
-    const imagen = await Imagen.insert({id_producto: producto.id_producto, path: req.file.filename});
-
-    return res.status(201).json({
-        success: true,
-        message: `Imagen para el producto ${producto.nombre} cargada correctamente`,
-        data: imagen
-    });
+const create_imagen = (is_portada: boolean) => {
+    return async (req: Request, res: Response): Promise<Response> => {
+        if (!req.file) throw new ValidationError("La imagen no se subio correctamente");
+        const id: number = res.locals.id;
+    
+        const producto = await Producto.get_one(id);
+        let imagen: string = "";
+    
+        if (!is_portada){
+            imagen = (await Imagen.insert({id_producto: producto.id_producto, path: req.file.filename})).path;
+        }else{
+            let _:void = await producto.update({portada: req.file.filename});
+            imagen = `${files_url}/${Imagen.image_route}/${producto.portada as string}`;
+        }
+    
+        return res.status(201).json({
+            success: true,
+            message: `Imagen para el producto ${producto.nombre} cargada correctamente`,
+            data: imagen
+        });
+    }
 }
 
 const get_images = async (req: Request, res: Response): Promise<Response> => {

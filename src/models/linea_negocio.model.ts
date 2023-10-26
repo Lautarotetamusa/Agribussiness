@@ -2,7 +2,7 @@ import { sql } from '../db';
 import { files_url } from '../server';
 import {BaseModel} from './base.model';
 import z, { number, string } from "zod";
-import { Producto } from './producto.model';
+import { Imagen, Producto } from './producto.model';
 import { Proveedor } from './proveedor.model';
 import { RowDataPacket } from 'mysql2';
 import { BuildProducto } from '../schemas/producto.schema';
@@ -48,7 +48,7 @@ export class LineaNegocio extends BaseModel{
 
     async get_productos(){
         const query = `
-            SELECT Prod.*
+            SELECT Prod.*, Prov.nombre as proveedor
             FROM ${Producto.table_name} Prod
             INNER JOIN ${Proveedor.table_name} Prov
                 ON Prod.id_proveedor = Prov.id_proveedor
@@ -56,6 +56,7 @@ export class LineaNegocio extends BaseModel{
         `;
 
         const [rows] = await sql.query<RowDataPacket[]>(query, this.id_linea);
+        rows.map(p => p.portada = p.portada != null ? `${files_url}/${Imagen.image_route}/${p.portada}` : null);
         this.productos = rows as BuildProducto[];
         return rows as BuildProducto[];
     }

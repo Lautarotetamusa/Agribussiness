@@ -2,11 +2,13 @@
 
 # [Api references](https://cronos-software.stoplight.io/docs/agribussiness/branches/main/pgbrbcgazs2m9-agribussiness-api-rest)
 
+# [Diseño del sistema](https://drive.google.com/file/d/1ZWjFM4cDzqSAxBS7Vm63pB3XIFpaPtes/view?usp=sharing)
+
 # Instalacion
 
 ## Instalar docker
 
-Instalar Docker 
+Instalar Docker
 
 * [Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 * [Windows](https://docs.docker.com/desktop/install/windows-install/)
@@ -14,7 +16,7 @@ Instalar Docker
 Agregar docker a sudo (linux)
 `sudo usermod -aG docker $USER`
 
-Levantar el servicio de docker (linux)
+Levantar el servicio de docker (linux) 
 `sudo systemctl start docker`
 
 ## Buildear el proyecto

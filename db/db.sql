@@ -46,11 +46,12 @@ CREATE TABLE IF NOT EXISTS Departamentos(
     PRIMARY KEY (id_depto)
 );
 
+#El campo ficha_tecnica campo no va mas, pero lo dejamos por ahora por si acaso TODO!
 CREATE TABLE IF NOT EXISTS Proveedores(
     id_proveedor INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(128) NOT NULL,
     photo VARCHAR(256),
-    ficha_tecnica VARCHAR(256),
+    ficha_tecnica VARCHAR(256), 
 
     PRIMARY KEY (id_proveedor)
 );
@@ -62,7 +63,10 @@ CREATE TABLE IF NOT EXISTS Productos(
     nombre VARCHAR(255) NOT NULL,
     presentacion VARCHAR(128) NOT NULL,
     descripcion VARCHAR(512) NOT NULL,
+    
     ficha_tecnica VARCHAR(256) DEFAULT NULL,
+    portada VARCHAR(256) DEFAULT NULL
+
     iva INT DEFAULT 0,
 
     PRIMARY KEY (id_producto),

@@ -54,7 +54,7 @@ export class Imagen extends BaseModel{
 
 export class Producto extends BaseModel{
     static table_name: string = "Productos";
-    static fields = ["id_producto", "id_proveedor", "precio", "nombre", "presentacion", "descripcion", "descripcion", "ficha_tecnica", "iva"];
+    static fields = ["id_producto", "id_proveedor", "precio", "nombre", "presentacion", "descripcion", "descripcion", "ficha_tecnica", "iva", "portada"];
     static pk = "id_producto";
 
     id_producto: number;
@@ -62,6 +62,7 @@ export class Producto extends BaseModel{
     precio: number;
     nombre: string;
     iva?: number;
+    portada?: string;
     presentacion: string;
     descripcion: string;
     ficha_tecnica?: string | null;
@@ -78,6 +79,7 @@ export class Producto extends BaseModel{
         this.descripcion = body.descripcion;
         this.ficha_tecnica = body.ficha_tecnica;
         this.iva = body.iva || 0;
+        this.portada = body.portada || "";
     }
 
     static async create(body: CreateProducto): Promise<Producto>{
@@ -96,7 +98,8 @@ export class Producto extends BaseModel{
         let prod = await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
         //Esto lo hacemos, porque mysql devuelve el campo DECIMAL(10, 2) como un string
         //Lo parseo a float, como ts no me deja pasarle un argumento que cree que es number, usamos as unkwnow as string
-        //prod.precio = parseFloat((prod.precio as unknown) as string);
+        prod.precio = parseFloat((prod.precio as unknown) as string);
+        prod.portada = `${files_url}/${Imagen.image_route}/${prod.portada}`;
         return prod;
     }
 
@@ -114,6 +117,7 @@ export class Producto extends BaseModel{
         //Omito el precio porque MySQL lo devuelve como un string, debería arreglar esto. TODO!
         //Suponemos que el precio está bien
         let check = ListProducto.omit({precio: true}).parse(rows[0]); //Validate the response
+        rows.map(p => p.portada = p.portada != null ? `${files_url}/${Imagen.image_route}/${p.portada}` : null);
         return rows as ListProducto[];
 
         //return await this.find_all<BuildProducto>();
@@ -130,9 +134,7 @@ export class Producto extends BaseModel{
         await Producto._update<UpdateProducto>(body, {id_producto: this.id_producto});
     }
 
-    static async bulk_insert(req: CreateProducto[]): Promise<void> {
-        console.log(req);
-        
+    static async bulk_insert(req: CreateProducto[]): Promise<void> {        
         return await Producto._bulk_insert<CreateProducto>(req);
     }
 
