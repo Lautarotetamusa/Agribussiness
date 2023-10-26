@@ -4,6 +4,7 @@ import { auth, check_rol } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
 import { uploadFichaTecnicaFile, uploadPriceListFile } from "../util/upload_file";
 import { valid_param } from "../middlewares/validad_param";
+import { uploadImagenProducto } from "../uploads/producto.upload";
 
 const router = Router();
 
@@ -38,6 +39,21 @@ router.put('/:id/ficha',
     uploadFichaTecnicaFile,
     valid_param("id"),
     productoController.create_ficha_tecnica
-)
+);
+
+router.post('/:id/imagen',
+    auth,
+    check_rol([roles.admin]),
+    uploadImagenProducto,
+    valid_param("id"),
+    productoController.create_imagen
+);
+
+router.get('/:id/imagen',
+    auth,
+    check_rol([roles.admin, roles.colaborador]),
+    valid_param("id"),
+    productoController.get_images
+);
 
 export default router;

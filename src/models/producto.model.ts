@@ -9,6 +9,48 @@ import {
 import { BaseModel} from './base.model';
 import { Proveedor } from './proveedor.model';
 import { ValidationError } from '../errors';
+import { CreateImagen, IImagen } from '../schemas/persona.schema';
+import { files_url } from '../server';
+
+export class Imagen extends BaseModel{
+    static table_name = "Imagenes";
+    static image_route = "imagenes";
+
+    id_producto: number;
+    path: string;
+    nro_imagen: number;
+
+    constructor(body: IImagen){
+        super();
+
+        this.id_producto = body.id_producto;
+        this.path = body.path;
+        this.nro_imagen = body.nro_imagen;
+    }
+
+    static async insert(body: CreateImagen){
+        const nro_imagen = await this.get_last(body.id_producto);
+        
+        const imagen = await this._insert<IImagen, Imagen>({
+            ...body,
+            nro_imagen: nro_imagen
+        });
+        imagen.path = `${files_url}/${Imagen.image_route}/${imagen.path}`;
+        return imagen;
+    }
+
+    //Devuelve el Nro de imagen que necesistamos pasarle a la siguiente que ingresemos
+    static async get_last(id_producto: number){
+        const imgs_prod = await this.find_all({id_producto: id_producto});
+        return imgs_prod.length;
+    }
+
+    static async get_all_by_prod(id_producto: number){
+        const images = await this.find_all<Imagen>({id_producto: id_producto});
+        images.map(i => i.path = `${files_url}/${Imagen.image_route}/${i.path}`);
+        return images;
+    }
+}
 
 export class Producto extends BaseModel{
     static table_name: string = "Productos";

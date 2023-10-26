@@ -137,8 +137,18 @@ CREATE TABLE IF NOT EXISTS CotizacionProducto(
 
     PRIMARY KEY (nro_cotizacion, id_producto),
 
-    FOREIGN KEY nro_cotizacion Cotizaciones(nro_cotizacion),
-    FOREIGN KEY id_producto Productos(id_producto)
+    FOREIGN KEY (nro_cotizacion) REFERENCES Cotizaciones(nro_cotizacion),
+    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
+);
+
+CREATE TABLE Imagenes(
+    path VARCHAR(256) NOT NULL,
+
+    id_producto INT NOT NULL,
+    nro_imagen INT NOT NULL,
+
+    PRIMARY KEY (id_producto, nro_imagen),
+    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
 );
 
 INSERT INTO Departamentos(nombre, telefono) VALUES
