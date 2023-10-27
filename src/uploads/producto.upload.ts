@@ -20,8 +20,14 @@ export const uploadImagenProducto = multer({
     }),
     limits: { fileSize: 10 * 1024 * 1024 }, //10MB
     fileFilter: (_req, file, cb) => {
-        if (file.mimetype != "image/jpg" && file.mimetype != "image/png")
-            return cb(new ValidationError("La foto debe ser jpg o png"));
+        console.log(file.mimetype);
+        
+        if (
+            file.mimetype != "image/jpg" && 
+            file.mimetype != "image/png" &&
+            file.mimetype != "image/jpeg"
+        )
+            return cb(new ValidationError("La foto debe ser jpg, jpeg o png "));
 
         return cb(null, true);
     }

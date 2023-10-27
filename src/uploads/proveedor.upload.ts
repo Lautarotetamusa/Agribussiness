@@ -29,8 +29,12 @@ export const proveedorUpload = multer({
         console.log("FILEFILTER");
         
         if(file.fieldname == "photo"){
-            if (file.mimetype != "image/jpg" && file.mimetype != "image/png")
-                return cb(new ValidationError("La foto debe ser jpg o png"));
+            if (
+                file.mimetype != "image/jpg" && 
+                file.mimetype != "image/png" &&
+                file.mimetype != "image/jpeg"
+            )
+                return cb(new ValidationError("La foto debe ser jpg, jpeg o png"));
         }else{
             return cb(new ValidationError("No se acepta ningun otro archivo que no sea photo, se encontro "+file.fieldname));
         }

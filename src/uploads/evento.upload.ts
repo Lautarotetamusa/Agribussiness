@@ -20,8 +20,12 @@ export const eventoUpload = multer({
     }),
     limits: { fileSize: 1024 * 1024 }, //1MB
     fileFilter: (_req, file, cb) => {
-        if (file.mimetype != "image/jpg" && file.mimetype != "image/png")
-            return cb(new ValidationError("La foto debe ser jpg o png"));
+        if (
+            file.mimetype != "image/jpg" && 
+            file.mimetype != "image/png" &&
+            file.mimetype != "image/jpeg"
+        )
+            return cb(new ValidationError("La foto debe ser jpg, jpeg o png"));
 
         return cb(null, true);
     }
