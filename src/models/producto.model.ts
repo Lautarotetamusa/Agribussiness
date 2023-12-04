@@ -119,8 +119,6 @@ export class Producto extends BaseModel{
         let check = ListProducto.omit({precio: true}).parse(rows[0]); //Validate the response
         rows.map(p => p.portada = p.portada != null ? `${files_url}/${Imagen.image_route}/${p.portada}` : null);
         return rows as ListProducto[];
-
-        //return await this.find_all<BuildProducto>();
     }
 
     async update(body: UpdateProducto){
