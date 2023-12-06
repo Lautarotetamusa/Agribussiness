@@ -71,6 +71,39 @@ export class Persona extends BaseModel{
         return this._get_one({cedula: cedula, is_deleted: 0}, fields);
     }
 
+    static async get_solicitables(cedula: string): Promise<{cedula: string}[]>{
+        const query = `
+            SELECT P.cedula, P.nombre
+            FROM ${Persona.table_name} P
+            INNER JOIN Cargos C
+                ON C.cod_cargo = P.cod_cargo
+            WHERE rol = '${roles.colaborador}'
+            AND C.nivel < (
+                SELECT nivel FROM ${Persona.table_name} P
+                INNER JOIN Cargos C
+                    ON C.cod_cargo = P.cod_cargo
+                WHERE cedula = ?
+            );
+        `;
+            /* 
+            SELECT cedula FROM Personas P
+            INNER JOIN Cargos C
+                ON C.cod_cargo = P.cod_cargo
+            WHERE rol = 'colaborador'
+            AND C.nivel > (
+                SELECT nivel FROM Personas P
+                INNER JOIN Cargos C
+                    ON C.cod_cargo = P.cod_cargo
+                WHERE cedula = "392142823"
+            ); 
+        */
+        console.log("query: ", query);
+
+        const [rows] = await sql.query<RowDataPacket[]>(query, [cedula]);
+        console.log(rows)
+        return rows as {cedula: string}[];
+    }
+
     static async get_all(rol?: RolesKeys): Promise<CreateColaborador[]>{
         if (rol)
             return await this.find_all<CreateColaborador>({
@@ -172,10 +205,15 @@ export class Colaborador extends Persona{
      */
     static async get_solicitudes(cedula: string, tipoSolicitud: TipoSolicitud){
         let where_key = tipoSolicitud  == "enviada"  ? "solicitante" : "solicitado";
+        //Cuando buscamos las solicitudes enviadas nos interesa el nombre del solicitado, el del solicitante seremos nosotros
+        //En cambio cuando buscamos las recibidas, nos interesa el nombre del solicitante, el solicitado seremos nostros
+        let name_key  = tipoSolicitud  == "enviada" ? "solicitado" : "solicitante";
 
         const query = `
-            SELECT cod_solicitud, solicitante, solicitado, fecha_creacion, descripcion, aceptada
+            SELECT cod_solicitud, solicitante, solicitado, P.nombre as nombre_${name_key}, fecha_creacion, descripcion, aceptada
             FROM ${Solicitud.table_name}
+            INNER JOIN ${Persona.table_name} P
+                ON ${name_key} = P.cedula
             WHERE ${where_key} = ?
             ORDER BY fecha_creacion DESC
         `;

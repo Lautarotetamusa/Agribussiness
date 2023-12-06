@@ -10,6 +10,14 @@ router.post('/login', personaController.login);
 
 router.get('/', auth, check_rol([roles.admin]), personaController.get_all);
 
+//Obtener todos los colaboradores a los que puede enviar una solicitud
+router.get('/:cedula/solicitables', 
+    auth, 
+    check_rol([roles.colaborador, roles.admin]), 
+    self_or_admin, 
+    personaController.get_solicitables
+);
+
 //Obtener todas las solicitudes de esta persona
 router.get('/:cedula/solicitud', 
     auth, 

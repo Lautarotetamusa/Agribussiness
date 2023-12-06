@@ -132,6 +132,15 @@ const get_cotizaciones = async (req: Request, res: Response): Promise<Response> 
     })
 }
 
+//Devuelve una lista con los colaboradores a los que puede solicitar un colaborador
+const get_solicitables = async (req: Request, res: Response): Promise<Response> => {
+    const solicitables = await Persona.get_solicitables(req.params.cedula);
+    return res.status(200).json({
+        success: true,
+        data: solicitables
+    })
+}
+
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     let rol;
     if (req.query.rol){
@@ -153,5 +162,6 @@ export default {
     delet,
     update,
     get_solicitudes,
-    get_cotizaciones
+    get_cotizaciones,
+    get_solicitables
 }
