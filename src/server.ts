@@ -9,10 +9,15 @@ import {router} from "./routes";
 
 /*export const app = express();*/
 import expressWs from "express-ws";
-import { Persona } from './models/persona.model';
 //let WebSocket = expressWs(app);
-export const app = expressWs(express()).app;
+export const express_ws = expressWs(express());
+export const app = express_ws.app;
+console.log("clients:", express_ws.getWss());
 //const expressWs = require('express-ws')(app);
+
+//Es muy importante que este import esté después de la declaracion de la pp
+//De otro modo router.ws nos dará error
+import chatRouter from "./chat";
 
 const back_port: number = Number(process.env.BACK_PORT) | 3000; // Puerto interno del docker donde se levanta el server
 const public_port: number = Number(process.env.BACK_PUBLIC_PORT) | 80; //Puerto que tiene acceso al mundo
@@ -29,21 +34,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true,}));
 
+//Rutas del chat
+app.use(chatRouter);
+
 //Servir los archivos estáticos
 app.use('/files', fileRouter);
 
+//Todas las routas
 app.use(router);
-
-//WebSockets
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-app.ws('/messages', async (ws, req) => {
-    ws.on('message', async (msg) => {
-        console.log("nuevo mensaje: ", msg);
-        const personas = await Persona.get_all();
-        await delay(2000);
-        ws.send(JSON.stringify(personas))
-    })
-})
 
 //Manejo de rutas de la API que no existen
 app.use('*', (req, res) => res.status(404).json({

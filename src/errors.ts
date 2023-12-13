@@ -2,12 +2,31 @@ import { Request, Response, NextFunction } from 'express';
 import { MulterError } from 'multer';
 import { ZodError } from 'zod';
 
-interface ErrorResponse{
+export interface ErrorResponse{
     success: false,
     errors: Array<{
         code: string,
         message: string
     }>
+}
+
+export const notFound = (msg: string): ErrorResponse => {
+    return {
+        success: false,
+        errors: [{
+            code: "NotFound",
+            message: msg
+        }]
+    }
+}
+export const validationError = (msg: string): ErrorResponse => {
+    return {
+        success: false,
+        errors: [{
+            code: "ValidationError",
+            message: msg
+        }]
+    }
 }
 
 export function handle_errors(err: Error, req: Request, res: Response, next: NextFunction): Response{

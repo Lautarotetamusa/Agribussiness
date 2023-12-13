@@ -1,6 +1,6 @@
 import {Router} from "express"
 import personaController from "../controllers/persona.controller";
-import { auth, check_rol, self_or_admin } from "../middlewares/auth";
+import { auth, check_rol, list_personas, self_or_admin } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
 const router = Router();
 
@@ -8,7 +8,11 @@ router.post('/', personaController.create);
 
 router.post('/login', personaController.login);
 
-router.get('/', auth, check_rol([roles.admin]), personaController.get_all);
+router.get('/', 
+    auth, 
+    list_personas,
+    personaController.get_all
+);
 
 //Obtener todos los colaboradores a los que puede enviar una solicitud
 router.get('/:cedula/solicitables', 

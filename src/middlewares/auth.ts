@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { Secret, TokenExpiredError } from "jsonwebtoken";
 import { RolesKeys, roles } from "../schemas/persona.schema";
-import { Forbidden, Unauthorized } from "../errors";
+import { Forbidden, Unauthorized, ValidationError } from "../errors";
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const token: string | undefined = req.header("Authorization")?.replace('Bearer ', '');
@@ -46,4 +46,22 @@ export const check_rol = (accepted_roles: Array<RolesKeys>) => {
 
         next();
     };
+};
+
+// Validar que un colaborador solamente pueda listar las personas de tipo cliente
+export const list_personas = async (req: Request, res: Response, next: NextFunction) => {
+    const rol: RolesKeys = res.locals.user.rol;
+    const query_rol = req.query.rol as string || "all";
+
+    const permissions: Record<string, string[]> = {
+        "admin": ["all", roles.admin, roles.colaborador, roles.cliente],
+        "colaborador": [roles.cliente],
+        "cliente": []
+    }
+    
+    if (!permissions[rol].includes(query_rol)){
+        throw new ValidationError(`Una persona con rol '${rol}' no puede listar personas con rol '${query_rol}'`)
+    }
+
+    next();
 };
