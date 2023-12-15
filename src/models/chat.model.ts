@@ -15,14 +15,15 @@ type ChatMessage = z.infer<typeof chat_message>;
 
 // Esta funcion nos devuelve el chat id entre un cliente y un colaborador
 // Si el chat no existe, lo crea y devuelve su id
-export async function get_chat(cliente: string, colaborador: string): Promise<number | ErrorResponse>{
+export async function get_chat(persona_1: string, persona_2: string): Promise<number | ErrorResponse>{
     let query = `
         SELECT id
         FROM ${table_name}
         WHERE cliente = ? AND colaborador = ?
+        OR colaborador = ? AND cliente = ?
     `;
 
-    const [rows] = await sql.query<RowDataPacket[]>(query, [cliente, colaborador]);
+    const [rows] = await sql.query<RowDataPacket[]>(query, [persona_1, persona_2, persona_1, persona_2]);
 
     if (rows.length > 0){ //No existe el chat, vamos a crear uno nuevo
         return rows[0].id
@@ -35,11 +36,11 @@ export async function get_chat(cliente: string, colaborador: string): Promise<nu
     `;
 
     try{
-        const [result] = await sql.query<ResultSetHeader>(query, [cliente, colaborador]);
+        const [result] = await sql.query<ResultSetHeader>(query, [persona_1, persona_2]);
         return result.insertId;
     }catch(error: any){
         console.log("ERROR: ", error);
-        return notFound(`La persona con cedula ${colaborador} o ${cliente} no existe`);
+        return notFound(`La persona con cedula ${persona_1} o ${persona_2} no existe`);
     }
 }
 

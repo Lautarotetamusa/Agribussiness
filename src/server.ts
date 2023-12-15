@@ -1,4 +1,7 @@
 import express from 'express';
+import {createServer} from 'http';
+import {Server} from 'socket.io';
+
 import cors from 'cors';
 import "express-async-errors"; //permitir errores en funciones asyncronas
 import {handle_errors} from './errors';
@@ -7,17 +10,15 @@ import {join} from "path"; //Crear path para los archivos estaticos
 import { fileRouter } from './routes/files.routes';
 import {router} from "./routes";
 
-/*export const app = express();*/
-import expressWs from "express-ws";
-//let WebSocket = expressWs(app);
-export const express_ws = expressWs(express());
-export const app = express_ws.app;
-console.log("clients:", express_ws.getWss());
-//const expressWs = require('express-ws')(app);
+import {chat} from "./chat";
 
-//Es muy importante que este import esté después de la declaracion de la pp
-//De otro modo router.ws nos dará error
-import chatRouter from "./chat";
+export const app = express();
+const server = createServer(app);
+export const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+});
 
 const back_port: number = Number(process.env.BACK_PORT) | 3000; // Puerto interno del docker donde se levanta el server
 const public_port: number = Number(process.env.BACK_PUBLIC_PORT) | 80; //Puerto que tiene acceso al mundo
@@ -34,14 +35,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true,}));
 
-//Rutas del chat
-app.use(chatRouter);
-
 //Servir los archivos estáticos
 app.use('/files', fileRouter);
 
 //Todas las routas
 app.use(router);
+
+io.on('connection', chat);
 
 //Manejo de rutas de la API que no existen
 app.use('*', (req, res) => res.status(404).json({
@@ -51,6 +51,6 @@ app.use('*', (req, res) => res.status(404).json({
 
 app.use(handle_errors);
 
-app.listen(back_port, () => {
+server.listen(back_port, () => {
     console.log(`[server]: Server is running at http://${host}:${back_port}`);
 });

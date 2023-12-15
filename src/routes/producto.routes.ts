@@ -17,7 +17,11 @@ router.post('/list',
     productoController.file_insert
 );
 
-router.get('/', auth, check_rol([roles.admin]), productoController.get_all);
+router.get('/', 
+    auth,
+    check_rol([roles.admin, roles.colaborador]),
+    productoController.get_all
+);
 
 router.get('/:id', 
     auth, 
@@ -43,7 +47,7 @@ router.put('/:id/ficha',
 
 router.post('/:id/imagen',
     auth,
-    check_rol([roles.admin]),
+    check_rol([roles.admin, roles.colaborador]),
     uploadImagenProducto,
     valid_param("id"),
     productoController.create_imagen(false)
