@@ -5,4 +5,5 @@ dist/*
 mysql/
 test.csv
 files/*
+!files/logo.png
 front_tests/
