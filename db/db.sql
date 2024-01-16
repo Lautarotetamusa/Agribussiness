@@ -150,6 +150,7 @@ CREATE TABLE Imagenes(
 
     id_producto INT NOT NULL,
     nro_imagen INT NOT NULL,
+    comentarios VARCHAR(512) DEFAULT "",
 
     PRIMARY KEY (id_producto, nro_imagen),
     FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)

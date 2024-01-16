@@ -50,7 +50,7 @@ router.post('/:id/imagen',
     check_rol([roles.admin, roles.colaborador]),
     uploadImagenProducto,
     valid_param("id"),
-    productoController.create_imagen(false)
+    productoController.create_imagen(false) //False -> imagen normal
 );
 
 router.post('/:id/portada',
@@ -58,7 +58,7 @@ router.post('/:id/portada',
     check_rol([roles.admin]),
     uploadImagenProducto,
     valid_param("id"),
-    productoController.create_imagen(true)
+    productoController.create_imagen(true) //True -> imagen de portada
 );
 
 router.get('/:id/imagen',

@@ -59,23 +59,29 @@ const create_ficha_tecnica = async (req: Request, res: Response): Promise<Respon
 
 const create_imagen = (is_portada: boolean) => {
     return async (req: Request, res: Response): Promise<Response> => {
+        console.log(req.body);
         if (!req.file) throw new ValidationError("La imagen no se subio correctamente");
         const id: number = res.locals.id;
     
         const producto = await Producto.get_one(id);
-        let imagen: string = "";
-    
+        let imagen_path: string = "";
+
         if (!is_portada){
-            imagen = (await Imagen.insert({id_producto: producto.id_producto, path: req.file.filename})).path;
+            const imagen = await Imagen.insert({
+                id_producto: producto.id_producto, 
+                path: req.file.filename,
+                comentarios: req.body.comentarios || ""
+            });
+            imagen_path = imagen.path;
         }else{
             let _:void = await producto.update({portada: req.file.filename});
-            imagen = `${files_url}/${Imagen.image_route}/${producto.portada as string}`;
+            imagen_path = `${files_url}/${Imagen.image_route}/${producto.portada as string}`;
         }
     
         return res.status(201).json({
             success: true,
             message: `Imagen para el producto ${producto.nombre} cargada correctamente`,
-            data: imagen
+            data: imagen_path
         });
     }
 }

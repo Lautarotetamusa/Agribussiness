@@ -7,7 +7,7 @@ import {files_path} from "../server";
 export const uploadImagenProducto = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            let file_path =  files_path + "/" + Imagen.image_route;
+            const file_path =  files_path + "/" + Imagen.image_route;
 
             fs.mkdirSync(file_path, { recursive: true })
             return cb(null, file_path);

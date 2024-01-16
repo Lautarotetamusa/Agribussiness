@@ -1,0 +1,2 @@
+ALTER TABLE Imagenes
+    ADD COLUMN comentarios VARCHAR(512) DEFAULT "";

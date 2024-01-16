@@ -30,6 +30,7 @@ export class Imagen extends BaseModel{
 
     static async insert(body: CreateImagen){
         const nro_imagen = await this.get_last(body.id_producto);
+        console.log("comentarios: ", body.comentarios);
         
         const imagen = await this._insert<IImagen, Imagen>({
             ...body,
