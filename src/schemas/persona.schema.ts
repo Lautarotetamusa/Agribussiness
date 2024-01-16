@@ -11,7 +11,8 @@ const rolesKeys = Object.keys(roles) as [RolesKeys];
 const iImagen = z.object({
     id_producto: z.number(),
     nro_imagen: z.number(),
-    path: z.string()
+    path: z.string(),
+    comentarios: z.string()
 });
 
 const createImagen = iImagen.omit({
