@@ -20,8 +20,8 @@ export const io = new Server(server, {
     }
 });
 
-const back_port: number = Number(process.env.BACK_PORT) | 3000; // Puerto interno del docker donde se levanta el server
-const public_port: number = Number(process.env.BACK_PUBLIC_PORT) | 80; //Puerto que tiene acceso al mundo
+const back_port: number = Number(process.env.BACK_PORT) || 3000; // Puerto interno del docker donde se levanta el server
+const public_port: number = Number(process.env.BACK_PUBLIC_PORT) || 80; //Puerto que tiene acceso al mundo
 const host = process.env.HOST ? process.env.HOST : "localhost";
 
 //Ruta de la API donde se accede a los archivos estaticos
