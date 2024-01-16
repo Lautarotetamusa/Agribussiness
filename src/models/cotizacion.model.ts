@@ -86,7 +86,7 @@ export class Cotizacion extends BaseModel{
 
     static async get_one(nro_cotizacion: number){
         const cotizacion = await this.find_one<ICotizacion, Cotizacion>({nro_cotizacion: nro_cotizacion});
-        //cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
+        cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
         return cotizacion;
     }
 
@@ -104,7 +104,7 @@ export class Cotizacion extends BaseModel{
 
     static async get_all(){
         const cotizaciones = await this.find_all<ICotizacion>();
-        cotizaciones.map(c => `${files_url}/${Cotizacion.file_route}/${c.file}`);
+        cotizaciones.map(c => {c.file = `${files_url}/${Cotizacion.file_route}/${c.file}`});
         return cotizaciones;
     }
 }

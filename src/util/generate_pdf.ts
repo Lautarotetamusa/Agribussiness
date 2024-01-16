@@ -22,7 +22,10 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
     }
   });
   // to save on server
-  doc.pipe(fs.createWriteStream(`${files_path}/${Cotizacion.file_route}/${cotizacion.file}`));
+  const folder_path = `${files_path}/${Cotizacion.file_route}/`;
+  //Creamos la carpeta si no existe
+  fs.mkdirSync(folder_path, { recursive: true });
+  doc.pipe(fs.createWriteStream(folder_path+cotizacion.file));
 
   //console.log("cotizacion: ", cotizacion);
 
