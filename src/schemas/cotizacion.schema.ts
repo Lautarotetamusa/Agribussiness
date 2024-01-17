@@ -18,7 +18,8 @@ export const iCotizacion = z.object({
     fecha_creacion: z.date(),
     estado: z.enum(Object.keys(estados) as [EstadoKeys]),
     colaborador: z.string().max(10),
-    cliente: z.string().max(10),
+    cliente: z.string().max(10).optional(),
+    cliente_nuevo: z.string().max(64).optional(),
     file: z.string(),
     forma_pago: z.enum(Object.keys(formas_pago) as [FormaPago]),
     tiempo_entrega: z.number().max(9).min(1),
@@ -45,7 +46,12 @@ export const createCotizacion = iCotizacion.omit({
 }).extend({
     forma_pago: z.enum(Object.keys(formas_pago) as [FormaPago]).default(formas_pago.Contado),
     tiempo_entrega: z.number().max(9).min(1).default(1),
-});
+}).refine(schema => !(
+    schema.cliente !== undefined && schema.cliente_nuevo !== undefined
+),  "Una cotizacion no puede tener dos clientes")
+.refine(schema => !(
+    schema.cliente === undefined && schema.cliente_nuevo === undefined
+), "Una cotizacion necesita al menos un cliente");
 
 export type ICotizacion = z.infer<typeof iCotizacion>;
 export type CreateCotizacion = z.infer<typeof createCotizacion>;

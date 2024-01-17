@@ -59,7 +59,7 @@ const create_ficha_tecnica = async (req: Request, res: Response): Promise<Respon
 
 const create_imagen = (is_portada: boolean) => {
     return async (req: Request, res: Response): Promise<Response> => {
-        console.log(req.body);
+        console.log(req);
         if (!req.file) throw new ValidationError("La imagen no se subio correctamente");
         const id: number = res.locals.id;
     

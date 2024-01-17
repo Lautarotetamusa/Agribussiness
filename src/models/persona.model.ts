@@ -12,6 +12,7 @@ import { TipoSolicitud } from '../schemas/solicitud.schema';
 import { ListSolicitudesColaborador } from '../schemas/solicitud.schema';
 import { ValidationError } from '../errors';
 import { Cotizacion } from './cotizacion.model';
+import { files_url } from '../server';
 
 type rolExtend<R extends RolesKeys> = 
     R extends "colaborador" ? Colaborador : 
@@ -85,22 +86,8 @@ export class Persona extends BaseModel{
                 WHERE cedula = ?
             );
         `;
-            /* 
-            SELECT cedula FROM Personas P
-            INNER JOIN Cargos C
-                ON C.cod_cargo = P.cod_cargo
-            WHERE rol = 'colaborador'
-            AND C.nivel > (
-                SELECT nivel FROM Personas P
-                INNER JOIN Cargos C
-                    ON C.cod_cargo = P.cod_cargo
-                WHERE cedula = "392142823"
-            ); 
-        */
-        console.log("query: ", query);
 
         const [rows] = await sql.query<RowDataPacket[]>(query, [cedula]);
-        console.log(rows)
         return rows as {cedula: string}[];
     }
 
@@ -136,11 +123,14 @@ export class Persona extends BaseModel{
         const query = `
             SELECT CO.*, ${(Cliente.fields.map(f => `C.${f} as ${Cliente.table_name}_${f}`)).join(',')} 
             FROM ${Cotizacion.table_name} CO
-            INNER JOIN ${Cliente.table_name} C
+            LEFT JOIN ${Cliente.table_name} C
                 ON CO.cliente = C.cedula
             WHERE ` + this.rol + ` = ?`;
         
         const [rows] = await sql.query<RowDataPacket[]>(query, this.cedula);
+        const field_name = 'cliente_nuevo';
+        if (!(field_name in rows[0])) throw new Error(`Falta el campo '${field_name}' en la consulta`);
+
         const cotizaciones = rows.map(row => {
             const cliente: Record<string, any> = {};
             for (const key in row) {
@@ -150,6 +140,11 @@ export class Persona extends BaseModel{
                     delete row[key];
                 }
             }
+            if (field_name in row && row[field_name] !== null){
+                cliente.nombre = row[field_name];
+                delete row[field_name];
+            }
+            row.file = `${files_url}/${Cotizacion.file_route}/${row.file}`;
             return {
                 ...row,
                 cliente,

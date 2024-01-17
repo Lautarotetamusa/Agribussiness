@@ -45,7 +45,8 @@ export class Cotizacion extends BaseModel{
     fecha_creacion: Date;
     estado: EstadoKeys;
     colaborador_cedula: string;
-    cliente_cedula: string;
+    cliente_cedula?: string;
+    cliente_nuevo?: string;
     file: string
     forma_pago: FormaPago;
     tiempo_entrega: number;
@@ -63,6 +64,7 @@ export class Cotizacion extends BaseModel{
         this.estado = req.estado;
         this.colaborador_cedula = req.colaborador;
         this.cliente_cedula = req.cliente;
+        this.cliente_nuevo = req.cliente_nuevo;
         this.file = req.file;
         this.forma_pago = req.forma_pago;
         this.tiempo_entrega = req.tiempo_entrega;
@@ -104,7 +106,7 @@ export class Cotizacion extends BaseModel{
 
     static async get_all(){
         const cotizaciones = await this.find_all<ICotizacion>();
-        cotizaciones.map(c => {c.file = `${files_url}/${Cotizacion.file_route}/${c.file}`});
+        cotizaciones.map(c => c.file = `${files_url}/${Cotizacion.file_route}/${c.file}`);
         return cotizaciones;
     }
 }

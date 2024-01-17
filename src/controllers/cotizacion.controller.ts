@@ -6,8 +6,8 @@ import {
     createCotizacion, 
     createProductosCotizacion
 }from "../schemas/cotizacion.schema";
-import { Colaborador, Persona } from "../models/persona.model";
-import { roles } from "../schemas/persona.schema";
+import { Cliente, Persona } from "../models/persona.model";
+import { CreateUser, roles } from "../schemas/persona.schema";
 import { sql } from "../db";
 import { ValidationError } from "../errors";
 import { Producto } from "../models/producto.model";
@@ -31,9 +31,14 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     //Validar que existan y traer otros datos para generar el archivo
     let db_prods = await Producto.select(productos.map(p => p.id_producto));
 
-    //Validar que exista un cliente y colaborador con las cedulas que les pasamos
-    const cliente = await Persona.get_by_rol(body.cliente, roles.cliente);
-    //await Persona.exists_tipo(body.colaborador, roles.colaborador); No lo valido ya que es la persona loogeada en ese momento, se supone que existe xd
+    //Validar que exista un cliente con la cedula pasada
+    //Si es un cliente nuevo lo creamos para tener su nombre para el pdf
+    let cliente = undefined;
+    if (body.cliente){
+        cliente = await Persona.get_by_rol(body.cliente, roles.cliente);
+    }else{
+        cliente = new Cliente({nombre: body.cliente_nuevo} as CreateUser)
+    }
  
     //Agregar el nombre y el precio si es que no lo tiene a los productos
     let prods_archivo = productos.map(p => {return {...p, nombre: "", precio_final: 0, iva: 0}});
@@ -54,9 +59,9 @@ const create = async (req: Request, res: Response): Promise<Response> => {
         await conn.beginTransaction();
         const cotizacion = await Cotizacion.create(body, productos as ProductosCotizacionArchivo[]);
         cotizacion.cliente = cliente;
-        //La buscamos de nuevo para obtener la fecha de creación
-        //const cotizacion = await Cotizacion.get_one(inserted.nro_cotizacion);
-        cotizacion.colaborador = await Persona.get_one(res.locals.user.cedula) as Colaborador;
+
+        //Buscamos el colaborador ya que necesitamos su nombre para el pdf.
+        cotizacion.colaborador = await Persona.get_by_rol(res.locals.user.cedula, roles.colaborador);
 
         await generate_cotizacion_pdf(cotizacion, prods_archivo);
         cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
@@ -87,8 +92,6 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
     let productos = await cotizacion.get_productos();
 
     if (res.locals.user.rol != roles.admin){
-        console.log(res.locals.user.cedula, cotizacion.colaborador_cedula);
-        
         if (res.locals.user.cedula != cotizacion.colaborador_cedula){
             throw new ValidationError("No podes ver una cotizacion generada por otro colaborador, se necesita permiso admin o que se generada por vos");
         }

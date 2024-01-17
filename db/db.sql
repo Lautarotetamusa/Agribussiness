@@ -121,8 +121,10 @@ CREATE TABLE IF NOT EXISTS Cotizaciones(
     estado ENUM("aprobada", "creada") NOT NULL DEFAULT "creada",
     colaborador CHAR(10) NOT NULL,
     disposiciones VARCHAR(2048) NOT NULL,
-    cliente CHAR(10) NOT NULL,
     file VARCHAR(256) NOT NULL,
+
+    cliente CHAR(10) DEFAULT NULL,
+    cliente_nuevo VARCHAR(64) DEFAULT NULL,
 
     forma_pago ENUM("Contado", "Credito 15", "Credito 30", "Credito 45") NOT NULL DEFAULT "Contado",
     tiempo_entrega TINYINT NOT NULL DEFAULT 1, //Tiempo en días
@@ -130,6 +132,10 @@ CREATE TABLE IF NOT EXISTS Cotizaciones(
     PRIMARY KEY (nro_cotizacion),
     FOREIGN KEY (colaborador) REFERENCES Personas(cedula),
     FOREIGN KEY (cliente) REFERENCES Personas(cedula)
+);
+ALTER TABLE Cotizaciones ADD constraint double_client_check CHECK(
+    (cliente IS NOT NULL AND cliente_nuevo IS NULL) OR
+    (cliente IS NULL AND cliente_nuevo IS NOT NULL)
 );
 
 CREATE TABLE IF NOT EXISTS CotizacionProducto(

@@ -27,8 +27,6 @@ export async function generate_cotizacion_pdf(cotizacion: Cotizacion, productos:
   fs.mkdirSync(folder_path, { recursive: true });
   doc.pipe(fs.createWriteStream(folder_path+cotizacion.file));
 
-  //console.log("cotizacion: ", cotizacion);
-
   let subtotal = productos.reduce((acc, p) => acc + p.cantidad * p.precio_final, 0);
 
   const total_iva = productos.reduce((acc, p) => 
