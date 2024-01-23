@@ -108,7 +108,6 @@ export class BaseModel{
 
         try {
             const [result] = await sql.query<ResultSetHeader>(query, _req);
-            console.log(result);
 
             let model = new (this as any)(_req) as MT;
             if (this.pk)
@@ -160,9 +159,6 @@ export class BaseModel{
             INSERT INTO ${this.table_name} (${keys})
             VALUES ${parameters}`;
 
-        console.log(query);
-        
-
         const [result] = await sql.query<ResultSetHeader>(query, value_list);
     }
 
@@ -191,7 +187,6 @@ export class BaseModel{
     static async all_exists<RT extends {}>(_req: RT[]): Promise<boolean>{
         const rows = await this._bulk_select(_req);
         return rows.length == _req.length;
-            throw new NotFound(`El item de la tabla ${this.table_name} no se encontro`);
     }
 
     /**
@@ -203,8 +198,6 @@ export class BaseModel{
      */
     static async any_exists<RT extends {}>(_req: RT[]): Promise<boolean>{
         const rows = await this._bulk_select(_req);
-        console.log("ROWS: ", rows);
-        
         return rows.length > 0;
     }
 

@@ -29,6 +29,11 @@ export const createUser = z.object({
     direccion: z.string(),
     rol: z.enum(rolesKeys)
 });
+const tokenData = createUser.pick({
+    cedula: true,
+    nombre: true,
+    rol: true
+});
 
 export const createColaborador = createUser.extend({
     cod_cargo: z.number()
@@ -41,6 +46,7 @@ export const updateUser = createUser.omit({rol: true}).partial();
 export const updateColaborador = createColaborador.partial();
 
 export type CreateUser = z.infer<typeof createUser>;
+export type TokenData = z.infer<typeof tokenData>;
 export type LoginUser = z.infer<typeof loginUser>;
 export type UpdateUser = Partial<CreateUser>;
 export type CreateColaborador = z.infer<typeof createColaborador>;

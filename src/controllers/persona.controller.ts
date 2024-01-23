@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+    TokenData,
     createColaborador,
     createUser, 
     loginUser, 
@@ -47,11 +48,12 @@ const login = async (req: Request, res: Response): Promise<Response> => {
     let match: boolean = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
     if (!match) throw new Unauthorized("Contraseña incorrecta");
 
-    const token = jwt.sign({
+    const tokenData: TokenData = {
         cedula: body.cedula,
+        nombre: persona.nombre,
         rol: persona.rol
-    }, process.env.JWT_SECRET as Secret, 
-    { expiresIn: process.env.JWT_EXPIRES_IN });
+    }
+    const token = jwt.sign(tokenData, process.env.JWT_SECRET as Secret, { expiresIn: process.env.JWT_EXPIRES_IN });
 
     return res.status(200).json({
         success: true,

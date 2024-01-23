@@ -1,7 +1,7 @@
 import {BaseModel} from './base.model';
 import {
     RolesKeys, 
-    CreateUser, UpdateUser, CreateColaborador, roles, UpdateColaborador
+    CreateUser, UpdateUser, CreateColaborador, roles, UpdateColaborador, TokenData
 } from "../schemas/persona.schema";
 import { Zona } from './zona.model';
 import { Cargo } from './cargo.model';
@@ -64,11 +64,8 @@ export class Persona extends BaseModel{
             throw new ValidationError(`No existe el ${rol} con cedula ${cedula}`);
     }
 
-    static async get_password(cedula: string): Promise<{
-        password: string,
-        rol: RolesKeys
-    }>{
-        const fields = ["password", "rol"];
+    static async get_password(cedula: string): Promise<TokenData & {password: string}>{
+        const fields = ["password", "rol", "nombre"];
         return this._get_one({cedula: cedula, is_deleted: 0}, fields);
     }
 

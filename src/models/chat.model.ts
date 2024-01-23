@@ -57,7 +57,7 @@ export async function get_messages(chat_id: number): Promise<ChatMessage[]>{
 //Crea un nuevo mensaje, validando que el sender se encuentre dentro del chat
 export async function create_message(chat_id: number, sender: string, message: string): Promise<number | ErrorResponse>{
     //Verificar si el remitente está dentro del chat
-    let query = `
+    /*let query = `
         SELECT COUNT(*) as valid_sender
         FROM Chats
         WHERE id = ? AND (cliente = ? OR colaborador = ?);
@@ -65,8 +65,8 @@ export async function create_message(chat_id: number, sender: string, message: s
     const [rows] = await sql.query<RowDataPacket[]>(query, [chat_id, sender, sender]);
     if (rows[0].valid_sender < 0){
         return notFound("La persona que envia el mensaje no se encuentra dentro del chat");
-    }
-    query = `
+    }*/
+    const query = `
         INSERT INTO Messages
         (chat_id, sender, message)
         VALUES(?, ?, ?)

@@ -1,33 +1,34 @@
 import { Socket } from "socket.io";
-import { get_chat, get_messages } from "./models/chat.model";
+import { create_message, get_chat, get_messages } from "./models/chat.model";
 import { validationError } from "./errors";
 import { io } from "./server";
 import jwt, { Secret } from "jsonwebtoken";
 import { Persona } from "./models/persona.model";
+import { TokenData } from "./schemas/persona.schema";
 
 // Objecto que guarda los usuarios conenctados en ese momento
-let Users: Record<string, {chat_id: number, nombre: string, cedula: string}> = {};
+let Users: Record<string, {chat_id: number, token: string} & TokenData> = {};
 
 export function chat(socket: Socket) {
-    console.log("usuario conectado");
+    //Token: token de la persona que inicia la conversacion
+    //cedula: cedula de la persona con la que quiere hablar
     socket.on('join', async (data: {token: string, cedula: string}) => {
-        let sender = "";
+        let sender: TokenData;
         
         try{
-            const decoded = jwt.verify(data.token, process.env.JWT_SECRET as Secret);
-            sender = (decoded as any).cedula;
+            sender = jwt.verify(data.token, process.env.JWT_SECRET as Secret) as TokenData;
         }catch(err: any){
             socket.emit("error", validationError("El token pasado es incorrecto "+err.message));
             socket.disconnect();
             return;
         }
-        if (sender == data.cedula){
+        if (sender.cedula == data.cedula){
             socket.emit("error", validationError("No se puede hacer un chat con vos mismo"));
             socket.disconnect();
             return;
         }
-        const persona = await Persona.get_one(sender);
-        const chat_id = await get_chat(sender, data.cedula)
+
+        const chat_id = await get_chat(sender.cedula, data.cedula)
         if (typeof chat_id !== "number"){
             socket.emit("error", chat_id);
             socket.disconnect();
@@ -41,8 +42,8 @@ export function chat(socket: Socket) {
         //Agregemos el usuario que se acaba de conectar a la lista de usuarios
         Users[socket.id] = {
             chat_id: chat_id,
-            nombre: persona.nombre,
-            cedula: persona.cedula
+            token: data.token,
+            ...sender
         };
 
         const messages = await get_messages(chat_id);
@@ -55,65 +56,14 @@ export function chat(socket: Socket) {
     socket.on('message', async (message: string) => {
         //Enviamos un mensaje a todos los usuarios coneectados a este chat
         console.log("nuevo mensaje", message);
+        console.log("Users: ", Users);
+        await create_message(Users[socket.id].chat_id, Users[socket.id].cedula, message);
 
         if (socket.id in Users){
-            io.to(Users[socket.id].chat_id.toString()).emit('message', {sender: Users[socket.id].nombre, message: message});
+            const user = Users[socket.id];
+            io.to(user.chat_id.toString()).emit('message', {sender: user.cedula, message: message});
         }else{
             socket.emit("error", validationError("No estás conectado a esta sala, para conectarse socket.emit('join', {chat_id, token})"));
         }
     });
 }
-
-//WebSockets
-//const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-/*
-router.ws('/messages/:cedula', async (ws, req) => {
-    //Primero necesitamos el token de la persona que envia el mensaje
-    if (!("token" in req.query)){
-        ws.send(JSON.stringify(validationError("Se necesita pasar un token como parametro /messages/{cedula}?token={token}")));
-        ws.close();
-        return;
-    }
-
-    let sender = "";
-    try{
-        const decoded = jwt.verify(String(req.query.token), process.env.JWT_SECRET as Secret);
-        sender = (decoded as any).cedula;
-    }catch(err: any){
-        console.log("ERROR: ", err);
-        ws.send(JSON.stringify(validationError("El token pasado es incorrecto "+err.message)));
-        ws.close();
-        return;
-    }
-    console.log("SENDER: ", sender);
-
-    if (sender == req.params.cedula){
-        ws.send(JSON.stringify(validationError("No se puede hacer un chat con vos mismo")))
-        ws.close();
-        return;
-    }
-
-    const chat_id = await get_chat(sender, req.params.cedula)
-    if (typeof chat_id !== "number"){
-        ws.send(JSON.stringify(chat_id));
-        ws.close();
-        return;
-    }
-    console.log(chat_id);
-
-    const messages = await get_messages(chat_id);
-    ws.send(JSON.stringify({
-        success: true,
-        data: messages
-    }));
-
-    //console.log("clients:", express_ws.getWss().clients.values());
-    ws.on('message', async (msg: string) => {
-        const parsed = JSON.parse(msg);
-        console.log(parsed.chat_id, parsed.message);
-        ws.emit(parsed.chat_id, parsed.message);
-    });
-});
-
-export default router;
-*/
