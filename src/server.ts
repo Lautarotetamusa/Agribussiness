@@ -38,9 +38,10 @@ app.use(express.urlencoded({extended: true,}));
 //Servir los archivos estáticos
 app.use('/files', fileRouter);
 
-//Todas las routas
+//Todas las rutas
 app.use(router);
 
+//Conexion con el chat
 io.on('connection', chat);
 
 //Manejo de rutas de la API que no existen

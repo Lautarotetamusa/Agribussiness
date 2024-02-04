@@ -13,11 +13,23 @@ services:
     volumes:
       - ./db/init:/docker-entrypoint-initdb.d #Crear las tablas automaticamente al iniciar
       - ./mysql:/var/lib/mysql #Mantener la misma data de mi base de datos local
+
+  #Servicio de notificaciones
+  rabbitmq:
+    image: rabbitmq:3.12.12-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=$AMQP_USER
+      - RABBITMQ_DEFAULT_PASS=$AMQP_PASS
   
   api:
     depends_on:
       mysqldb:
         condition: service_started
+          #rabbitmq:
+          #condition: service_started
     build: 
       dockerfile: ./Dockerfile
     env_file: ./.env

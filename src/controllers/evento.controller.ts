@@ -2,11 +2,17 @@ import { Request, Response } from "express";
 import {Evento} from "../models/evento.model";
 import { createEvento, updateEvento } from "../schemas/evento.schema";
 import { ValidationError } from "../errors";
+import { broadcast_notification } from "../notifications";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createEvento.parse(req.body);
 
     const evento = await Evento.create(body);
+
+    await broadcast_notification({
+        message: `Nuevo evento: ${evento.titulo}`,
+        type: 'evento:new'
+    });
 
     return res.status(201).json({
         success: true,
@@ -34,6 +40,11 @@ const update = async (req: Request, res: Response): Promise<Response> => {
 
     const evento = await Evento.get_one(res.locals.id);
     let _:void = await evento.update(body);
+
+    await broadcast_notification({
+        message: `Nuevo evento: ${evento.titulo}`,
+        type: 'evento:update'
+    });
 
     return res.status(201).json({
         success: true,

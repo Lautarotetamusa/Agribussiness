@@ -11,6 +11,7 @@ import LineaNegocioRouter from "./routes/linea_negocio.routes";
 import EventoRouter from "./routes/evento.routes";
 import SolicitudRouter from "./routes/solicitud.routes";
 import CotizacionRouter from "./routes/cotizacion.routes";
+import NotificationRouter from "./routes/notification.routes";
 
 router.use('/persona/', PersonaRouter);
 router.use('/producto/', ProductoRouter);
@@ -22,3 +23,4 @@ router.use('/linea', LineaNegocioRouter);
 router.use('/evento', EventoRouter);
 router.use('/solicitud', SolicitudRouter);
 router.use('/cotizacion', CotizacionRouter);
+router.use('/notificacion', NotificationRouter);

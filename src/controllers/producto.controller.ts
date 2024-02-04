@@ -8,6 +8,7 @@ import {
 import { csv2arr } from "../util/csv_to_arr";
 import { Proveedor } from "../models/proveedor.model";
 import { files_url } from "../server";
+import { broadcast_notification } from "../notifications";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const productos = await Producto.get_all();
@@ -36,6 +37,11 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
     }
     let _: void = await Producto.bulk_insert((productos as unknown) as CreateProducto[]);
 
+    await broadcast_notification({
+        message: `Hubo un cambio en la lista de precios`,
+        type: "producto:new"
+    });
+
     return res.status(201).json({
         success: true,
         message: "Productos subidos correctamente",
@@ -59,7 +65,6 @@ const create_ficha_tecnica = async (req: Request, res: Response): Promise<Respon
 
 const create_imagen = (is_portada: boolean) => {
     return async (req: Request, res: Response): Promise<Response> => {
-        console.log(req);
         if (!req.file) throw new ValidationError("La imagen no se subio correctamente");
         const id: number = res.locals.id;
     
@@ -78,6 +83,11 @@ const create_imagen = (is_portada: boolean) => {
             imagen_path = `${files_url}/${Imagen.image_route}/${producto.portada as string}`;
         }
     
+        await broadcast_notification({
+            message: `Imagen para el producto ${producto.nombre} cargada correctamente`,
+            type: "producto:imagen:new"
+        });
+
         return res.status(201).json({
             success: true,
             message: `Imagen para el producto ${producto.nombre} cargada correctamente`,
@@ -104,6 +114,11 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     const body: CreateProducto = createProducto.parse(req.body);
     const producto: Producto = await Producto.create(body);
 
+    await broadcast_notification({
+        message: `Se agrego un nuevo producto: ${producto.nombre}`,
+        type: "producto:new"
+    });
+
     return res.status(201).json({
         success: true,
         message: "Producto creado correctamente",
@@ -117,7 +132,12 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     const id: number = res.locals.id;
 
     const producto = await Producto.get_one(id);
-    let _:void = await producto.update(body);
+    const _:void = await producto.update(body);
+
+    await broadcast_notification({
+        message: `Se actualizo un producto: ${producto.nombre}`,
+        type: "producto:update"
+    });
 
     return res.status(201).json({
         success: true,
