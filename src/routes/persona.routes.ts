@@ -40,6 +40,13 @@ router.get('/:cedula/cotizacion',
     personaController.get_cotizaciones
 );
 
+router.get('/:cedula/chat',
+    auth,
+    check_rol([roles.colaborador, roles.cliente]),
+    self_or_admin,
+    personaController.get_chats
+);
+
 router.get('/:cedula', auth, self_or_admin, personaController.get_one);
 
 router.put('/:cedula', auth, self_or_admin, personaController.update);
