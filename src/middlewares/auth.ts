@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { Secret, TokenExpiredError } from "jsonwebtoken";
 import { RolesKeys, roles } from "../schemas/persona.schema";
 import { Forbidden, Unauthorized, ValidationError } from "../errors";
+import { TokenData } from "../schemas/persona.schema";
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const token: string | undefined = req.header("Authorization")?.replace('Bearer ', '');
@@ -10,7 +11,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     try{
         const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret);
-        res.locals.user = decoded;
+        res.locals.user = decoded as TokenData;
         next();
     }catch(err: any){
         if (err instanceof TokenExpiredError)

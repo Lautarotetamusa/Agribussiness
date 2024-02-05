@@ -9,6 +9,7 @@ import {
     updateUser
 } from "../schemas/persona.schema";
 import {Colaborador, Persona, Cliente} from "../models/persona.model";
+import * as Chat from "../models/chat.model";
 
 import bcrypt from "bcrypt";
 import jwt, {Secret} from "jsonwebtoken";
@@ -143,6 +144,16 @@ const get_solicitables = async (req: Request, res: Response): Promise<Response> 
     })
 }
 
+//Devuelve una lista de chats de esa persona
+const get_chats = async (req: Request, res: Response): Promise<Response> => {
+    const chats = await Chat.get_chats(req.params.cedula);
+
+    return res.status(200).json({
+        success: true,
+        data: chats
+    });
+}
+
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     let rol;
     if (req.query.rol){
@@ -165,5 +176,6 @@ export default {
     update,
     get_solicitudes,
     get_cotizaciones,
-    get_solicitables
+    get_solicitables,
+    get_chats
 }

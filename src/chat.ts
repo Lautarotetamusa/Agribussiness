@@ -3,11 +3,11 @@ import { create_message, get_chat, get_messages } from "./models/chat.model";
 import { validationError } from "./errors";
 import { io } from "./server";
 import jwt, { Secret } from "jsonwebtoken";
-import { Persona } from "./models/persona.model";
 import { TokenData } from "./schemas/persona.schema";
+import { direct_notification } from "./notifications";
 
 // Objecto que guarda los usuarios conenctados en ese momento
-let Users: Record<string, {chat_id: number, token: string} & TokenData> = {};
+let Users: Record<string, {chat_id: number, cedula: string, nombre: string, reciver: string}> = {};
 
 export function chat(socket: Socket) {
     //Token: token de la persona que inicia la conversacion
@@ -34,16 +34,14 @@ export function chat(socket: Socket) {
             socket.disconnect();
             return;
         }
-
-        console.log("JOIN", chat_id);
-        console.log("socket_id: ", socket.id);
         socket.join(String(chat_id));
 
         //Agregemos el usuario que se acaba de conectar a la lista de usuarios
         Users[socket.id] = {
             chat_id: chat_id,
-            token: data.token,
-            ...sender
+            cedula: sender.cedula,
+            nombre: sender.nombre,
+            reciver: data.cedula,
         };
 
         const messages = await get_messages(chat_id);
@@ -54,16 +52,21 @@ export function chat(socket: Socket) {
     });
 
     socket.on('message', async (message: string) => {
-        //Enviamos un mensaje a todos los usuarios coneectados a este chat
-        console.log("nuevo mensaje", message);
-        console.log("Users: ", Users);
-        await create_message(Users[socket.id].chat_id, Users[socket.id].cedula, message);
-
-        if (socket.id in Users){
-            const user = Users[socket.id];
-            io.to(user.chat_id.toString()).emit('message', {sender: user.cedula, message: message});
-        }else{
+        if (!(socket.id in Users)){
             socket.emit("error", validationError("No estás conectado a esta sala, para conectarse socket.emit('join', {chat_id, token})"));
+            return;
         }
+        const user = Users[socket.id];
+
+        await create_message(user.chat_id, user.cedula, message);
+
+        //Enviamos una notificacion a la persona que recive el mensaje 
+        await direct_notification(user.reciver, {
+            message: `Tienes un nuevo mensaje de ${user.nombre}: ${message}`,
+            type: "message:new"
+        });
+
+        //Enviamos un mensaje a todos los usuarios coneectados a este chat
+        io.to(user.chat_id.toString()).emit('message', {sender: user.cedula, message: message});
     });
 }

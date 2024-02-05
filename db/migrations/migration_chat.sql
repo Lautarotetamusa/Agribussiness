@@ -9,6 +9,10 @@ CREATE TABLE Chats(
     PRIMARY KEY (id)
 );
 
+ALTER TABLE Chats
+    RENAME COLUMN cliente TO persona_1,
+    RENAME COLUMN colaborador TO persona_2;
+
 CREATE TABLE Messages(
     id INT NOT NULL AUTO_INCREMENT,
     chat_id INT NOT NULL,
