@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { ErrorResponse, notFound } from "../errors";
 import { Persona } from "./persona.model";
-import { RolesKeys, roles } from "../schemas/persona.schema";
+import { TokenData, roles } from "../schemas/persona.schema";
 
 const table_name = "Chats";
 
@@ -132,4 +132,26 @@ export async function create_message(chat_id: number, sender: string, message: s
     `;
     const [result] = await sql.query<ResultSetHeader>(query, [chat_id, sender, message]);
     return result.insertId;
+}
+
+export async function init_chat(cedula: string, motivo: string): Promise<TokenData | undefined>{
+    const cargoBuscado = "Representante Técnico Comercial";
+    const query = `
+        WITH Cliente as (
+            SELECT cedula, cod_zona
+            FROM Personas
+            WHERE cedula = ?
+        )
+        SELECT P.cedula, P.nombre, rol
+        FROM Personas P
+        INNER JOIN Cargos Ca
+            ON P.cod_cargo = Ca.cod_cargo
+        INNER JOIN Cliente C
+            ON P.cod_zona = C.cod_zona 
+            AND rol = '${roles.colaborador}'
+        WHERE Ca.nombre LIKE '${cargoBuscado}'
+    `;
+
+    const [rows] = await sql.query<RowDataPacket[]>(query, [cedula]);
+    return rows[0] as TokenData;
 }

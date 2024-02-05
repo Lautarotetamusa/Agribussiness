@@ -12,6 +12,12 @@ router.get('/',
     chatController.get_all
 );
 
+router.get('/init', 
+    auth, 
+    check_rol([roles.cliente]), 
+    chatController.init_chat
+);
+
 router.get('/:id', 
     auth, 
     check_rol([roles.admin]), 
