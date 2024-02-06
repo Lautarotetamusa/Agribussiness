@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as Chat from "../models/chat.model";
+import { createChat } from "../schemas/chat.schema";
 import { notFound } from "../errors";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
@@ -27,9 +28,11 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
 
 const init_chat = async (req: Request, res: Response): Promise<Response> => {
     const cedula: string = res.locals.user.cedula;
-    const user = await Chat.init_chat(cedula, "test");
+    const motivo = createChat.parse(req.query).motivo;
+
+    const [user, cargoBuscado] = await Chat.init_chat(cedula, motivo);
     if (user == undefined){
-        return res.status(404).json(notFound("No hay ningun colaborador disponible en tu zona"));
+        return res.status(404).json(notFound(`No hay ningun ${cargoBuscado} disponible en tu zona`));
     }
 
     return res.status(200).json({

@@ -1,34 +1,11 @@
 import { sql } from "../db";
-import { z } from "zod";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { ErrorResponse, notFound } from "../errors";
 import { Persona } from "./persona.model";
 import { TokenData, roles } from "../schemas/persona.schema";
+import { Chat, IChat, ChatMessage, motivos, Motivos } from "../schemas/chat.schema";
 
 const table_name = "Chats";
-
-const iChat = z.object({
-    id: z.number(),
-    persona_1: z.string().max(10),
-    persona_2: z.string().max(10)
-});
-type IChat = z.infer<typeof iChat>;
-
-const chat = z.object({
-    chat_id: z.number(),
-    reciver: z.string().max(10),
-    reciver_name: z.string()
-});
-const chatKeys = Object.keys(chat) as [keyof typeof chat];
-type Chat = z.infer<typeof chat>;
-
-const chat_message = z.object({
-    //chat_id: z.number(),
-    message: z.string(),
-    sender: z.string().max(10),
-    created_at: z.date()
-});
-type ChatMessage = z.infer<typeof chat_message>;
 
 /**
     @returns chat_id 
@@ -134,8 +111,13 @@ export async function create_message(chat_id: number, sender: string, message: s
     return result.insertId;
 }
 
-export async function init_chat(cedula: string, motivo: string): Promise<TokenData | undefined>{
-    const cargoBuscado = "Representante Técnico Comercial";
+/**
+El cliente deberá ser dirigido al vendedor de esa zona si es una venta, pero si es asistencia técnica a un desarollista de la zona.
+se pasó como Representante Técnico Comercial (Vendedor) y Asistente Técnico Comercial (desarollista)
+*/
+export async function init_chat(cedula: string, motivo: Motivos): Promise<[TokenData | undefined, string]>{
+    const cargoBuscado = motivo == motivos.venta ? "Representante Técnico Comercial" : "Asistente Técnico Comercial";
+
     const query = `
         WITH Cliente as (
             SELECT cedula, cod_zona
@@ -153,5 +135,5 @@ export async function init_chat(cedula: string, motivo: string): Promise<TokenDa
     `;
 
     const [rows] = await sql.query<RowDataPacket[]>(query, [cedula]);
-    return rows[0] as TokenData;
+    return [rows[0] as TokenData, cargoBuscado];
 }
