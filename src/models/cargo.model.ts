@@ -1,17 +1,9 @@
 import { sql } from "../db";
 import { BaseModel } from "./base.model"
-import { z } from "zod";
 import { Persona } from "./persona.model";
-import { roles } from "../schemas/persona.schema";
-import { ColaboradoresDepto } from "../schemas/departamento.schema";
+import { RetrieveColaborador, roles } from "../schemas/persona.schema";
 import { Departamento } from "./departamento.model";
-
-const iCargo = z.object({
-    cod_cargo: z.number(),
-    id_depto: z.number(),
-    nombre: z.string()
-});
-export type iCargo = z.infer<typeof iCargo>;
+import { iCargo, CargoName } from "../schemas/cargo.schema";
 
 export class Cargo extends BaseModel{
     static table_name = "Cargos";
@@ -19,8 +11,8 @@ export class Cargo extends BaseModel{
 
     cod_cargo: number;
     id_depto: number;
-    nombre: string;
-    colaboradores?: ColaboradoresDepto;
+    nombre: CargoName;
+    colaboradores?: RetrieveColaborador[];
     depto?: Departamento;
 
     constructor(body: iCargo){
@@ -39,13 +31,6 @@ export class Cargo extends BaseModel{
     }
 
     async get_depto(){
-        /*const [rows] = await sql.query<RowDataPacket[]>(`
-            SELECT id_depto, nombre, telefono FROM ${Departamento.table_name} D
-            WHERE id_depto = ?
-        `, [this.id_depto]);*/
-
-        //return rows[0] as RetrieveDepartamento;
-
         this.depto = await Departamento.get_one(this.id_depto);
     }
 
@@ -60,6 +45,6 @@ export class Cargo extends BaseModel{
             AND P.is_deleted = 0
         `, [this.cod_cargo, roles.colaborador]);
 
-        this.colaboradores = rows as ColaboradoresDepto;
+        this.colaboradores = rows as RetrieveColaborador[];
     }
 }

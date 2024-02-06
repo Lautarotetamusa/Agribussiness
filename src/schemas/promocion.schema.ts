@@ -8,11 +8,11 @@ export const createPromocion = z.object({
 });
 export type CreatePromocion = z.infer<typeof createPromocion>;
 
-const iPromocion = createPromocion.extend({
+const promocionSchema = createPromocion.extend({
     id_promo: z.number(),
 })
-export type iPromocion = z.infer<typeof iPromocion>;
+export type PromocionSchema = z.infer<typeof promocionSchema>;
 
-export const uPromocion = createPromocion.partial();
+export const updatePromocion = createPromocion.partial();
 
-export type UPromocion = Partial<CreatePromocion>;
+export type UpdatePromocion = Partial<CreatePromocion>;

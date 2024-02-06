@@ -15,6 +15,7 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
     const cargo = await Cargo.get_one(id);
     let _:void = await cargo.get_colaboradores();
     _ = await cargo.get_depto();
+
     return res.status(200).json({
         success: true,
         data: cargo

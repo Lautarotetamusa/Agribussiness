@@ -1,12 +1,10 @@
 import {BaseModel} from './base.model';
 import { Persona } from './persona.model';
 import { sql } from '../db';
-import { roles } from '../schemas/persona.schema';
-import {
-    ColaboradoresDepto,
-    RetrieveDepartamento
- } from '../schemas/departamento.schema';
-import { Cargo, iCargo } from './cargo.model';
+import { RetrieveColaborador, roles } from '../schemas/persona.schema';
+import { RetrieveDepartamento } from '../schemas/departamento.schema';
+import { Cargo } from './cargo.model';
+import { iCargo } from '../schemas/cargo.schema';
 
 export class Departamento extends BaseModel{
     static table_name: string = "Departamentos"; 
@@ -15,7 +13,7 @@ export class Departamento extends BaseModel{
     nombre: string;
     telefono: string;
     cargos?: iCargo[];
-    colaboradores?: ColaboradoresDepto;
+    colaboradores?: RetrieveColaborador[];
 
     constructor(body: RetrieveDepartamento){
         super();
@@ -36,6 +34,7 @@ export class Departamento extends BaseModel{
         this.cargos = await Cargo.find_all({id_depto: this.id_depto});
     }
 
+    // Devuelve todos los colaboradores de este departamento
     async get_colaboradores(){
         const query = `
             SELECT P.cedula, P.nombre, correo, P.telefono, P.direccion
@@ -45,22 +44,12 @@ export class Departamento extends BaseModel{
             INNER JOIN ${Departamento.table_name} D
                 ON C.id_depto = D.id_depto
             WHERE D.id_depto = ?
-            AND P.rol = ?
+            AND P.rol = ${roles.colaborador}
             AND P.is_deleted = 0
         `;
-        // Con esto podría hacer get_one(), get_cargos() y get_colaboradores() en una sola consulta, pero tendría que mappear todos los campos.
-        /*const query = `
-            SELECT C.*, D.*, C.nombre as nombre_cargo, P.cedula, P.nombre
-            FROM Departamentos D
-            INNER JOIN Cargos C
-                ON C.id_depto = D.id_depto
-            LEFT JOIN Personas P
-                ON P.cod_cargo = C.cod_cargo
-            WHERE D.id_depto = 2
-        `;*/
         
-        const [rows] = await sql.query(query, [this.id_depto, roles.colaborador]);
+        const [rows] = await sql.query(query, [this.id_depto]);
 
-        this.colaboradores = rows as ColaboradoresDepto;
+        this.colaboradores = rows as RetrieveColaborador[];
     }
 }

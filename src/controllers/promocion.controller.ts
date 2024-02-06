@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { Promocion } from "../models/promocion.model";
-import { ValidationError } from "../errors";
-import { createPromocion, uPromocion } from "../schemas/promocion.schema";
+import { createPromocion, updatePromocion } from "../schemas/promocion.schema";
 import { Zona } from "../models/zona.model";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
@@ -37,7 +36,7 @@ const get_one = async (req: Request, res: Response): Promise<Response> => {
 
 const update = async (req: Request, res: Response): Promise<Response> => {
     const id: number = res.locals.id;
-    const body = uPromocion.parse(req.body);
+    const body = updatePromocion.parse(req.body);
 
     const promo = await Promocion.update(id, body);
     return res.status(201).json({

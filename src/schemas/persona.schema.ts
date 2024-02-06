@@ -45,6 +45,15 @@ export const updateUser = createUser.omit({rol: true}).partial();
 
 export const updateColaborador = createColaborador.partial();
 
+const retrieveColaborador = createColaborador.pick({
+    cedula: true,
+    nombre: true,
+    correo: true,
+    telefono: true,
+    direccion: true
+});
+export type RetrieveColaborador = z.infer<typeof retrieveColaborador>;
+
 export type CreateUser = z.infer<typeof createUser>;
 export type TokenData = z.infer<typeof tokenData>;
 export type LoginUser = z.infer<typeof loginUser>;

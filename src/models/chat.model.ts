@@ -4,6 +4,7 @@ import { ErrorResponse, notFound } from "../errors";
 import { Persona } from "./persona.model";
 import { TokenData, roles } from "../schemas/persona.schema";
 import { Chat, IChat, ChatMessage, motivos, Motivos } from "../schemas/chat.schema";
+import { cargosNames } from "../schemas/cargo.schema";
 
 const table_name = "Chats";
 
@@ -116,7 +117,7 @@ El cliente deberá ser dirigido al vendedor de esa zona si es una venta, pero si
 se pasó como Representante Técnico Comercial (Vendedor) y Asistente Técnico Comercial (desarollista)
 */
 export async function init_chat(cedula: string, motivo: Motivos): Promise<[TokenData | undefined, string]>{
-    const cargoBuscado = motivo == motivos.venta ? "Representante Técnico Comercial" : "Asistente Técnico Comercial";
+    const cargoBuscado = motivo == motivos.venta ? cargosNames.representanteTecnicoComercial: cargosNames.asistenteTecnicoComercial;
 
     const query = `
         WITH Cliente as (

@@ -1,14 +1,13 @@
 import {BaseModel} from './base.model';
 import { Persona } from './persona.model';
 import { sql } from '../db';
-import { roles } from '../schemas/persona.schema';
+import { RetrieveColaborador, roles } from '../schemas/persona.schema';
 import { Zona } from './zona.model';
 import {
-    iPromocion,
+    PromocionSchema,
     CreatePromocion,
-    UPromocion
+    UpdatePromocion
 } from '../schemas/promocion.schema';
-import { ColaboradoresDepto } from '../schemas/departamento.schema';
 
 export class Promocion extends BaseModel{
     static table_name: string = "Promociones";
@@ -21,9 +20,9 @@ export class Promocion extends BaseModel{
     fecha_expiracion: Date;
     descripcion: string;
     zona?: Zona;
-    colaboradores?: ColaboradoresDepto 
+    colaboradores?: RetrieveColaborador[];
 
-    constructor(body: iPromocion){
+    constructor(body: PromocionSchema){
         super();
         this.id_promo = body.id_promo;
         this.cod_zona = body.cod_zona;
@@ -39,17 +38,17 @@ export class Promocion extends BaseModel{
     }
 
     static async get_one(id_promo: number): Promise<Promocion>{
-        const promo = await this.find_one<iPromocion, Promocion>({id_promo: id_promo});
+        const promo = await this.find_one<PromocionSchema, Promocion>({id_promo: id_promo});
         promo.zona = await Zona.get_one(promo.cod_zona);
         return promo;
     }
 
-    static async get_all(): Promise<iPromocion[]>{
-        return await this.find_all<iPromocion>();
+    static async get_all(): Promise<PromocionSchema[]>{
+        return await this.find_all<PromocionSchema>();
     }
 
-    static async update(id_promo: number, req: UPromocion): Promise<Promocion>{
-        await this._update<iPromocion>(req, {id_promo: id_promo});
+    static async update(id_promo: number, req: UpdatePromocion): Promise<Promocion>{
+        await this._update<PromocionSchema>(req, {id_promo: id_promo});
         return await this.get_one(id_promo);
     }
 
@@ -62,6 +61,6 @@ export class Promocion extends BaseModel{
             WHERE Per.rol = ?
         `, [roles.colaborador]);
 
-        this.colaboradores = rows as ColaboradoresDepto;
+        this.colaboradores = rows as RetrieveColaborador[];
     }
 }

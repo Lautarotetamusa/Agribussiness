@@ -1,16 +1,18 @@
 import z from 'zod';
+import { createColaborador } from './persona.schema';
 
-export const retrieveDepartamento = z.object({
+const retrieveDepartamento = z.object({
     id_depto: z.number(),
     nombre: z.string(),
     telefono: z.string().length(15)
 });
 export type RetrieveDepartamento = z.infer<typeof retrieveDepartamento>;
 
-export type ColaboradoresDepto = Array<{
-    cedula: string,
-    nombre: string,
-    correo: string,
-    telefono: string,
-    direccion: string
-}>
+const colaboradoresDepto = createColaborador.pick({
+    cedula: true,
+    nombre: true,
+    correo: true,
+    telefono: true,
+    direccion: true
+});
+export type ColaboradoresDepto = z.infer<typeof colaboradoresDepto>;
