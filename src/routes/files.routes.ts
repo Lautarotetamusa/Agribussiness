@@ -1,10 +1,24 @@
 import express from "express"
-import path from "path";
+import { auth, check_rol } from "../middlewares/auth";
+import { roles } from "../schemas/persona.schema";
+import { files_path } from "../server";
 
 export const fileRouter = express.Router();
 
-// !TODO: Para los distintos archivos tener distintos roles
-//        Por ejemplo el colaborador no puede ver las imagenes de la linea de negocios
+const filesPermissions = {
+    'cotizaciones': [roles.cliente, roles.admin],
+    'eventos': [roles.colaborador, roles.admin],
+    'fichas_tecnicas': [roles.cliente, roles.colaborador, roles.admin],
+    'imagenes': [roles.cliente, roles.colaborador, roles.admin],
+    'lineas_negocio': [roles.cliente, roles.admin],
+    'price_lists': [roles.admin],
+    'proveedores': [roles.admin],
+};
 
-//Servir archivos estaticos
-fileRouter.use('/', /*auth,*/ express.static(path.join(__dirname, '../../files')));
+for (const folder in filesPermissions){
+    fileRouter.use(`/${folder}`,
+        auth,
+        check_rol(filesPermissions[folder as keyof typeof filesPermissions]),
+        express.static(`${files_path}/${folder}`)
+    );
+}

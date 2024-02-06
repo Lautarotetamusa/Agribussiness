@@ -36,14 +36,12 @@ export const self_or_admin = async (req: Request, res: Response, next: NextFunct
     next();
 };
 
-export const check_rol = (accepted_roles: Array<RolesKeys>) => {
+export const check_rol = (roles: Array<RolesKeys>) => {
     return async (req: Request, res: Response, next: NextFunction) => {
-        //Get the user ID from previous midleware
         const persona = res.locals.user;
         
-        //Check if array of authorized roles not includes the user's role
-        if (accepted_roles.indexOf(persona.rol) < 0) 
-            throw new Forbidden("No tenes tiene permiso para acceder a este recurso, se necesita rol: ".concat(accepted_roles.join(',')));
+        if (roles.indexOf(persona.rol) < 0) 
+            throw new Forbidden(`No tenes tiene permiso para acceder a este recurso, se necesita rol: ${roles.join(', ')}`);
 
         next();
     };
