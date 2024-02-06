@@ -6,8 +6,19 @@ import { roles } from "../schemas/persona.schema";
 
 const router = Router();
 
-router.get('/', auth, check_rol([roles.cliente, roles.admin]), LineaNegocioController.get_all);
+router.get('/',
+	auth,
+	check_rol([roles.cliente,
+	roles.admin]),
+	LineaNegocioController.get_all
+);
 
-router.get('/:id', auth, check_rol([roles.cliente, roles.admin]), valid_param("id"), LineaNegocioController.get_one);
+router.get('/:id',
+	auth,
+	check_rol([roles.cliente,
+	roles.admin]),
+	valid_param("id"),
+	LineaNegocioController.get_one
+);
 
 export default router;

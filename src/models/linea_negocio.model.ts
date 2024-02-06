@@ -1,15 +1,15 @@
 import { sql } from '../db';
 import { files_url } from '../server';
 import {BaseModel} from './base.model';
-import z, { number, string } from "zod";
+import {z} from "zod";
 import { Imagen, Producto } from './producto.model';
 import { Proveedor } from './proveedor.model';
 import { RowDataPacket } from 'mysql2';
 import { BuildProducto } from '../schemas/producto.schema';
 
 const iLineaNegocio = z.object({
-    id_linea: number(),
-    nombre: string(),
+    id_linea: z.number(),
+    nombre: z.string(),
     image: z.string().url()
 });
 type ILineaNegocio = z.infer<typeof iLineaNegocio>;

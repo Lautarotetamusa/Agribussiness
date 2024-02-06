@@ -7,9 +7,6 @@ import "express-async-errors"; //permitir errores en funciones asyncronas
 import {handle_errors} from './errors';
 import {join} from "path"; //Crear path para los archivos estaticos
 
-import { fileRouter } from './routes/files.routes';
-import {router} from "./routes";
-
 import {chat} from "./chat";
 
 export const app = express();
@@ -35,10 +32,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true,}));
 
-//Servir los archivos estáticos
+//Servir los archivos estáticos, lo imoprtamos aca para que files_path funcione
+import { fileRouter } from './routes/files.routes';
 app.use('/files', fileRouter);
 
 //Todas las rutas
+import {router} from "./routes";
 app.use(router);
 
 //Conexion con el chat
