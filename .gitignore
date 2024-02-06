@@ -6,4 +6,5 @@ mysql/
 test.csv
 files/*
 !files/logo.png
+!files/lineas_negocio
 front_tests/
