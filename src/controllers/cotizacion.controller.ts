@@ -91,6 +91,7 @@ const create = async (req: Request, res: Response): Promise<Response> => {
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const cotizaciones = await Cotizacion.get_all();
+
     return res.status(200).json({
         success: true,
         data: cotizaciones

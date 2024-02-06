@@ -29,10 +29,3 @@ export type ListProducto = z.infer<typeof ListProducto>;
 export type CreateProducto = z.infer<typeof createProducto>;
 export type BuildProducto  = z.infer<typeof buildProducto>;
 export type UpdateProducto = z.infer<typeof updateProducto>;
- 
-
-type Prettify<T> = {
-    [K in keyof T]: T[K];
-  } & {};
-
-type a = Prettify<CreateProducto>

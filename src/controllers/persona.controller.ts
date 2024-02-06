@@ -127,8 +127,8 @@ const get_solicitudes = async (req: Request, res: Response): Promise<Response> =
 
 const get_cotizaciones = async (req: Request, res: Response): Promise<Response> => {
     const persona = await Persona.get_one(req.params.cedula);
-        
     const cotizaciones = await persona.get_cotizaciones();
+
     return res.status(200).json({
         success: true,
         data: cotizaciones
@@ -138,6 +138,7 @@ const get_cotizaciones = async (req: Request, res: Response): Promise<Response> 
 //Devuelve una lista con los colaboradores a los que puede solicitar un colaborador
 const get_solicitables = async (req: Request, res: Response): Promise<Response> => {
     const solicitables = await Persona.get_solicitables(req.params.cedula);
+
     return res.status(200).json({
         success: true,
         data: solicitables

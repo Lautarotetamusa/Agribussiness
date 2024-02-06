@@ -16,6 +16,11 @@ router.get('/', auth, check_rol([roles.admin]), solicitudController.get_all);
 router.get('/:cod_solicitud', auth, check_rol([roles.admin]), valid_param("cod_solicitud"), solicitudController.get_one);
 
 //Aceptar una solicitud. Solo la persona que recibio la solicitud puede aprobarla
-router.post('/:cod_solicitud/aceptar', auth, check_rol([roles.colaborador]), valid_param("cod_solicitud"), solicitudController.aceptar);
+router.post('/:cod_solicitud/aceptar',
+	auth,
+	check_rol([roles.colaborador]),
+	valid_param("cod_solicitud"),
+	solicitudController.aceptar
+);
 
 export default router;

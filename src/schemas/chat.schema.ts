@@ -12,7 +12,6 @@ const chat = z.object({
     reciver: z.string().max(10),
     reciver_name: z.string()
 });
-const chatKeys = Object.keys(chat) as [keyof typeof chat];
 export type Chat = z.infer<typeof chat>;
 
 const chat_message = z.object({

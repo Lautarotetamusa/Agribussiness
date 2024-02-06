@@ -3,6 +3,7 @@ import {Cargo} from "../models/cargo.model";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const cargos = await Cargo.get_all();
+
     return res.status(200).json({
         success: true,
         data: cargos

@@ -55,6 +55,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const eventos = await Evento.get_all();
+
     return res.status(200).json({
         success: true,
         data: eventos
@@ -63,6 +64,7 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
 
 const get_one = async (req: Request, res: Response): Promise<Response> => {
     const evento = await Evento.get_one(res.locals.id);
+
     return res.status(200).json({
         success: true,
         data: evento
