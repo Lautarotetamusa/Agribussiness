@@ -11,10 +11,11 @@ import { Proveedor } from './proveedor.model';
 import { ValidationError } from '../errors';
 import { CreateImagen, IImagen } from '../schemas/persona.schema';
 import { files_url } from '../server';
+import { filePaths } from '../schemas/files.schema';
 
 export class Imagen extends BaseModel{
     static table_name = "Imagenes";
-    static image_route = "imagenes";
+    static image_route = filePaths.imagenes;
 
     id_producto: number;
     path: string;

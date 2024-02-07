@@ -3,9 +3,10 @@ import { sql } from "../db";
 import { CreateEvento, IEvento, UpdateEvento } from "../schemas/evento.schema";
 import { files_url } from "../server";
 import { BaseModel } from "./base.model"
+import { filePaths } from "../schemas/files.schema";
 
 export class Evento extends BaseModel{
-    static image_route = "eventos";
+    static image_route = filePaths.eventos;
     static table_name = "Eventos";
     static pk = "id_evento";
 
