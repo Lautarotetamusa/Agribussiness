@@ -11,7 +11,7 @@ type MimeTypes =
     | "text/csv"
     | "application/pdf";
 
-export const uploadBuilder = (path: FilePath, validTypes: MimeTypes[], fieldName: string = "file", size: number = 10*1024*1024) => {
+export const uploadBuilder = (path: FilePath, validTypes: MimeTypes[], size: number = 10*1024*1024) => {
     const storage = multer.diskStorage({
         destination: (_req, _file, cb) => {
             const file_path =  files_path + "/" + path;
@@ -38,5 +38,5 @@ export const uploadBuilder = (path: FilePath, validTypes: MimeTypes[], fieldName
 
             return cb(null, true);
         }
-    }).single(fieldName);
+    });
 }

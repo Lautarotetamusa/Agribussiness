@@ -2,9 +2,8 @@ import {Router} from "express"
 import productoController from "../controllers/producto.controller";
 import { auth, check_rol } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
-import { uploadFichaTecnicaFile, uploadPriceListFile } from "../util/upload_file";
+import { uploadFichaTecnicaFile, uploadPriceListFile, uploadImagenProducto } from "../uploads/producto.upload";
 import { valid_param } from "../middlewares/validad_param";
-import { uploadImagenProducto } from "../uploads/producto.upload";
 
 const router = Router();
 

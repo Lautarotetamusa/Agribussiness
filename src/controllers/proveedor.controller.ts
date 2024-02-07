@@ -13,9 +13,6 @@ const create = async (req: Request, res: Response, next: Function): Promise<Resp
     req.body.id_linea = isNaN(req.body.id_linea) ? req.body.id_linea : Number(req.body.id_linea);
 
     const body = cProveedor.parse(req.body);
-    
-    console.log(req.body);
-
     const proveedor = await Proveedor.create(body);
 
     return res.status(201).json({

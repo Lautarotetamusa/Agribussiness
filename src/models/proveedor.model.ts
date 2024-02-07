@@ -2,22 +2,19 @@ import {BaseModel} from './base.model';
 import { IProveedor, CProveedor } from '../schemas/proveedor.schema';
 import { LineaNegocio } from './linea_negocio.model';
 import { files_url } from '../server';
+import { filePaths } from '../schemas/files.schema';
 
 export class Proveedor extends BaseModel{
     static table_name: string = "Proveedores"; 
     static pk: string = "id_proveedor";
     static fields = ["id_proveedor", "id_linea", "nombre", "photo"];
-
-    //Ruta de los archivos estáticos del proveedor
-    static photo_route = "proveedores/images";
-    //static ficha_route = "proveedores/fichas";
+    static photo_route = filePaths.proveedores;
 
     id_proveedor: number;
     nombre: string;
     photo: string;
     id_linea: number;
     linea_negocio?: LineaNegocio;
-    // ficha_tecnica?: string;
 
     constructor(body: IProveedor){
         super();
@@ -25,7 +22,6 @@ export class Proveedor extends BaseModel{
         this.nombre = body.nombre;
         this.photo = body.photo;
         this.id_linea = body.id_linea;
-        // this.ficha_tecnica = body.ficha_tecnica
     }
 
     private parse_path(){
