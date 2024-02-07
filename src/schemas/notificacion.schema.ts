@@ -10,6 +10,8 @@ const notificationType = {
     'producto:imagen:new': 'producto:imagen:new', 
     'solicitud:new': 'solicitud:new', 
     'solicitud:update': 'solicitud:update', 
+    'articulo_tecnico:update': 'articulo_tecnico:update', 
+    'articulo_tecnico:new': 'articulo_tecnico:new', 
 } as const;
 type NotificationTypeKeys = keyof typeof notificationType;
 export const notificationTypeKeys = Object.keys(notificationType) as [NotificationTypeKeys];
