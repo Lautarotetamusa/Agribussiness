@@ -62,7 +62,7 @@ export class Producto extends BaseModel{
     id_proveedor: number;
     precio: number;
     nombre: string;
-    iva?: number;
+    iva: number;
     portada?: string | null;
     presentacion: string;
     descripcion: string;
@@ -79,8 +79,8 @@ export class Producto extends BaseModel{
         this.presentacion = body.presentacion;
         this.descripcion = body.descripcion;
         this.ficha_tecnica = body.ficha_tecnica;
-        this.iva = body.iva || 0;
-        this.portada = body.portada || "";
+        this.iva = body.iva;
+        this.portada = body.portada;
     }
 
     static async create(body: CreateProducto): Promise<Producto>{
@@ -97,6 +97,7 @@ export class Producto extends BaseModel{
 
     static async get_one(id_producto: number): Promise<Producto>{
         const prod = await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
+        console.log(prod);
         //Esto lo hacemos, porque mysql devuelve el campo DECIMAL(10, 2) como un string
         //Lo parseo a float, como ts no me deja pasarle un argumento que cree que es number, usamos as unkwnow as string
         prod.precio = parseFloat((prod.precio as unknown) as string);
@@ -111,7 +112,7 @@ export class Producto extends BaseModel{
             FROM ${this.table_name} Prod
             INNER JOIN ${Proveedor.table_name} Prov
                 ON Prod.id_proveedor = Prov.id_proveedor
-            ORDER BY Prod.id_producto ASC
+            ORDER BY Prod.id_producto DESC
         ` as const;
 
         const [rows] = await sql.query<RowDataPacket[]>(query);
@@ -128,6 +129,8 @@ export class Producto extends BaseModel{
             let value = body[i as keyof typeof body];
             this[i as keyof typeof this] = value as never;
         }
+        this.portada = this.portada != null ? `${files_url}/${Imagen.image_route}/${this.portada}` : null;
+        this.ficha_tecnica = `${files_url}/${Producto.fichaTecnicaPath}/${this.ficha_tecnica}`;
         
         let _:void = await this.get_proveedor();
         
