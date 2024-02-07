@@ -1,23 +1,24 @@
 import multer from "multer";
 import { ValidationError } from "../errors";
-import fs from "fs";
+import { Producto } from "../models/producto.model";
+import { files_path } from "../server";
 
-let price_list_storage = multer.diskStorage({
+const price_list_storage = multer.diskStorage({
     destination: "files/price_lists/",
     filename: (req, file, cb) => {;
-        const uniqueSuffix = Date.now()
+        const date = Date.now()
         const [name, format] = file.originalname.split('.')
-        return cb(null,  `${name}_${uniqueSuffix}.${format}`);
+        return cb(null,  `${name}_${date}.${format}`);
     }
 });
 
-let ficha_storage = multer.diskStorage({
-    destination: "files/fichas_tecnicas/",
+const ficha_storage = multer.diskStorage({
+    destination: files_path + "/" + Producto.fichaTecnicaPath,
     filename: (req, file, cb) => {
         const id = Number(req.params.id);
         const date = Date.now();
-        const [name, format] = file.originalname.split('.')
-        cb(null,  `${id}_${date}_${name}.${format}`);
+        const [_, format] = file.originalname.split('.')
+        cb(null,  `${id}_${date}.${format}`);
     }
 });
 

@@ -7,8 +7,6 @@ import {files_path} from "../server";
 export const proveedorUpload = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            console.log("DESTINATION");
-            
             let file_path = files_path;
             
             if(file.fieldname == "photo")
@@ -20,14 +18,12 @@ export const proveedorUpload = multer({
         },
         filename: (req, file, cb) => {
             const date = Date.now()
-            const [name, format] = file.originalname.split('.');
+            const [_, format] = file.originalname.split('.');
             
             return cb(null, `${date}.${format}`);
         }
     }),
     fileFilter: (_req, file, cb) => {
-        console.log("FILEFILTER");
-        
         if(file.fieldname == "photo"){
             if (
                 file.mimetype != "image/jpg" && 

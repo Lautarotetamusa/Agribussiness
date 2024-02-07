@@ -6,7 +6,7 @@ export const createProducto = z.object({
     presentacion: z.string(),
     descripcion: z.string(),
     id_proveedor: z.number(),
-    iva: z.number().min(0).max(100).optional().default(0)
+    iva: z.number().min(0).max(100).default(0)
 });
 
 export const updateProducto = createProducto.partial().extend({
@@ -25,7 +25,6 @@ export const ListProducto = buildProducto.extend({
 });
 
 export type ListProducto = z.infer<typeof ListProducto>;
-
 export type CreateProducto = z.infer<typeof createProducto>;
 export type BuildProducto  = z.infer<typeof buildProducto>;
 export type UpdateProducto = z.infer<typeof updateProducto>;

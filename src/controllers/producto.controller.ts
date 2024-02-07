@@ -32,10 +32,11 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
     if (!req.file) throw new ValidationError("El archivo no se subio correctamente");
     
     const productos = csv2arr(req.file.path, createProducto);
+    //Validar que todos los proveedores existan
     for (const producto of productos){
         await Proveedor.get_one(producto.id_proveedor);
     }
-    let _: void = await Producto.bulk_insert((productos as unknown) as CreateProducto[]);
+    await Producto.bulk_insert(productos as CreateProducto[]);
 
     await broadcast_notification({
         message: `Hubo un cambio en la lista de precios`,
@@ -54,7 +55,7 @@ const create_ficha_tecnica = async (req: Request, res: Response): Promise<Respon
     const id: number = res.locals.id;
 
     const producto = await Producto.get_one(id);
-    let _:void = await producto.update({ficha_tecnica: req.file.path});
+    let _:void = await producto.update({ficha_tecnica: req.file.filename});
 
     return res.status(201).json({
         success: true,

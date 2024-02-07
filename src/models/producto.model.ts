@@ -30,7 +30,6 @@ export class Imagen extends BaseModel{
 
     static async insert(body: CreateImagen){
         const nro_imagen = await this.get_last(body.id_producto);
-        console.log("comentarios: ", body.comentarios);
         
         const imagen = await this._insert<IImagen, Imagen>({
             ...body,
@@ -57,13 +56,14 @@ export class Producto extends BaseModel{
     static table_name: string = "Productos";
     static fields = ["id_producto", "id_proveedor", "precio", "nombre", "presentacion", "descripcion", "descripcion", "ficha_tecnica", "iva", "portada"];
     static pk = "id_producto";
+    static fichaTecnicaPath = "fichas_tecnicas";
 
     id_producto: number;
     id_proveedor: number;
     precio: number;
     nombre: string;
     iva?: number;
-    portada?: string;
+    portada?: string | null;
     presentacion: string;
     descripcion: string;
     ficha_tecnica?: string | null;
@@ -96,11 +96,12 @@ export class Producto extends BaseModel{
     }
 
     static async get_one(id_producto: number): Promise<Producto>{
-        let prod = await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
+        const prod = await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
         //Esto lo hacemos, porque mysql devuelve el campo DECIMAL(10, 2) como un string
         //Lo parseo a float, como ts no me deja pasarle un argumento que cree que es number, usamos as unkwnow as string
         prod.precio = parseFloat((prod.precio as unknown) as string);
-        prod.portada = `${files_url}/${Imagen.image_route}/${prod.portada}`;
+        prod.portada = prod.portada != null ? `${files_url}/${Imagen.image_route}/${prod.portada}` : null;
+        prod.ficha_tecnica = `${files_url}/${this.fichaTecnicaPath}/${prod.ficha_tecnica}`;
         return prod;
     }
 
@@ -115,10 +116,10 @@ export class Producto extends BaseModel{
 
         const [rows] = await sql.query<RowDataPacket[]>(query);
 
-        //Omito el precio porque MySQL lo devuelve como un string, debería arreglar esto. TODO!
-        //Suponemos que el precio está bien
-        let check = ListProducto.omit({precio: true}).parse(rows[0]); //Validate the response
-        rows.map(p => p.portada = p.portada != null ? `${files_url}/${Imagen.image_route}/${p.portada}` : null);
+        rows.map(p => {
+            p.portada = p.portada != null ? `${files_url}/${Imagen.image_route}/${p.portada}` : null;
+            p.ficha_tecnica = p.ficha_tecnica != null ? `${files_url}/${this.fichaTecnicaPath}/${p.ficha_tecnica}` : null;
+        });
         return rows as ListProducto[];
     }
 
