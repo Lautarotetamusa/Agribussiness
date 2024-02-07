@@ -3,7 +3,8 @@ import {z} from "zod";
 export const roles = {
     admin: 'admin',
     cliente: 'cliente',
-    colaborador: 'colaborador'
+    colaborador: 'colaborador',
+    invitado: 'invitado'
 } as const;
 export type RolesKeys = keyof typeof roles;
 const rolesKeys = Object.keys(roles) as [RolesKeys];

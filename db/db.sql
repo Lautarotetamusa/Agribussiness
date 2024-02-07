@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS Personas(
     correo VARCHAR(255) NOT NULL,
     telefono VARCHAR(15),
     direccion VARCHAR(255),
-    rol ENUM("admin", "cliente", "colaborador") NOT NULL,
+    rol ENUM("admin", "cliente", "colaborador", "invitado") NOT NULL,
     is_deleted BOOLEAN DEFAULT false,
 
     PRIMARY KEY (cedula),
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS Departamentos(
     PRIMARY KEY (id_depto)
 );
 
-#El campo ficha_tecnica campo no va mas, pero lo dejamos por ahora por si acaso TODO!
+/* El campo ficha_tecnica campo no va mas, pero lo dejamos por ahora por si acaso TODO! */
 CREATE TABLE IF NOT EXISTS Proveedores(
     id_proveedor INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(128) NOT NULL,
@@ -202,3 +202,7 @@ INSERT INTO LineasNegocio(nombre, image) VALUES
     ("Productos Eco", "PRODUCTOS_ECO.jpg"),
     ("Entutorado", "ENTUTORADO.png"),
     ("Otros", "OTROS.jpg");
+
+/* La contraseña es: invitado*/
+INSERT INTO Personas(cedula, password, cod_zona, cod_cargo, nombre, correo, telefono, direccion, rol) VALUES
+("invitado", "$2b$10$oGz/OOPpk8iuM/TN3Lptp.Lrmfs6..4SUjSJ7xmblpyX5WemPOHPK", 1, NULL, "invitado", "", NULL, "", "invitado")

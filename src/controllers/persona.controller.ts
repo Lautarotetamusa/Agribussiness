@@ -20,8 +20,8 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     const rol = createUser.shape.rol.parse(req.body.rol);
     let persona, body;
 
-    if (rol == roles.admin){
-        throw new ValidationError("No se puede crear una persona con rol 'admin'");
+    if (rol == roles.admin || rol == roles.invitado){
+        throw new ValidationError("No se puede crear una persona con rol 'admin' o 'invitado'");
 
     }else if(rol == roles.colaborador){
         body = createColaborador.parse(req.body);

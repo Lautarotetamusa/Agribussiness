@@ -16,6 +16,11 @@ const filesPermissions = {
     'proveedores': [roles.admin],
 };
 
+fileRouter.use(`/`,
+    express.static(`${files_path}/`)
+);
+
+/*
 for (const folder in filesPermissions){
     fileRouter.use(`/${folder}`,
         auth,
@@ -23,3 +28,4 @@ for (const folder in filesPermissions){
         express.static(`${files_path}/${folder}`)
     );
 }
+*/
