@@ -7,11 +7,11 @@ export const fileRouter = express.Router();
 
 const filesPermissions = {
     'cotizaciones': [roles.cliente, roles.admin],
-    'eventos': [roles.colaborador, roles.admin],
-    'fichas_tecnicas': [roles.cliente, roles.colaborador, roles.admin],
-    'imagenes': [roles.cliente, roles.colaborador, roles.admin],
-    'lineas_negocio': [roles.cliente, roles.admin],
-    'articulos_tecnicos': [roles.cliente, roles.admin],
+    'eventos': [roles.cliente, roles.invitado, roles.admin],
+    'fichas_tecnicas': [roles.cliente, roles.colaborador, roles.invitado, roles.admin],
+    'imagenes': [roles.cliente, roles.colaborador, roles.invitado, roles.admin],
+    'lineas_negocio': [roles.cliente, roles.invitado, roles.admin],
+    'articulos_tecnicos': [roles.cliente, roles.invitado, roles.admin],
     'price_lists': [roles.admin],
     'proveedores': [roles.admin],
 };

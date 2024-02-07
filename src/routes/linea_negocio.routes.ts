@@ -8,15 +8,13 @@ const router = Router();
 
 router.get('/',
 	auth,
-	check_rol([roles.cliente,
-	roles.admin]),
+	check_rol([roles.cliente, roles.invitado, roles.admin]),
 	LineaNegocioController.get_all
 );
 
 router.get('/:id',
 	auth,
-	check_rol([roles.cliente,
-	roles.admin]),
+	check_rol([roles.cliente, roles.invitado, roles.admin]),
 	valid_param("id"),
 	LineaNegocioController.get_one
 );

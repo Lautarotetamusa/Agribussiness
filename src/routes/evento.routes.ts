@@ -38,14 +38,14 @@ router.delete('/:id',
 //Listar todos
 router.get('/', 
     auth, 
-    check_rol([roles.admin, roles.cliente]), 
+    check_rol([roles.admin, roles.invitado, roles.cliente]), 
     eventoController.get_all
 );
 
 //Obtener un evento
 router.get('/:id', 
     auth, 
-    check_rol([roles.admin, roles.cliente]), 
+    check_rol([roles.admin, roles.invitado, roles.cliente]), 
     valid_param("id"), 
     eventoController.get_one
 );

@@ -6,8 +6,17 @@ import { valid_param } from "../middlewares/validad_param";
 
 const router = Router();
 
-router.get('/', auth, check_rol([roles.cliente, roles.admin]), deptoController.get_all);
+router.get('/',
+	auth,
+	check_rol([roles.cliente, roles.invitado, roles.admin]),
+	deptoController.get_all
+);
 
-router.get('/:id', auth, check_rol([roles.cliente, roles.admin]), valid_param("id"), deptoController.get_one);
+router.get('/:id',
+	auth,
+	check_rol([roles.cliente, roles.invitado, roles.admin]),
+	valid_param("id"),
+	deptoController.get_one
+);
 
 export default router;

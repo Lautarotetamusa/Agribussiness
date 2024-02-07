@@ -8,7 +8,11 @@ import { uploadImagenProducto } from "../uploads/producto.upload";
 
 const router = Router();
 
-router.post('/', auth, check_rol([roles.admin]), productoController.create);
+router.post('/',
+	auth,
+	check_rol([roles.admin]),
+	productoController.create
+);
 
 router.post('/list', 
     auth, 
@@ -19,13 +23,13 @@ router.post('/list',
 
 router.get('/', 
     auth,
-    check_rol([roles.admin, roles.colaborador]),
+    check_rol([roles.admin, roles.colaborador, roles.invitado]),
     productoController.get_all
 );
 
 router.get('/:id', 
     auth, 
-    check_rol([roles.admin]), 
+    check_rol([roles.admin, roles.colaborador, roles.invitado]), 
     valid_param("id"), 
     productoController.get_one
 );

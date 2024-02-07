@@ -38,14 +38,14 @@ router.delete('/:id',
 //Listar todos
 router.get('/', 
     auth, 
-    check_rol([roles.admin, roles.cliente]), 
+    check_rol([roles.admin, roles.cliente, roles.invitado]), 
     articuloTecnicoController.get_all
 );
 
 //Obtener un articuloTecnico
 router.get('/:id', 
     auth, 
-    check_rol([roles.admin, roles.cliente]), 
+    check_rol([roles.admin, roles.cliente, roles.invitado]), 
     valid_param("id"), 
     articuloTecnicoController.get_one
 );
