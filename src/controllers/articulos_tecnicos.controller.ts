@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import {ArticuloTecnico} from "../models/articulo_tecnico.model";
 import { createArticuloTecnico, updateArticuloTecnico } from "../schemas/articulo_tecnico.schema";
 import { ValidationError } from "../errors";
-import { broadcast_notification } from "../notifications";
+import { broadcastNotification } from "../notifications";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createArticuloTecnico.parse(req.body);
 
     const articuloTecnico = await ArticuloTecnico.create(body);
 
-    await broadcast_notification({
+    await broadcastNotification({
         message: `Nuevo articulo_tecnico: ${articuloTecnico.titulo}`,
         type: 'articulo_tecnico:new'
     });
@@ -43,7 +43,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     const articuloTecnico = await ArticuloTecnico.get_one(res.locals.id);
     await articuloTecnico.update(body);
 
-    await broadcast_notification({
+    await broadcastNotification({
         message: `Se actualizo un articulo tecnico`,
         type: 'articulo_tecnico:update'
     });

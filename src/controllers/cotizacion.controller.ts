@@ -13,7 +13,7 @@ import { ValidationError } from "../errors";
 import { Producto } from "../models/producto.model";
 import { generate_cotizacion_pdf } from "../util/generate_pdf";
 import { files_url } from "../server";
-import { direct_notification } from "../notifications";
+import { directNotification } from "../notifications";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const conn = await sql.getConnection(); //Obtener una conexion, necesario para realizar la transaccion
@@ -67,11 +67,11 @@ const create = async (req: Request, res: Response): Promise<Response> => {
         await generate_cotizacion_pdf(cotizacion, prods_archivo);
         cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
 
-        await direct_notification(cotizacion.colaborador.cedula, {
+        await directNotification(cotizacion.colaborador.cedula, {
             message: `Su cotización ${cotizacion.nro_cotizacion} ha sido exitosamente elaborada, puede descargarla`,
             type: 'cotizacion:new'
         });
-        await direct_notification(cotizacion.cliente.cedula, {
+        await directNotification(cotizacion.cliente.cedula, {
             message: `Recibio una nueva cotización nro: ${cotizacion.nro_cotizacion} de parte de ${cotizacion.colaborador.nombre}`,
             type: 'cotizacion:new'
         });

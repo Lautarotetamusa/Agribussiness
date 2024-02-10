@@ -1,6 +1,6 @@
 import fs from "fs";
 import { ValidationError } from "../errors";
-import {number, z} from "zod";
+import {z} from "zod";
 
 /**
  * Returns the keys from a zod object

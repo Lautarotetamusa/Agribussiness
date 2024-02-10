@@ -2,17 +2,17 @@ import { Request, Response } from "express";
 import { createSolicitud } from "../schemas/solicitud.schema";
 import { Solicitud } from "../models/solicitud.model";
 import { ValidationError } from "../errors";
-import { direct_notification } from "../notifications";
+import { directNotification } from "../notifications";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createSolicitud.parse({...req.body, solicitante: res.locals.user.cedula})
     const solicitud = await Solicitud.create(body); 
 
-    await direct_notification(solicitud.solicitante, {
+    await directNotification(solicitud.solicitante, {
         message: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido elaborada`,
         type: 'solicitud:new'
     });
-    await direct_notification(solicitud.solicitado, {
+    await directNotification(solicitud.solicitado, {
         message: `Recibiste una nueva notificacion de parte de ${solicitud.solicitante}`,
         type: 'solicitud:new'
     });
@@ -48,11 +48,11 @@ const aceptar = async (req: Request, res: Response): Promise<Response> => {
 
     const _:void = await solicitud.aceptar();
 
-    await direct_notification(solicitud.solicitado, {
+    await directNotification(solicitud.solicitado, {
         message: `Aceptaste la solicitud ${solicitud.cod_solicitud} correctamente`,
         type: 'solicitud:new'
     });
-    await direct_notification(solicitud.solicitante, {
+    await directNotification(solicitud.solicitante, {
         message: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido aceptada`,
         type: 'solicitud:update'
     });

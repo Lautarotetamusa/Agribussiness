@@ -8,7 +8,7 @@ import {
 import { csv2arr } from "../util/csv_to_arr";
 import { Proveedor } from "../models/proveedor.model";
 import { files_url } from "../server";
-import { broadcast_notification } from "../notifications";
+import { broadcastNotification } from "../notifications";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const productos = await Producto.get_all();
@@ -38,7 +38,7 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
     }
     await Producto.bulk_insert(productos as CreateProducto[]);
 
-    await broadcast_notification({
+    await broadcastNotification({
         message: `Hubo un cambio en la lista de precios`,
         type: "producto:new"
     });
@@ -84,7 +84,7 @@ const create_imagen = (is_portada: boolean) => {
             imagen_path = `${files_url}/${Imagen.image_route}/${producto.portada as string}`;
         }
     
-        await broadcast_notification({
+        await broadcastNotification({
             message: `Imagen para el producto ${producto.nombre} cargada correctamente`,
             type: "producto:imagen:new"
         });
@@ -115,7 +115,7 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     const body: CreateProducto = createProducto.parse(req.body);
     const producto: Producto = await Producto.create(body);
 
-    await broadcast_notification({
+    await broadcastNotification({
         message: `Se agrego un nuevo producto: ${producto.nombre}`,
         type: "producto:new"
     });
@@ -135,7 +135,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     const producto = await Producto.get_one(id);
     const _:void = await producto.update(body);
 
-    await broadcast_notification({
+    await broadcastNotification({
         message: `Se actualizo un producto: ${producto.nombre}`,
         type: "producto:update"
     });

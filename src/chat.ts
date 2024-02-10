@@ -4,7 +4,7 @@ import { validationError } from "./errors";
 import { io } from "./server";
 import jwt, { Secret } from "jsonwebtoken";
 import { TokenData } from "./schemas/persona.schema";
-import { direct_notification } from "./notifications";
+import { directNotification } from "./notifications";
 
 // Objecto que guarda los usuarios conenctados en ese momento
 let Users: Record<string, {chat_id: number, cedula: string, nombre: string, reciver: string}> = {};
@@ -27,6 +27,7 @@ export function chat(socket: Socket) {
             socket.disconnect();
             return;
         }
+        console.log(sender, "conected");
 
         const chat_id = await get_chat(sender.cedula, data.cedula)
         if (typeof chat_id !== "number"){
@@ -61,7 +62,7 @@ export function chat(socket: Socket) {
         await create_message(user.chat_id, user.cedula, message);
 
         //Enviamos una notificacion a la persona que recive el mensaje 
-        await direct_notification(user.reciver, {
+        await directNotification(user.reciver, {
             message: `Tienes un nuevo mensaje de ${user.nombre}: ${message}`,
             type: "message:new"
         });
