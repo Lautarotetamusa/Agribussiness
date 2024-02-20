@@ -47,7 +47,7 @@ export class ArticuloTecnico extends BaseModel{
         const path = `${files_url}/${this.image_route}/`;
         const [rows] = await sql.query<RowDataPacket[]>(`
             SELECT *,
-            CONCAT('${path}', image)
+            CONCAT('${path}', image) as image
             FROM ${this.table_name}
             ORDER BY fecha_creacion DESC
         `);

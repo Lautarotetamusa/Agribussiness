@@ -108,8 +108,13 @@ export class Producto extends BaseModel{
     }
 
     static async get_all(): Promise<ListProducto[]>{ 
+        const portadaPath = `${files_url}/${Imagen.image_route}/`;
+        const fichaPath = `${files_url}/${this.fichaTecnicaPath}/`;
+
         const query = `
-            SELECT Prod.*, Prov.nombre as nombre_proveedor
+            SELECT Prod.*, Prov.nombre as nombre_proveedor,
+                CONCAT('${portadaPath}', Prod.portada) as portada,
+                CONCAT('${fichaPath}', Prod.ficha_tecnica) as ficha_tecnica
             FROM ${this.table_name} Prod
             INNER JOIN ${Proveedor.table_name} Prov
                 ON Prod.id_proveedor = Prov.id_proveedor
@@ -117,11 +122,6 @@ export class Producto extends BaseModel{
         ` as const;
 
         const [rows] = await sql.query<RowDataPacket[]>(query);
-
-        rows.map(p => {
-            p.portada = p.portada != null ? `${files_url}/${Imagen.image_route}/${p.portada}` : null;
-            p.ficha_tecnica = p.ficha_tecnica != null ? `${files_url}/${this.fichaTecnicaPath}/${p.ficha_tecnica}` : null;
-        });
         return rows as ListProducto[];
     }
 
