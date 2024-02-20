@@ -122,7 +122,8 @@ export class Persona extends BaseModel{
             FROM ${Cotizacion.table_name} CO
             LEFT JOIN ${Cliente.table_name} C
                 ON CO.cliente = C.cedula
-            WHERE ` + this.rol + ` = ?`;
+            WHERE ` + this.rol + ` = ?
+            ORDER BY CO.nro_cotizacion DESC`;
         
         const [rows] = await sql.query<RowDataPacket[]>(query, this.cedula);
         const field_name = 'cliente_nuevo';
