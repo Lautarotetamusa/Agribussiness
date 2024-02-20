@@ -39,7 +39,7 @@ export class Solicitud extends BaseModel{
             `, [body.solicitante, body.solicitado]);
 
         //niveles: [{'392142823': 3, 'Gerente'}, {'492183214': 1, "Encargado"}]
-        let nivel: Record<string, {nivel: number, cargo: string}> = {}; 
+        const nivel: Record<string, {nivel: number, cargo: string}> = {}; 
         //nivel: { '392142823': {nivel: 3, cargo: "Gerente"}, '492183214': {nivel: 1, cargo: "Encargado"} }
         niveles.map(n => {nivel[n.cedula] = {nivel: n.nivel, cargo: n.nombre}}); 
 

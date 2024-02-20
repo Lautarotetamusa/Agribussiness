@@ -47,8 +47,13 @@ export class LineaNegocio extends BaseModel{
     }
 
     async get_productos(){
+        const portadaPath = `${files_url}/${Imagen.image_route}/`;
+        const fichaPath = `${files_url}/${Producto.fichaTecnicaPath}/`;
+
         const query = `
-            SELECT Prod.*, Prov.nombre as proveedor
+            SELECT Prod.*, Prov.nombre as proveedor,
+                CONCAT('${portadaPath}', Prod.portada) as portada, 
+                CONCAT('${fichaPath}', Prod.ficha_tecnica) as ficha_tecnica 
             FROM ${Producto.table_name} Prod
             INNER JOIN ${Proveedor.table_name} Prov
                 ON Prod.id_proveedor = Prov.id_proveedor
@@ -56,7 +61,6 @@ export class LineaNegocio extends BaseModel{
         `;
 
         const [rows] = await sql.query<RowDataPacket[]>(query, this.id_linea);
-        rows.map(p => p.portada = p.portada != null ? `${files_url}/${Imagen.image_route}/${p.portada}` : null);
         this.productos = rows as BuildProducto[];
         return rows as BuildProducto[];
     }
