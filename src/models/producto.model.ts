@@ -98,7 +98,6 @@ export class Producto extends BaseModel{
 
     static async get_one(id_producto: number): Promise<Producto>{
         const prod = await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
-        console.log(prod);
         //Esto lo hacemos, porque mysql devuelve el campo DECIMAL(10, 2) como un string
         //Lo parseo a float, como ts no me deja pasarle un argumento que cree que es number, usamos as unkwnow as string
         prod.precio = parseFloat((prod.precio as unknown) as string);

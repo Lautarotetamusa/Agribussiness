@@ -43,8 +43,10 @@ export class Evento extends BaseModel{
     }
 
     static async get_all(): Promise<IEvento[]>{
+        const path = `${files_url}/${this.image_route}/`;
         const [rows] = await sql.query<RowDataPacket[]>(`
-            SELECT id_evento, titulo, descripcion, fecha_creacion, image
+            SELECT id_evento, titulo, descripcion, fecha_creacion,
+                CONCAT('${path}', image) AS image
             FROM ${this.table_name}
             ORDER BY fecha_creacion DESC
         `);
