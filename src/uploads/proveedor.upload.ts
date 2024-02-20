@@ -3,7 +3,8 @@ import { uploadBuilder } from "../uploads";
 
 export const proveedorUpload = uploadBuilder(
     filePaths.proveedores, 
-    ["image/jpg", "image/jpeg", "image/png"]
+    ["image/jpg", "image/jpeg", "image/png"],
+    5*1024*1024
 ).fields([
     {
         name:'photo',
