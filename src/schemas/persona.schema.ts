@@ -26,7 +26,7 @@ export const createUser = z.object({
     password: z.string(),
     nombre: z.string(),
     correo: z.string().email(),
-    telefono: z.string().min(10).optional(),
+    telefono: z.string().optional(),
     direccion: z.string(),
     rol: z.enum(rolesKeys)
 });

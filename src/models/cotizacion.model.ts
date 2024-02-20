@@ -1,7 +1,6 @@
 import { BaseModel } from "./base.model"
 import {
     CreateCotizacion, 
-    CreateProductosCotizacion, 
     EstadoKeys, 
     FormaPago, 
     ICotizacion, 
@@ -105,8 +104,14 @@ export class Cotizacion extends BaseModel{
     }
 
     static async get_all(){
-        const cotizaciones = await this.find_all<ICotizacion>();
-        cotizaciones.map(c => c.file = `${files_url}/${Cotizacion.file_route}/${c.file}`);
+        const path = `${files_url}/${Cotizacion.file_route}/`
+        const query = `
+            SELECT *, CONCAT('${path}', file) as file
+            FROM Cotizaciones
+            ORDER BY nro_cotizacion DESC
+        `;
+
+        const [cotizaciones] = await sql.query<RowDataPacket[]>(query);
         return cotizaciones;
     }
 }

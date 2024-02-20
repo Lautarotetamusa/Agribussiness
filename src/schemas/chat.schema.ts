@@ -15,7 +15,6 @@ const chat = z.object({
 export type Chat = z.infer<typeof chat>;
 
 const chat_message = z.object({
-    //chat_id: z.number(),
     message: z.string(),
     sender: z.string().max(10),
     created_at: z.date()

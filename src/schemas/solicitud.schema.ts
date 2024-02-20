@@ -1,4 +1,4 @@
-import {number, z} from "zod";
+import {z} from "zod";
 
 const iSolicitud = z.object({
     cod_solicitud: z.number(),

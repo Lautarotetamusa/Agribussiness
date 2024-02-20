@@ -5,7 +5,6 @@ const iProveedor = z.object({
     nombre: z.string(),
     photo: z.string(),
     id_linea: z.number()
-    //ficha_tecnica: z.string().optional()
 });
 export type IProveedor = z.infer<typeof iProveedor>;
 
