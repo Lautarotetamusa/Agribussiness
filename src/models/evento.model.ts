@@ -51,9 +51,7 @@ export class Evento extends BaseModel{
             ORDER BY fecha_creacion DESC
         `);
 
-        let eventos = rows as IEvento[];
-        eventos.map(e => e.image = e.image ? `${files_url}/${this.image_route}/${e.image}` : null);
-        return eventos;
+        return rows as IEvento[];
     }
 
     static async get_one(id_evento: number){

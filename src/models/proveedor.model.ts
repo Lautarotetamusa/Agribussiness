@@ -3,6 +3,8 @@ import { IProveedor, CProveedor } from '../schemas/proveedor.schema';
 import { LineaNegocio } from './linea_negocio.model';
 import { files_url } from '../server';
 import { filePaths } from '../schemas/files.schema';
+import { sql } from '../db';
+import { RowDataPacket } from 'mysql2';
 
 export class Proveedor extends BaseModel{
     static table_name: string = "Proveedores"; 
@@ -44,9 +46,14 @@ export class Proveedor extends BaseModel{
     }
 
     static async get_all(): Promise<IProveedor[]>{
-        const proveedores = await this.find_all<IProveedor>();
-        proveedores.map(p => p.photo = `${files_url}/${Proveedor.photo_route}/${p.photo}`);
-        return proveedores;
+        const path = `${files_url}/${Proveedor.photo_route}/`;
+        const query = `
+            SELECT ${this.fields.join(', ')},
+            CONCAT('${path}', photo) as photo
+            FROM ${this.table_name}
+        `
+        const [proveedores] = await sql.query<RowDataPacket[]>(query);
+        return proveedores as IProveedor[];
     }
 
     async get_linea(){
