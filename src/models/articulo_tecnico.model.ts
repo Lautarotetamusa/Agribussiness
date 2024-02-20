@@ -44,15 +44,15 @@ export class ArticuloTecnico extends BaseModel{
     }
 
     static async get_all(): Promise<ArticuloTecnicoSchema[]>{
+        const path = `${files_url}/${this.image_route}/`;
         const [rows] = await sql.query<RowDataPacket[]>(`
-            SELECT *
+            SELECT *,
+            CONCAT('${path}', image)
             FROM ${this.table_name}
             ORDER BY fecha_creacion DESC
         `);
 
-        let articulosTecnicos = rows as ArticuloTecnicoSchema[];
-        articulosTecnicos.map(e => e.image = e.image ? `${files_url}/${this.image_route}/${e.image}` : null);
-        return articulosTecnicos;
+        return rows as ArticuloTecnicoSchema[];
     }
 
     static async get_one(id: number){
