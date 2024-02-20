@@ -23,7 +23,7 @@ function newNotification(body: CreateNotification): NotificationSchema {
 /**
     * @brief Envia una notificacion a todos los usuarios subscriptos a ese tipo
     * @param notification Notificacion que vamos a enviar
-    * @returns None
+    * @returns NotificationSchema
 */
 export async function broadcastNotification(body: CreateNotification):Promise<NotificationSchema>{
     const connection = await AMQPConnection.connect();
@@ -44,7 +44,7 @@ export async function broadcastNotification(body: CreateNotification):Promise<No
 /**
     * @param to Cedula de la persona que recibe la notificacion
     * @param message Mensaje a enviar 
-    * @returns None
+    * @returns NotificationSchema
  */
 export async function directNotification(to: string, body: CreateNotification): Promise<NotificationSchema>{
     const connection = await AMQPConnection.connect();
