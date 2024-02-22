@@ -71,7 +71,7 @@ export class Persona extends BaseModel{
 
     static async get_solicitables(cedula: string): Promise<{cedula: string}[]>{
         const query = `
-            SELECT P.cedula, P.nombre
+            SELECT P.cedula, P.nombre, C.nombre as cargo
             FROM ${Persona.table_name} P
             INNER JOIN Cargos C
                 ON C.cod_cargo = P.cod_cargo
