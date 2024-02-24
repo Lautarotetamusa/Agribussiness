@@ -47,7 +47,7 @@ export const check_rol = (roles: Array<RolesKeys>) => {
     };
 };
 
-// Validar que un colaborador solamente pueda listar las personas de tipo cliente
+// Validar cuales tipo de persona se pueden listar
 export const list_personas = async (req: Request, res: Response, next: NextFunction) => {
     type RolList = RolesKeys | "all"; 
     const rol: RolesKeys = res.locals.user.rol;
@@ -55,7 +55,7 @@ export const list_personas = async (req: Request, res: Response, next: NextFunct
 
     const permissions: Record<RolesKeys, RolList[]> = {
         "admin": ["all", roles.admin, roles.colaborador, roles.cliente],
-        "colaborador": [roles.cliente],
+        "colaborador": [roles.cliente, roles.colaborador],
         "cliente": [],
         "invitado": []
     }
