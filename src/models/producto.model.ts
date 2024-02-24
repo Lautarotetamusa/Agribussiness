@@ -102,7 +102,7 @@ export class Producto extends BaseModel{
         //Lo parseo a float, como ts no me deja pasarle un argumento que cree que es number, usamos as unkwnow as string
         prod.precio = parseFloat((prod.precio as unknown) as string);
         prod.portada = prod.portada != null ? `${files_url}/${Imagen.image_route}/${prod.portada}` : null;
-        prod.ficha_tecnica = `${files_url}/${this.fichaTecnicaPath}/${prod.ficha_tecnica}`;
+        prod.ficha_tecnica = prod.ficha_tecnica != null ? `${files_url}/${this.fichaTecnicaPath}/${prod.ficha_tecnica}` : null;
         return prod;
     }
 
