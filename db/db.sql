@@ -73,17 +73,6 @@ CREATE TABLE IF NOT EXISTS Productos(
     FOREIGN KEY (id_proveedor) REFERENCES Proveedores(id_proveedor)
 );
 
-CREATE TABLE IF NOT EXISTS Promociones(
-    id_promo INT NOT NULL AUTO_INCREMENT,
-    cod_zona INT NOT NULL,
-    titulo VARCHAR(255) NOT NULL,
-    fecha_expiracion DATE NOT NULL,
-    descripcion VARCHAR(512) NOT NULL,
-
-    PRIMARY KEY (id_promo),
-    FOREIGN KEY (cod_zona) REFERENCES Zonas(cod_zona)
-);
-
 CREATE TABLE IF NOT EXISTS Solicitudes(
     cod_solicitud INT NOT NULL AUTO_INCREMENT,
     solicitante CHAR(10) NOT NULL,
