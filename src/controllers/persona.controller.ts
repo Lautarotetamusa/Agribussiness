@@ -4,6 +4,7 @@ import {
     createColaborador,
     createUser, 
     loginUser, 
+    logoutUser, 
     roles, 
     updateColaborador, 
     updateUser
@@ -15,6 +16,7 @@ import bcrypt from "bcrypt";
 import jwt, {Secret} from "jsonwebtoken";
 import { Unauthorized, ValidationError } from "../errors";
 import { tipoSolicitud } from "../schemas/solicitud.schema";
+import { Dispositivo } from "../models/dispositivo.model";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const rol = createUser.shape.rol.parse(req.body.rol);
@@ -46,8 +48,15 @@ const login = async (req: Request, res: Response): Promise<Response> => {
     const body = loginUser.parse(req.body)
     const persona = await Persona.get_password(body.cedula); //This method is only used here to prevent password leaks
 
-    let match: boolean = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
+    const match: boolean = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
     if (!match) throw new Unauthorized("Contraseña incorrecta");
+
+    //Guardar el device
+    const device = new Dispositivo({
+        cedula: body.cedula,
+        token: body.expo_token
+    });
+    await device.save();
 
     const tokenData: TokenData = {
         cedula: body.cedula,
@@ -61,6 +70,19 @@ const login = async (req: Request, res: Response): Promise<Response> => {
         message: "login exitoso",
         token: token,
         rol: persona.rol,
+    });
+}
+const logout = async (req: Request, res: Response): Promise<Response> => {
+    const body = logoutUser.parse(req.body)
+
+    await Dispositivo.remove({
+        cedula: body.cedula,
+        token: body.expo_token
+    });
+
+    return res.status(200).json({
+        success: true,
+        message: "logout exitoso",
     });
 }
 
@@ -172,6 +194,7 @@ export default {
     get_all,
     get_one,
     login,
+    logout,
     create,
     delet,
     update,
