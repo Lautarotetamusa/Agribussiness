@@ -14,7 +14,7 @@ import { Producto } from "../models/producto.model";
 import { generate_cotizacion_pdf } from "../util/generate_pdf";
 import { files_url } from "../server";
 import { directNotification } from "../notifications";
-import { broadcastNotis } from "../schemas/notificacion.schema";
+import { notifications } from "../schemas/notificacion.schema";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const conn = await sql.getConnection(); //Obtener una conexion, necesario para realizar la transaccion
@@ -68,10 +68,7 @@ const create = async (req: Request, res: Response): Promise<Response> => {
         await generate_cotizacion_pdf(cotizacion, prods_archivo);
         cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
 
-        directNotification({
-            [cotizacion.colaborador.cedula]: `Nueva cotizacion ${cotizacion.nro_cotizacion} creada con exito`,
-            [cotizacion.cliente.cedula]: `Recibiste una cotizacion ${cotizacion.nro_cotizacion} de parte de ${cotizacion.colaborador.nombre}`
-        })
+        directNotification(notifications['cotizacion:new'](cotizacion));
 
         await conn.commit();
         return res.status(201).json({

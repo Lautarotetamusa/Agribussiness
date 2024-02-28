@@ -1,5 +1,5 @@
-import { Dispositivo, DispositivoSchema } from "./models/dispositivo.model";
-import { BroadCastNotification, DirectNotification } from "./schemas/notificacion.schema";
+import { Dispositivo } from "./models/dispositivo.model";
+import { BroadCastNotification } from "./schemas/notificacion.schema";
 
 const expoApi = "https://exp.host/--/api/v2/push/send";
 const title = "Agribussiness";

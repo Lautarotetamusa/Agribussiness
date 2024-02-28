@@ -51,12 +51,13 @@ const login = async (req: Request, res: Response): Promise<Response> => {
     const match: boolean = await bcrypt.compare(body.password, Buffer.from(persona.password).toString('ascii'));
     if (!match) throw new Unauthorized("Contraseña incorrecta");
 
-    //Guardar el device
-    const device = new Dispositivo({
-        cedula: body.cedula,
-        token: body.expo_token
-    });
-    await device.save();
+    if (body.expo_token){
+        const device = new Dispositivo({
+            cedula: body.cedula,
+            token: body.expo_token
+        });
+        await device.save();
+    }
 
     const tokenData: TokenData = {
         cedula: body.cedula,

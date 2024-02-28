@@ -3,15 +3,13 @@ import { createSolicitud } from "../schemas/solicitud.schema";
 import { Solicitud } from "../models/solicitud.model";
 import { ValidationError } from "../errors";
 import { directNotification } from "../notifications";
+import { notifications } from "../schemas/notificacion.schema";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createSolicitud.parse({...req.body, solicitante: res.locals.user.cedula})
     const solicitud = await Solicitud.create(body); 
 
-    directNotification({
-        [solicitud.solicitante]: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido elaborada`,
-        [solicitud.solicitado]: `Recibiste una nueva notificacion de parte de ${solicitud.solicitante}`
-    });
+    directNotification(notifications['solicitud:new'](solicitud))
     
     return res.status(201).json({
         success: true,
@@ -44,10 +42,7 @@ const aceptar = async (req: Request, res: Response): Promise<Response> => {
 
     const _:void = await solicitud.aceptar();
 
-    directNotification({
-        [solicitud.solicitante]: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido aceptada`,
-        [solicitud.solicitado]: `Aceptaste la solicitud ${solicitud.cod_solicitud} correctamente`
-    });
+    directNotification(notifications['solicitud:accept'](solicitud));
 
     return res.status(201).json({
         success: true,

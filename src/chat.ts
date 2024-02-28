@@ -5,7 +5,7 @@ import { io } from "./server";
 import jwt, { Secret } from "jsonwebtoken";
 import { TokenData } from "./schemas/persona.schema";
 import { directNotification } from "./notifications";
-import { broadcastNotis, directNotis } from "./schemas/notificacion.schema";
+import { notifications } from "./schemas/notificacion.schema";
 
 // Objecto que guarda los usuarios conenctados en ese momento
 let Users: Record<string, {chat_id: number, cedula: string, nombre: string, reciver: string}> = {};
@@ -62,9 +62,8 @@ export function chat(socket: Socket) {
 
         await create_message(user.chat_id, user.cedula, message);
 
-        directNotification({
-            [user.reciver]: `Tienes un nuevo mensaje de ${user.nombre}`
-        });
+        const notification = notifications['message:new'](user.reciver, user.nombre, message);
+        directNotification(notification)
 
         //Enviamos un mensaje a todos los usuarios coneectados a este chat
         io.to(user.chat_id.toString()).emit('message', {sender: user.cedula, message: message});

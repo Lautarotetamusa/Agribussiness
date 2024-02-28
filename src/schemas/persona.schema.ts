@@ -44,7 +44,7 @@ export const loginUser = createUser.pick({
     cedula: true, 
     password: true
 }).and(z.object({
-    expo_token: z.string()
+    expo_token: z.string().optional()
 }));
 
 export const logoutUser = createUser.pick({

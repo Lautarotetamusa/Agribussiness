@@ -9,7 +9,7 @@ import { csv2arr } from "../util/csv_to_arr";
 import { Proveedor } from "../models/proveedor.model";
 import { files_url } from "../server";
 import { broadcastNotification } from "../notifications";
-import { broadcastNotis } from "../schemas/notificacion.schema";
+import { notifications } from "../schemas/notificacion.schema";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const productos = await Producto.get_all();
@@ -39,7 +39,7 @@ const file_insert = async (req: Request, res: Response): Promise<Response> => {
     }
     await Producto.bulk_insert(productos as CreateProducto[]);
 
-    broadcastNotification(broadcastNotis['producto:list']());
+    broadcastNotification(notifications['producto:list']());
 
     return res.status(201).json({
         success: true,
@@ -82,7 +82,7 @@ const create_imagen = (is_portada: boolean) => {
             imagen_path = `${files_url}/${Imagen.image_route}/${producto.portada as string}`;
         }
     
-        broadcastNotification(broadcastNotis['producto:imagen:new'](producto.nombre));
+        broadcastNotification(notifications['producto:imagen:new'](producto.nombre));
 
         return res.status(201).json({
             success: true,
@@ -110,7 +110,7 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     const body: CreateProducto = createProducto.parse(req.body);
     const producto: Producto = await Producto.create(body);
 
-    broadcastNotification(broadcastNotis['producto:new'](producto.nombre));
+    broadcastNotification(notifications['producto:new'](producto.nombre));
 
     return res.status(201).json({
         success: true,
@@ -127,7 +127,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     const producto = await Producto.get_one(id);
     const _:void = await producto.update(body);
 
-    broadcastNotification(broadcastNotis['producto:update'](producto.nombre));
+    broadcastNotification(notifications['producto:update'](producto.nombre));
 
     return res.status(201).json({
         success: true,
