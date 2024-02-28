@@ -8,6 +8,8 @@ router.post('/', personaController.create);
 
 router.post('/login', personaController.login);
 
+router.post('/logout', personaController.logout);
+
 router.get('/', 
     auth, 
     list_personas,

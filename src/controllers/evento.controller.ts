@@ -3,16 +3,13 @@ import {Evento} from "../models/evento.model";
 import { createEvento, updateEvento } from "../schemas/evento.schema";
 import { ValidationError } from "../errors";
 import { broadcastNotification } from "../notifications";
+import { broadcastNotis } from "../schemas/notificacion.schema";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createEvento.parse(req.body);
-
     const evento = await Evento.create(body);
 
-    await broadcastNotification({
-        message: `Nuevo evento: ${evento.titulo}`,
-        type: 'evento:new'
-    });
+    broadcastNotification(broadcastNotis['evento:new'](evento.titulo))
 
     return res.status(201).json({
         success: true,
@@ -41,10 +38,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     const evento = await Evento.get_one(res.locals.id);
     let _:void = await evento.update(body);
 
-    await broadcastNotification({
-        message: `Se actualizo un evento`,
-        type: 'evento:update'
-    });
+    broadcastNotification(broadcastNotis['evento:update'](evento.titulo));
 
     return res.status(201).json({
         success: true,

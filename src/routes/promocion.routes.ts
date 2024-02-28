@@ -1,5 +1,5 @@
 import {Router} from "express"
-import promoController from "../controllers/promocion.controller";
+import promoController from "../controllers/__promocion.controller";
 import { auth, check_rol } from "../middlewares/auth";
 import { roles } from "../schemas/persona.schema";
 import { valid_param } from "../middlewares/validad_param";

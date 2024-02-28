@@ -85,10 +85,7 @@ export class Producto extends BaseModel{
     }
 
     static async create(body: CreateProducto): Promise<Producto>{
-        let proveedor = await Proveedor.get_one(body.id_proveedor)
-
         const producto = await Producto._insert<CreateProducto, Producto>(body);
-        producto.proveedor = proveedor;
         return producto;
     }
 

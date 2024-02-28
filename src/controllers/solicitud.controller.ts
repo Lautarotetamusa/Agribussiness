@@ -8,13 +8,9 @@ const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createSolicitud.parse({...req.body, solicitante: res.locals.user.cedula})
     const solicitud = await Solicitud.create(body); 
 
-    await directNotification(solicitud.solicitante, {
-        message: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido elaborada`,
-        type: 'solicitud:new'
-    });
-    await directNotification(solicitud.solicitado, {
-        message: `Recibiste una nueva notificacion de parte de ${solicitud.solicitante}`,
-        type: 'solicitud:new'
+    directNotification({
+        [solicitud.solicitante]: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido elaborada`,
+        [solicitud.solicitado]: `Recibiste una nueva notificacion de parte de ${solicitud.solicitante}`
     });
     
     return res.status(201).json({
@@ -48,13 +44,9 @@ const aceptar = async (req: Request, res: Response): Promise<Response> => {
 
     const _:void = await solicitud.aceptar();
 
-    await directNotification(solicitud.solicitado, {
-        message: `Aceptaste la solicitud ${solicitud.cod_solicitud} correctamente`,
-        type: 'solicitud:new'
-    });
-    await directNotification(solicitud.solicitante, {
-        message: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido aceptada`,
-        type: 'solicitud:update'
+    directNotification({
+        [solicitud.solicitante]: `Su solicitud con codigo: ${solicitud.cod_solicitud} ha sido aceptada`,
+        [solicitud.solicitado]: `Aceptaste la solicitud ${solicitud.cod_solicitud} correctamente`
     });
 
     return res.status(201).json({

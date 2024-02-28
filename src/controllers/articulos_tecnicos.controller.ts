@@ -3,16 +3,14 @@ import {ArticuloTecnico} from "../models/articulo_tecnico.model";
 import { createArticuloTecnico, updateArticuloTecnico } from "../schemas/articulo_tecnico.schema";
 import { ValidationError } from "../errors";
 import { broadcastNotification } from "../notifications";
+import { broadcastNotis } from "../schemas/notificacion.schema";
 
 const create = async (req: Request, res: Response): Promise<Response> => {
     const body = createArticuloTecnico.parse(req.body);
 
     const articuloTecnico = await ArticuloTecnico.create(body);
 
-    await broadcastNotification({
-        message: `Nuevo articulo_tecnico: ${articuloTecnico.titulo}`,
-        type: 'articulo_tecnico:new'
-    });
+    broadcastNotification(broadcastNotis['articulo_tecnico:new'](articuloTecnico.titulo))
 
     return res.status(201).json({
         success: true,
@@ -43,10 +41,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     const articuloTecnico = await ArticuloTecnico.get_one(res.locals.id);
     await articuloTecnico.update(body);
 
-    await broadcastNotification({
-        message: `Se actualizo un articulo tecnico`,
-        type: 'articulo_tecnico:update'
-    });
+    broadcastNotification(broadcastNotis['articulo_tecnico:update'](articuloTecnico.titulo));
 
     return res.status(201).json({
         success: true,

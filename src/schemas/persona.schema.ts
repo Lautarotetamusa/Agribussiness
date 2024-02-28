@@ -40,7 +40,18 @@ export const createColaborador = createUser.extend({
     cod_cargo: z.number()
 });
 
-export const loginUser = createUser.pick({cedula: true, password: true});
+export const loginUser = createUser.pick({
+    cedula: true, 
+    password: true
+}).and(z.object({
+    expo_token: z.string()
+}));
+
+export const logoutUser = createUser.pick({
+    cedula: true, 
+}).and(z.object({
+    expo_token: z.string()
+}));
 
 export const updateUser = createUser.omit({rol: true}).partial();
 
