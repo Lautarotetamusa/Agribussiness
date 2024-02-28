@@ -8,3 +8,5 @@ files/*
 !files/logo.png
 !files/lineas_negocio
 front_tests/
+tests/
+*.txt

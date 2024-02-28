@@ -1,63 +1,54 @@
-import * as amqp from 'amqplib'
-import { CreateNotification, NotificationSchema } from './schemas/notificacion.schema';
+import { Dispositivo, DispositivoSchema } from "./models/dispositivo.model";
+import { BroadCastNotification, DirectNotification } from "./schemas/notificacion.schema";
 
-class AMQPConnection{
-    private static connection: amqp.Connection;
-    private static url = `amqp://${process.env.AMQP_USER}:${process.env.AMQP_PASS}@${process.env.AMQP_HOST}:${process.env.AMQP_PORT}`;
+const expoApi = "https://exp.host/--/api/v2/push/send";
+const title = "Agribussiness";
 
-    static async connect(){
-        if (!this.connection){
-            this.connection = await amqp.connect(this.url);
+type NotificationSchema = {
+    title: string,
+    body: string,
+    to: string
+};
+
+async function pushNotification(payload: Array<NotificationSchema> | NotificationSchema){
+    console.log("noti payload:", payload);
+
+    const res = await fetch(expoApi, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         }
-        return this.connection;
-    }
-}
-
-function newNotification(body: CreateNotification): NotificationSchema {
-    return {
-        message: body.message,
-        type: body.type,
-        created_at: new Date()
-    }
-}
-/**
-    * @brief Envia una notificacion a todos los usuarios subscriptos a ese tipo
-    * @param notification Notificacion que vamos a enviar
-    * @returns NotificationSchema
-*/
-export async function broadcastNotification(body: CreateNotification):Promise<NotificationSchema>{
-    const connection = await AMQPConnection.connect();
-    const channel = await connection.createChannel();
-    const exchange = 'events';
-    const notification = newNotification(body);
-
-    //El modo fanout envia un mensaje a todas las colas asociadas al exchange
-    channel.assertExchange(exchange, 'direct', {
-        durable: false
-    })
-
-    channel.publish(exchange, notification.type, Buffer.from(JSON.stringify(notification)));
-
-    return notification;
-}
-
-/**
-    * @param to Cedula de la persona que recibe la notificacion
-    * @param message Mensaje a enviar 
-    * @returns NotificationSchema
- */
-export async function directNotification(to: string, body: CreateNotification): Promise<NotificationSchema>{
-    const connection = await AMQPConnection.connect();
-    const channel = await connection.createChannel();
-    const exchange = 'direct';
-    const notification = newNotification(body);
-
-    //El modo fanout envia un mensaje a todas las colas asociadas al exchange
-    channel.assertExchange(exchange, 'direct', {
-        durable: false
     });
+    const data = await res.json();
+    return data;
+}
 
-    channel.publish(exchange, to, Buffer.from(JSON.stringify(notification)));
+export function broadcastNotification(noti: BroadCastNotification){
+    Dispositivo.getByRoles(noti.to).then((devices) => {
+        const payload = devices.map(d => {return {
+            title: title,
+            body: noti.message,
+            to: d.token
+        }});
+        pushNotification(payload).then((data) => {
+            console.log(data);
+        }).catch((err) => console.error("Error enviando la notificacion", err));
+    }).catch((err) => console.error("No se pudo obtener los devices", err));
+}
 
-    return notification;
+export function directNotification(args: Record<string, string>){
+    const cedulas = Object.keys(args);
+
+    Dispositivo.getByCedulas(cedulas).then((devices) => {
+        const payload = devices.map(d => {return {
+            title: title,
+            body: args[d.cedula],
+            to: d.token
+        }});
+        pushNotification(payload).then((data) => {
+            console.log(data);
+        }).catch((err) => console.error("Error enviando la notificacion", err));
+    }).catch((err) => console.error("No se pudo obtener los devices", err));
 }
