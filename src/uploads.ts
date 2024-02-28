@@ -19,8 +19,12 @@ export const uploadBuilder = (path: FilePath, validTypes: MimeTypes[], size: num
             return cb(null, file_path);
         },
         filename: (_req, file, cb) => {
+            console.log(file);
             const date = Date.now()
             const [_, format] = file.originalname.split('.');
+            if (format == "undefined" || format == "null"){
+                return cb(new ValidationError("Ocurrio un error, el tipo de archivo es 'undefined'"), '');
+            }
             return cb(null, `${date}.${format}`);
         }
     });
