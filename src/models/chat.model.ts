@@ -95,6 +95,7 @@ export async function get_messages(chat_id: number): Promise<ChatMessage[]>{
         FROM Messages
         WHERE chat_id = ?
         ORDER BY created_at DESC
+        LIMIT 50
     `;
     const [rows] = await sql.query<RowDataPacket[]>(query, [chat_id]);
     return rows as ChatMessage[];
