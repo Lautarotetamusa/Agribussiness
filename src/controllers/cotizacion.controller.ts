@@ -11,7 +11,7 @@ import { CreateUser, roles } from "../schemas/persona.schema";
 import { sql } from "../db";
 import { ValidationError } from "../errors";
 import { Producto } from "../models/producto.model";
-import { generate_cotizacion_pdf } from "../util/generate_pdf";
+import { generate_cotizacion_pdf } from "../util/generate_cotizacion_pdf";
 import { files_url } from "../server";
 import { directNotification } from "../notifications";
 import { notifications } from "../schemas/notificacion.schema";
