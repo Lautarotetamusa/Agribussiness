@@ -88,15 +88,20 @@ export class Persona extends BaseModel{
         return rows as {cedula: string, nombre: string, cargo: string}[];
     }
 
-    static async get_all(rol?: RolesKeys): Promise<CreateColaborador[]>{
+    static async get_all(cedula: string, rol?: RolesKeys): Promise<CreateColaborador[]>{
+        let query = `
+            SELECT ${this.fields.join(', ')}
+            FROM Personas
+            WHERE cedula != ?
+            AND rol != '${roles.invitado}'
+            AND is_deleted = 0
+        `;
         if (rol){
-            return await this.find_all<CreateColaborador>({
-                is_deleted: 0,
-                rol: rol
-            });
+            query += ' AND rol = ?';
         }
-
-        return await this.find_all<CreateColaborador>({is_deleted: 0});
+        console.log(query);
+        const [rows] = await sql.query<RowDataPacket[]>(query, [cedula, rol]);
+        return rows as CreateColaborador[];
     }
 
     async update(_req: UpdateUser){

@@ -184,7 +184,7 @@ const get_all = async (req: Request, res: Response): Promise<Response> => {
         rol = createUser.shape.rol.parse(req.query.rol);
     }
 
-    const personas = await Persona.get_all(rol);
+    const personas = await Persona.get_all(res.locals.user.cedula, rol);
     return res.status(200).json({
         success: true,
         data: personas
