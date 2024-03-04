@@ -13,6 +13,7 @@ import SolicitudRouter from "./routes/solicitud.routes";
 import CotizacionRouter from "./routes/cotizacion.routes";
 import NotificationRouter from "./routes/notification.routes";
 import ChatRouter from "./routes/chat.routes";
+import ListaPreciosRouter from "./routes/lista_precios.routes";
 
 router.use('/persona/', PersonaRouter);
 router.use('/producto/', ProductoRouter);
@@ -26,3 +27,4 @@ router.use('/solicitud', SolicitudRouter);
 router.use('/cotizacion', CotizacionRouter);
 router.use('/notificacion', NotificationRouter);
 router.use('/chat', ChatRouter);
+router.use('/lista_precios', ListaPreciosRouter);
