@@ -11,11 +11,19 @@ CREATE TABLE IF NOT EXISTS Zonas(
     PRIMARY KEY (cod_zona)
 );
 
+CREATE TABLE IF NOT EXISTS Departamentos(
+    id_depto INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(60) NOT NULL,
+    telefono VARCHAR(15) NOT NULL,
+
+    PRIMARY KEY (id_depto)
+);
+
 CREATE TABLE IF NOT EXISTS Cargos(
     cod_cargo INT NOT NULL AUTO_INCREMENT,
-    id_depto INT NOT NULL
+    id_depto INT NOT NULL,
     nombre VARCHAR(128) NOT NULL,
-    nivel INT(2) NOT NULL;
+    nivel INT(2) NOT NULL,
 
     PRIMARY KEY(cod_cargo),
     FOREIGN KEY (id_depto) REFERENCES Departamentos(id_depto)
@@ -38,13 +46,15 @@ CREATE TABLE IF NOT EXISTS Personas(
     FOREIGN KEY (cod_cargo) REFERENCES Cargos(cod_cargo)
 );
 
-CREATE TABLE IF NOT EXISTS Departamentos(
-    id_depto INT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(60) NOT NULL,
-    telefono VARCHAR(15) NOT NULL,
-
-    PRIMARY KEY (id_depto)
+CREATE TABLE Dispositivos(
+    token CHAR(50) NOT NULL ,
+    cedula CHAR(10) NOT NULL,
+    
+    PRIMARY KEY (token, cedula),
+    FOREIGN KEY (cedula) REFERENCES Personas(cedula)
 );
+
+
 
 /* El campo ficha_tecnica campo no va mas, pero lo dejamos por ahora por si acaso TODO! */
 CREATE TABLE IF NOT EXISTS Proveedores(
@@ -52,8 +62,10 @@ CREATE TABLE IF NOT EXISTS Proveedores(
     nombre VARCHAR(128) NOT NULL,
     photo VARCHAR(256),
     ficha_tecnica VARCHAR(256), 
+    id_linea int(11) NOT NULL,
 
-    PRIMARY KEY (id_proveedor)
+    PRIMARY KEY (id_proveedor),
+    FOREIGN KEY (id_linea) REFERENCES LineasNegocio(id_linea)
 );
 
 CREATE TABLE IF NOT EXISTS Productos(
@@ -65,7 +77,7 @@ CREATE TABLE IF NOT EXISTS Productos(
     descripcion VARCHAR(512) NOT NULL,
     
     ficha_tecnica VARCHAR(256) DEFAULT NULL,
-    portada VARCHAR(256) DEFAULT NULL
+    portada VARCHAR(256) DEFAULT NULL,
 
     iva INT DEFAULT 0,
 
@@ -116,7 +128,7 @@ CREATE TABLE IF NOT EXISTS ArticulosTecnicos(
 );
 
 CREATE TABLE IF NOT EXISTS Cotizaciones(
-    nro_cotizacion INT NOT NULL AUTO_INCREMENT
+    nro_cotizacion INT NOT NULL AUTO_INCREMENT,
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     estado ENUM("aprobada", "creada") NOT NULL DEFAULT "creada",
     colaborador CHAR(10) NOT NULL,
@@ -127,7 +139,7 @@ CREATE TABLE IF NOT EXISTS Cotizaciones(
     cliente_nuevo VARCHAR(64) DEFAULT NULL,
 
     forma_pago ENUM("Contado", "Credito 15", "Credito 30", "Credito 45") NOT NULL DEFAULT "Contado",
-    tiempo_entrega TINYINT NOT NULL DEFAULT 1, //Tiempo en días
+    tiempo_entrega TINYINT NOT NULL DEFAULT 1, 
 
     PRIMARY KEY (nro_cotizacion),
     FOREIGN KEY (colaborador) REFERENCES Personas(cedula),
@@ -140,10 +152,10 @@ ALTER TABLE Cotizaciones ADD constraint double_client_check CHECK(
 
 CREATE TABLE IF NOT EXISTS CotizacionProducto(
     nro_cotizacion INT NOT NULL,
-    id_producto INT NOT NULL
+    id_producto INT NOT NULL,
 
     cantidad INT NOT NULL,
-    precio_final DECIMAL (10, 2) NOT NULL
+    precio_final DECIMAL (10, 2) NOT NULL,
 
     PRIMARY KEY (nro_cotizacion, id_producto),
 
@@ -163,17 +175,17 @@ CREATE TABLE Imagenes(
 );
 
 INSERT INTO Departamentos(nombre, telefono) VALUES
-    ("GERENCIA GENERAL", "1234")
-    ("VENTAS Y DESAROLLO", "2345")
-    ("MARKETING", "3456")
-    ("LOGÍSTICA", "4567")
-    ("ADMISTRACION Y FINANZAS", "5678")
+    ("GERENCIA GENERAL", "1234"),
+    ("VENTAS Y DESAROLLO", "2345"),
+    ("MARKETING", "3456"),
+    ("LOGÍSTICA", "4567"),
+    ("ADMISTRACION Y FINANZAS", "5678"),
     ("COMPRAS", "6789");
 
 INSERT INTO Cargos (nombre, id_depto, nivel) VALUES 
     ("Gerente General", 1, 1),
-    ("Gerente Administrativo", 5, 2), // Solo al general
-    ("Coordinador de Ventas y Desarollo", 2, 3), // Gerentes (de aca para abajo)
+    ("Gerente Administrativo", 5, 2),
+    ("Coordinador de Ventas y Desarollo", 2, 3),
     ("Representante Técnico Comercial", 2, 3),  
     ("Asistente Técnico Comercial", 2, 3),
     ("Asistente de Gerencia", 1, 3),
@@ -194,4 +206,7 @@ INSERT INTO LineasNegocio(nombre, image) VALUES
 
 /* La contraseña es: invitado*/
 INSERT INTO Personas(cedula, password, cod_zona, cod_cargo, nombre, correo, telefono, direccion, rol) VALUES
-("invitado", "$2b$10$oGz/OOPpk8iuM/TN3Lptp.Lrmfs6..4SUjSJ7xmblpyX5WemPOHPK", 1, NULL, "invitado", "", NULL, "", "invitado")
+("invitado", "$2b$10$oGz/OOPpk8iuM/TN3Lptp.Lrmfs6..4SUjSJ7xmblpyX5WemPOHPK", 1, NULL, "invitado", "", NULL, "", "invitado");
+
+INSERT INTO Personas(cedula, password, cod_zona, cod_cargo, nombre, correo, telefono, direccion, rol) VALUES
+("admin", "$2b$10$JoR3.ISiE2QcEBN8VEmFA.QAeeInV/pxcFiHQhjykdfYxWzIzP9AS", 1, NULL, "admin", "", NULL, "", "admin");
