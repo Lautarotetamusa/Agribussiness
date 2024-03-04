@@ -13,7 +13,7 @@ const iImagen = z.object({
     id_producto: z.number(),
     nro_imagen: z.number(),
     path: z.string(),
-    comentarios: z.string()
+    comentarios: z.string().optional()
 });
 
 const createImagen = iImagen.omit({

@@ -2,7 +2,7 @@ import {z} from "zod";
 
 const iProveedor = z.object({
     id_proveedor: z.number(),
-    nombre: z.string(),
+    nombre: z.string().min(1, {message: "El nombre es obligatorio"}),
     photo: z.string(),
     id_linea: z.number()
 });

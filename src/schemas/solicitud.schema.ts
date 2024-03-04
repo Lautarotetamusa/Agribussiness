@@ -2,10 +2,10 @@ import {z} from "zod";
 
 const iSolicitud = z.object({
     cod_solicitud: z.number(),
-    solicitante: z.string(),
-    solicitado: z.string(),
+    solicitante: z.string().min(1, {message: "Debes ingresar un solicitante"}),
+    solicitado: z.string().min(1, {message: "Debes ingresar un solicitado"}),
     fecha_creacion: z.date(),
-    descripcion: z.string(),
+    descripcion: z.string().min(1, {message: "La descripcion es obligatoria"}),
     aceptada: z.boolean(),
 });
 export const createSolicitud = iSolicitud.omit({cod_solicitud: true, fecha_creacion: true, aceptada: true});

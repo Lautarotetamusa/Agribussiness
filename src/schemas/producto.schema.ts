@@ -2,9 +2,9 @@ import {z} from "zod";
 
 export const createProducto = z.object({
     precio: z.number(),
-    nombre: z.string(),
-    presentacion: z.string(),
-    descripcion: z.string(),
+    nombre: z.string().min(1, {message: "El nombre es obligatorio"}),
+    presentacion: z.string().min(1, {message: "La presentacion es obligatoria"}),
+    descripcion: z.string().min(1, {message: "La descripcion es obligatoria"}),
     id_proveedor: z.number(),
     iva: z.number().min(0).max(100).default(0)
 });

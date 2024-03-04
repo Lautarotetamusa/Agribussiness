@@ -2,8 +2,8 @@ import {z} from "zod";
 
 const articuloTecnicoSchema = z.object({
     id: z.number(),
-    titulo: z.string().max(128),
-    descripcion: z.string().max(1024),
+    titulo: z.string().max(128, {message: "El titulo es demasiado largo"}).min(1, {message: "El titulo es obligatorio"}),
+    descripcion: z.string().max(1024, {message: "La descripcion es demasiado larga"}).min(1, {message: "La descripcion es obligatoria"}),
     fecha_creacion: z.date(),
     url: z.string().url(),
     image: z.string().optional().nullable(),
