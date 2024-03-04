@@ -94,7 +94,10 @@ export class Producto extends BaseModel{
     }
 
     static async get_one(id_producto: number): Promise<Producto>{
-        const prod = await this.find_one<BuildProducto, Producto>({id_producto: id_producto})
+        const prod = await this.find_one<BuildProducto, Producto>({
+            id_producto: id_producto,
+            is_deleted: 0
+        })
         //Esto lo hacemos, porque mysql devuelve el campo DECIMAL(10, 2) como un string
         //Lo parseo a float, como ts no me deja pasarle un argumento que cree que es number, usamos as unkwnow as string
         prod.precio = parseFloat((prod.precio as unknown) as string);
@@ -114,6 +117,7 @@ export class Producto extends BaseModel{
             FROM ${this.table_name} Prod
             INNER JOIN ${Proveedor.table_name} Prov
                 ON Prod.id_proveedor = Prov.id_proveedor
+            WHERE Prod.is_deleted = 0
             ORDER BY Prod.id_producto DESC
         ` as const;
 
@@ -138,8 +142,15 @@ export class Producto extends BaseModel{
         return await Producto._bulk_insert<CreateProducto>(req);
     }
 
+    static async remove(id: number){
+        await Producto._update({is_deleted: 1}, {id_producto: id})
+    }
+
     static async select(ids: number[]) {
-        const productos = await this._bulk_select(ids.map(i => {return {id_producto: i}}));
+        const productos = await this._bulk_select(ids.map(i => {return {
+            id_producto: i,
+            is_deleted: 0
+        }}));
         if (productos.length != ids.length){
             throw new ValidationError("Algun producto no existe en la base de datos");
         }

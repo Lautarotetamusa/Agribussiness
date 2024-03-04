@@ -33,6 +33,13 @@ router.get('/:id',
     productoController.get_one
 );
 
+router.delete('/:id', 
+    auth, 
+    check_rol([roles.admin]), 
+    valid_param("id"), 
+    productoController.remove
+);
+
 router.put('/:id', 
     auth, 
     check_rol([roles.admin]), 

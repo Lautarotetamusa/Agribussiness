@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS Productos(
     nombre VARCHAR(255) NOT NULL,
     presentacion VARCHAR(128) NOT NULL,
     descripcion VARCHAR(512) NOT NULL,
+    is_deleted BOOLEAN DEFAULT false,
     
     ficha_tecnica VARCHAR(256) DEFAULT NULL,
     portada VARCHAR(256) DEFAULT NULL,

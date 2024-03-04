@@ -136,11 +136,22 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     });
 }
 
+const remove = async (req: Request, res: Response): Promise<Response> => {
+    const id: number = res.locals.id;
+    await Producto.remove(id);
+
+    return res.status(200).json({
+        success: true,
+        message: "Producto eliminado correctamente"
+    });
+}
+
 export default {
     get_all,
     get_one,
     create,
     update,
+    remove,
     file_insert,
     create_ficha_tecnica,
     create_imagen,
