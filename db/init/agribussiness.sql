@@ -1,4 +1,4 @@
--- MariaDB dump 10.19  Distrib 10.11.2-MariaDB, for Linux (x86_64)
+-- MariaDB dump 10.19  Distrib 10.9.4-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: Agribussiness
 -- ------------------------------------------------------
@@ -15,11 +15,35 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE USER IF NOT EXISTS 'teti'@'%' IDENTIFIED BY 'Lautaro123.';
-GRANT ALL PRIVILEGES ON *.* TO 'teti'@'%' WITH GRANT OPTION;
+--
+-- Table structure for table `ArticulosTecnicos`
+--
 
-CREATE DATABASE IF NOT EXISTS Agribussiness;
-USE Agribussiness;
+DROP TABLE IF EXISTS `ArticulosTecnicos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ArticulosTecnicos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `titulo` varchar(128) NOT NULL,
+  `descripcion` varchar(1024) DEFAULT NULL,
+  `image` varchar(256) DEFAULT NULL,
+  `url` varchar(256) NOT NULL,
+  `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ArticulosTecnicos`
+--
+
+LOCK TABLES `ArticulosTecnicos` WRITE;
+/*!40000 ALTER TABLE `ArticulosTecnicos` DISABLE KEYS */;
+INSERT INTO `ArticulosTecnicos` VALUES
+(4,'Artículo de prueba','Nuevas semillas.','1709554610840.png','Https://www.Google.com','2024-03-04 12:15:11'),
+(5,'','',NULL,'https://www.google.com/','2024-03-04 17:06:27');
+/*!40000 ALTER TABLE `ArticulosTecnicos` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Cargos`
@@ -30,8 +54,8 @@ DROP TABLE IF EXISTS `Cargos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Cargos` (
   `cod_cargo` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(128) NOT NULL,
   `id_depto` int(11) NOT NULL,
+  `nombre` varchar(128) NOT NULL,
   `nivel` int(2) NOT NULL,
   PRIMARY KEY (`cod_cargo`),
   KEY `id_depto` (`id_depto`),
@@ -46,17 +70,47 @@ CREATE TABLE `Cargos` (
 LOCK TABLES `Cargos` WRITE;
 /*!40000 ALTER TABLE `Cargos` DISABLE KEYS */;
 INSERT INTO `Cargos` VALUES
-(1,'Gerente General',1,1),
-(2,'Gerente Administrativo',5,2),
-(3,'Coordinador de Ventas y Desarrollo',2,3),
-(4,'Representante Técnico Comercial',2,3),
-(5,'Asistente Técnico Comercial',2,3),
-(6,'Asistente de Gerencia',1,3),
-(7,'Asistente de Despacho',4,3),
-(8,'Encargado de Marketing',3,3),
-(9,'Encargada de Logística',4,3),
-(10,'Encargado de compras',6,3);
+(1,1,'Gerente General',1),
+(2,5,'Gerente Administrativo',2),
+(3,2,'Coordinador de Ventas y Desarollo',3),
+(4,2,'Representante Técnico Comercial',3),
+(5,2,'Asistente Técnico Comercial',3),
+(6,1,'Asistente de Gerencia',3),
+(7,4,'Asistente de Despacho',3),
+(8,3,'Encargado de Marketing',3),
+(9,4,'Encargado de Logística',3),
+(10,6,'Encargado de compras',3);
 /*!40000 ALTER TABLE `Cargos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Chats`
+--
+
+DROP TABLE IF EXISTS `Chats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Chats` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `persona_1` char(10) NOT NULL,
+  `persona_2` char(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cliente` (`persona_1`,`persona_2`),
+  KEY `colaborador` (`persona_2`),
+  CONSTRAINT `Chats_ibfk_1` FOREIGN KEY (`persona_1`) REFERENCES `Personas` (`cedula`),
+  CONSTRAINT `Chats_ibfk_2` FOREIGN KEY (`persona_2`) REFERENCES `Personas` (`cedula`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Chats`
+--
+
+LOCK TABLES `Chats` WRITE;
+/*!40000 ALTER TABLE `Chats` DISABLE KEYS */;
+INSERT INTO `Chats` VALUES
+(22,'666666','333333');
+/*!40000 ALTER TABLE `Chats` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -85,18 +139,11 @@ CREATE TABLE `CotizacionProducto` (
 LOCK TABLES `CotizacionProducto` WRITE;
 /*!40000 ALTER TABLE `CotizacionProducto` DISABLE KEYS */;
 INSERT INTO `CotizacionProducto` VALUES
-(2,1,3,100.00),
-(2,3,2,102.00),
-(3,1,3,100.00),
-(3,3,2,102.00),
-(4,1,3,100.00),
-(4,3,2,102.00),
-(5,1,3,100.00),
-(5,3,2,102.00),
-(6,1,3,100.00),
-(6,3,2,102.00),
-(7,1,3,100.00),
-(7,3,2,102.00);
+(2,3,2,4000.00),
+(2,5,3,1000.00),
+(3,5,5,1000.00),
+(4,6,25,1500.00),
+(5,4,24,2500.00);
 /*!40000 ALTER TABLE `CotizacionProducto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -112,16 +159,19 @@ CREATE TABLE `Cotizaciones` (
   `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
   `estado` enum('aprobada','creada') NOT NULL DEFAULT 'creada',
   `colaborador` char(10) NOT NULL,
-  `cliente` char(10) NOT NULL,
+  `disposiciones` varchar(2048) NOT NULL,
   `file` varchar(256) NOT NULL,
+  `cliente` char(10) DEFAULT NULL,
+  `cliente_nuevo` varchar(64) DEFAULT NULL,
   `forma_pago` enum('Contado','Credito 15','Credito 30','Credito 45') NOT NULL DEFAULT 'Contado',
   `tiempo_entrega` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`nro_cotizacion`),
   KEY `colaborador` (`colaborador`),
   KEY `cliente` (`cliente`),
   CONSTRAINT `Cotizaciones_ibfk_1` FOREIGN KEY (`colaborador`) REFERENCES `Personas` (`cedula`),
-  CONSTRAINT `Cotizaciones_ibfk_2` FOREIGN KEY (`cliente`) REFERENCES `Personas` (`cedula`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `Cotizaciones_ibfk_2` FOREIGN KEY (`cliente`) REFERENCES `Personas` (`cedula`),
+  CONSTRAINT `double_client_check` CHECK (`cliente` is not null and `cliente_nuevo` is null or `cliente` is null and `cliente_nuevo` is not null)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,13 +181,10 @@ CREATE TABLE `Cotizaciones` (
 LOCK TABLES `Cotizaciones` WRITE;
 /*!40000 ALTER TABLE `Cotizaciones` DISABLE KEYS */;
 INSERT INTO `Cotizaciones` VALUES
-(1,'2023-10-04 10:54:04','creada','492183214','43491979','1696416844920.pdf','Contado',1),
-(2,'2023-10-04 10:59:36','creada','492183214','43491979','1696417176084.pdf','Contado',1),
-(3,'2023-10-04 11:00:16','creada','492183214','43491979','1696417216711.pdf','Contado',1),
-(4,'2023-10-04 11:01:47','creada','492183214','43491979','1696417307501.pdf','Contado',1),
-(5,'2023-10-04 11:16:20','creada','492183214','43491979','1696418180753.pdf','Contado',1),
-(6,'2023-10-04 11:16:54','creada','492183214','43491979','1696418214621.pdf','Contado',1),
-(7,'2023-10-04 11:17:39','creada','492183214','43491979','1696418259901.pdf','Contado',1);
+(2,'2024-03-04 12:50:39','creada','333333','Disposición de prueba','1709556639254.pdf','3',NULL,'Credito 15',9),
+(3,'2024-03-04 15:55:56','creada','666666','','1709567756710.pdf','2',NULL,'Contado',3),
+(4,'2024-03-05 18:17:36','creada','333333','Precio por compra ','1709662656786.pdf','3',NULL,'Contado',1),
+(5,'2024-03-05 18:20:38','creada','333333','Precio ','1709662838856.pdf','3',NULL,'Contado',14);
 /*!40000 ALTER TABLE `Cotizaciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -173,6 +220,36 @@ INSERT INTO `Departamentos` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Dispositivos`
+--
+
+DROP TABLE IF EXISTS `Dispositivos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Dispositivos` (
+  `token` char(50) NOT NULL,
+  `cedula` char(10) NOT NULL,
+  PRIMARY KEY (`token`,`cedula`),
+  KEY `cedula` (`cedula`),
+  CONSTRAINT `Dispositivos_ibfk_1` FOREIGN KEY (`cedula`) REFERENCES `Personas` (`cedula`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Dispositivos`
+--
+
+LOCK TABLES `Dispositivos` WRITE;
+/*!40000 ALTER TABLE `Dispositivos` DISABLE KEYS */;
+INSERT INTO `Dispositivos` VALUES
+('ExponentPushToken[52ObtPI02Vg6f335NAXbIj]','2'),
+('ExponentPushToken[cW7pUTNA_piYo4rkPYsPVt]','333333'),
+('ExponentPushToken[f1LeHwJQKM_4QZOB66zOCZ]','22'),
+('ExponentPushToken[vwndy5AahZLmRVJg_a9gyt]','333333');
+/*!40000 ALTER TABLE `Dispositivos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Eventos`
 --
 
@@ -186,7 +263,7 @@ CREATE TABLE `Eventos` (
   `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
   `image` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id_evento`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,36 +273,39 @@ CREATE TABLE `Eventos` (
 LOCK TABLES `Eventos` WRITE;
 /*!40000 ALTER TABLE `Eventos` DISABLE KEYS */;
 INSERT INTO `Eventos` VALUES
-(1,'Evento de campo','Evento de campo reunión para toda la familia','2023-09-11 16:43:42','1694453141055.png'),
-(2,'¡¡Nuevos precios!','Estimados clientes se realizó cambios en los precios por favor revisar .','2023-09-11 16:44:27',NULL);
+(1,'Nuevos precios','Más competitivos que nunca','2024-03-04 12:17:37','1709554699008.jpeg'),
+(2,'Día de Campo','e realizará un visita al invernadero del Ing. Carlos Tomez en la ciudad de..','2024-03-04 12:40:39','1709556079741.png');
 /*!40000 ALTER TABLE `Eventos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `FichaTecnica`
+-- Table structure for table `Imagenes`
 --
 
-DROP TABLE IF EXISTS `FichaTecnica`;
+DROP TABLE IF EXISTS `Imagenes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FichaTecnica` (
-  `id_ficha` int(11) NOT NULL AUTO_INCREMENT,
-  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
-  `archivo` varchar(255) NOT NULL,
+CREATE TABLE `Imagenes` (
+  `path` varchar(256) NOT NULL,
   `id_producto` int(11) NOT NULL,
-  PRIMARY KEY (`id_ficha`),
-  KEY `id_producto` (`id_producto`),
-  CONSTRAINT `FichaTecnica_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `Productos` (`id_producto`)
+  `nro_imagen` int(11) NOT NULL,
+  `comentarios` varchar(512) DEFAULT '',
+  PRIMARY KEY (`id_producto`,`nro_imagen`),
+  CONSTRAINT `Imagenes_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `Productos` (`id_producto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `FichaTecnica`
+-- Dumping data for table `Imagenes`
 --
 
-LOCK TABLES `FichaTecnica` WRITE;
-/*!40000 ALTER TABLE `FichaTecnica` DISABLE KEYS */;
-/*!40000 ALTER TABLE `FichaTecnica` ENABLE KEYS */;
+LOCK TABLES `Imagenes` WRITE;
+/*!40000 ALTER TABLE `Imagenes` DISABLE KEYS */;
+INSERT INTO `Imagenes` VALUES
+('1709556448991.jpeg',6,0,'Comentario de la foto'),
+('1709556459574.jpeg',6,1,'Comentario de prueba'),
+('1709556469862.jpeg',6,2,'');
+/*!40000 ALTER TABLE `Imagenes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -262,6 +342,43 @@ INSERT INTO `LineasNegocio` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Messages`
+--
+
+DROP TABLE IF EXISTS `Messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `chat_id` int(11) NOT NULL,
+  `sender` char(10) NOT NULL,
+  `message` varchar(1024) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `chat_id` (`chat_id`),
+  KEY `sender` (`sender`),
+  CONSTRAINT `Messages_ibfk_1` FOREIGN KEY (`chat_id`) REFERENCES `Chats` (`id`),
+  CONSTRAINT `Messages_ibfk_2` FOREIGN KEY (`sender`) REFERENCES `Personas` (`cedula`)
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Messages`
+--
+
+LOCK TABLES `Messages` WRITE;
+/*!40000 ALTER TABLE `Messages` DISABLE KEYS */;
+INSERT INTO `Messages` VALUES
+(107,22,'666666','hola','2024-03-04 12:57:57'),
+(108,22,'333333','Hola','2024-03-04 12:58:56'),
+(109,22,'333333','Por favor préstame guita','2024-03-04 12:59:06'),
+(110,22,'666666','Dale','2024-03-04 12:59:15'),
+(113,22,'333333','Hola','2024-03-05 17:46:38'),
+(114,22,'333333','Hola','2024-03-05 17:47:01');
+/*!40000 ALTER TABLE `Messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Personas`
 --
 
@@ -272,18 +389,18 @@ CREATE TABLE `Personas` (
   `cedula` char(10) NOT NULL,
   `password` binary(60) NOT NULL,
   `cod_zona` int(11) NOT NULL,
+  `cod_cargo` int(11) DEFAULT NULL,
   `nombre` varchar(60) NOT NULL,
   `correo` varchar(255) NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
   `direccion` varchar(255) DEFAULT NULL,
+  `rol` enum('admin','cliente','colaborador','invitado') NOT NULL,
   `is_deleted` tinyint(1) DEFAULT 0,
-  `rol` enum('admin','cliente','colaborador') NOT NULL,
-  `cod_cargo` int(11) DEFAULT NULL,
   PRIMARY KEY (`cedula`),
   KEY `cod_zona` (`cod_zona`),
   KEY `cod_cargo` (`cod_cargo`),
-  CONSTRAINT `Personas_ibfk_2` FOREIGN KEY (`cod_zona`) REFERENCES `Zonas` (`cod_zona`),
-  CONSTRAINT `Personas_ibfk_4` FOREIGN KEY (`cod_cargo`) REFERENCES `Cargos` (`cod_cargo`)
+  CONSTRAINT `Personas_ibfk_1` FOREIGN KEY (`cod_zona`) REFERENCES `Zonas` (`cod_zona`),
+  CONSTRAINT `Personas_ibfk_2` FOREIGN KEY (`cod_cargo`) REFERENCES `Cargos` (`cod_cargo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -294,27 +411,14 @@ CREATE TABLE `Personas` (
 LOCK TABLES `Personas` WRITE;
 /*!40000 ALTER TABLE `Personas` DISABLE KEYS */;
 INSERT INTO `Personas` VALUES
-('204349197','$2b$10$cS.2t0W/VJ6zkSnOHhQf3OkxaTWHQb6VSjsXCoJquTSXBPD9IIVS6',2,'Juan ramon','lautarotetamusa@gmail.com',NULL,'urquiza 1159',1,'cliente',NULL),
-('2043491978','$2b$10$/17GjSxcLyRDrGumrch.2uM78MZaIwDiqJHFPIZKeuChla5u/hdLG',1,'Juan ramon Alberto Jose','lautarotetamusa@gmail.com',NULL,'urquiza 1159',0,'admin',NULL),
-('348213901','$2b$10$MImncc/vL/QzI7cNOARuvuA4DDrBDDMYolzg1ZLmkGVjxChHjMeFq',1,'juan ramon','juanramon@gmail.com',NULL,'zeballos 1159',0,'cliente',NULL),
-('348213902','$2b$10$kPlyuWDfNXZsTctWQ9iMhegHDoRxly7YO4raHeP6plzmPV2AZxFci',2,'Juan alonso el facha','juanramon@gmail.com',NULL,'zeballos 1159',0,'cliente',NULL),
-('348213904','$2b$10$ZoDqz7/WV5EhpJNYWt5a0eg1jbbYyfRWF3kBRUehyZJlBn3Jyk2X.',1,'juan ramon','juanramon@gmail.com',NULL,'zeballos 1159',0,'cliente',NULL),
-('348213905','$2b$10$4dlBzpav9vBOyCk9rmuEl.7uw1xS3cYjciLtnxFDlYnbNYC/PNfQW',1,'juan ramon','juanramon@gmail.com',NULL,'zeballos 1159',0,'cliente',NULL),
-('348213906','$2b$10$It/iTpj/lcmZVeV6RCCjF.wdQdN.vuElPr/sNV/fpOF2aYjZ7Vpg.',1,'juan ramon','juanramon@gmail.com',NULL,'zeballos 1159',1,'cliente',NULL),
-('348213907','$2b$10$pwCXlAtYy54tY237sb96IOffeF8xlREBkUMDFUEISgFAUHJQ8P9Vq',1,'juan ramon','juanramon@gmail.com',NULL,'zeballos 1159',0,'cliente',NULL),
-('39214281','$2b$10$ke.cqNRqz.yB3RtncweYxu0Qg4du9XhlQcFHSwAEFnYXuRorFCMCe',3,'Manuel Variego','manu141414@gmail.com',NULL,'New YOrk',0,'cliente',NULL),
-('39214282','$2b$10$U.V7tC.7nlo.R1ZnmGTJquNMLCpRHIWvNQmVQGvHDoLkw1VvSB28G',3,'Manuel Variego','manu141414@gmail.com',NULL,'New YOrk',0,'colaborador',1),
-('392142823','$2b$10$bm8lkD8dsEx6Lupwlu8/Ue3r7L04WQ1mI793mXqSP02EVhsz.pDoe',3,'Manuel Variego','manu141414@gmail.com',NULL,'New YOrk',0,'colaborador',6),
-('392142824','$2b$10$QtYm/Ahwd.hVuZm6BcoAPuvHEDoESoKknRGft1/5aZw5VZ5JguY4W',3,'Manuel Variego','manu141414@gmail.com',NULL,'New YOrk',0,'colaborador',9),
-('4213','$2b$10$UA4ocdWK2dL5di4aEjUEPu0.sDvYyZUJpM7woI983nBJe.W4Wr1Di',1,'Leo Messi','leomessi@gmail.com',NULL,'dorrego 737',0,'cliente',NULL),
-('43491978','$2b$10$kHbiEirM6O3SeCT/aUSBSeeM8IRnZhtlo/HaMM7lzKsYX5JFrMqDi',1,'Lautaro','lautarotetamusa@gmail.com',NULL,'urquiza 1159',0,'admin',NULL),
-('43491979','Lautaro123.\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',1,'Lautaro','lautarotetamusa@gmail.com',NULL,'urquiza 1159',0,'cliente',NULL),
-('492183214','$2b$10$VcN3PL0rp41C/4ajDaMaFOT9MNbz..kz8cxL.XPitMCLhZ/K0K.Ka',2,'Juan ramon Alberto Jose','roberto@gmail.com',NULL,'dorrego 737',0,'colaborador',1),
-('5721832','$2b$10$I/SnYhitXPS49nI9fDEJbufTVbUbhtZEjQtUnwUqgHTUjeyq8BgMG',1,'Leo Messi','leomessi@gmail.com',NULL,'dorrego 737',0,'cliente',NULL),
-('591209321','$2b$10$AI.SP2fj/KAybP/FOkLAV..c.NzuNuYtMxuEV5THa6fBfGaswrqiC',2,'Callender','callender@gmail.com',NULL,'Philadelphia',0,'colaborador',1),
-('591209322','$2b$10$NN.QFbjcJCQjhetb45eyOu5kWZ0JTuEwkzqMuNA7PWsN87SkGCTJG',2,'Callender','callender@gmail.com',NULL,'Philadelphia',0,'colaborador',4),
-('592813921','$2b$10$BSE5SvtByBlWD2iZ0/D70ewoSdqYW4cAtb1SD8nq.ieeCt68izGRS',1,'Leo Messi','leomessi@gmail.com',NULL,'dorrego 737',0,'cliente',NULL),
-('592813922','$2b$10$jJMeZIZw0Qqn32RBs6Jf0eGsf2v2Ng1Ycm0YQXwhSsV/oSrH7HK7K',1,'Leo Messi','leomessi@gmail.com',NULL,'dorrego 737',0,'cliente',NULL);
+('2','$2b$10$Wp.sldJZObm.CFsBCo0WXOWn5I/OKmSM.wF8LmEt6qYmsZhrPKSSC',2,NULL,'Aaaa','Aaa@aaa.com','124846794','Sushe 123','cliente',0),
+('22','$2b$10$EgjFk1g2zJQCZz3GMHsql.RxvXrKgC4ecTg9A8OXUD187p.eZHHry',2,NULL,'Cliente de prueba','Cliente@thorque.com.ar','123456789','Prueba 333','cliente',0),
+('3','$2b$10$IfX0CiIukVurpqRjnzraR.I1cgGaKYS8yOh7OriK00qnkDR.LDRJ6',2,NULL,'Cliente','cliente@hotmail.com','13791677646','Prueba 123','cliente',0),
+('333333','$2b$10$jFgFu.Sy5UZLHKrC21edseXf1FGWCwq/r/v6C69xcI102JyfmxAbC',1,1,'Juan','juancarlos@gmail.com',NULL,'Maipu 444','colaborador',0),
+('6','$2b$10$tVP68/fo6Yr/fEurmLQyNu27UGnzohlQqHBbPdi9MFCCAuT04oh1q',2,8,'Colaborador','colaborador@example.com','3417293721','Ejemplo 123','colaborador',1),
+('666666','$2b$10$YCFD5FQyfswUKM6q5osDvu7mbQIP2KMa6YLR446abGtKodDSkA3M.',1,6,'Jose','jose@gmail.com',NULL,'Zeballos 444','colaborador',0),
+('admin','$2b$10$JoR3.ISiE2QcEBN8VEmFA.QAeeInV/pxcFiHQhjykdfYxWzIzP9AS',1,NULL,'admin','',NULL,'','admin',0),
+('invitado','$2b$10$oGz/OOPpk8iuM/TN3Lptp.Lrmfs6..4SUjSJ7xmblpyX5WemPOHPK',1,NULL,'invitado','',NULL,'','invitado',0);
 /*!40000 ALTER TABLE `Personas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -327,16 +431,19 @@ DROP TABLE IF EXISTS `Productos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Productos` (
   `id_producto` int(11) NOT NULL AUTO_INCREMENT,
+  `id_proveedor` int(11) NOT NULL,
   `precio` decimal(10,2) NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `presentacion` varchar(128) NOT NULL,
   `descripcion` varchar(512) NOT NULL,
   `ficha_tecnica` varchar(256) DEFAULT NULL,
-  `id_proveedor` int(11) NOT NULL,
+  `portada` varchar(256) DEFAULT NULL,
+  `iva` int(11) DEFAULT 0,
+  `is_deleted` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id_producto`),
   KEY `id_proveedor` (`id_proveedor`),
   CONSTRAINT `Productos_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `Proveedores` (`id_proveedor`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -346,92 +453,14 @@ CREATE TABLE `Productos` (
 LOCK TABLES `Productos` WRITE;
 /*!40000 ALTER TABLE `Productos` DISABLE KEYS */;
 INSERT INTO `Productos` VALUES
-(1,100.00,'Edulcurante 2','100 ml','edulcorante para el mate ihh','files/fichas_tecnicas/1_1696424057871_Ficha Técnica - Almar-1.pdf',1),
-(2,100.00,'XD XD XD','10 ml','para la soja','files/fichas_tecnicas/2_1693332259444_Ficha Técnica - Almar-1.pdf',1),
-(3,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(4,0.00,'0','0','0',NULL,1),
-(5,0.00,'0','0','0',NULL,1),
-(6,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(7,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(8,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(9,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(10,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(11,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(12,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(13,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(14,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(15,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(16,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(17,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(18,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(19,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(20,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(21,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(22,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(23,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(24,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(25,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(26,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(27,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(28,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(29,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(30,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(31,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(32,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(33,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(34,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(35,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(36,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(37,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(38,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(39,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(40,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(41,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(42,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(43,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(44,100.00,'Agrotoxicos','10 ml','para la soja',NULL,1),
-(45,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(46,200.50,'cocacola','10ml','para refrescar la garganta',NULL,1),
-(47,101.00,'Agrotoxicos','10 ml','para la soja',NULL,1),
-(48,101.00,'Agrotoxicos','10 ml','para la soja',NULL,1),
-(51,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(52,200.50,'cocacola','10ml','para refrescar la garganta',NULL,2),
-(53,101.00,'Agrotoxicos','10 ml','para la soja',NULL,1),
-(54,101.00,'Agrotoxicos','10 ml','para la soja',NULL,1),
-(55,500.00,'metanfetamina','100ml','holaaaaaa',NULL,1),
-(56,200.50,'cocacola','10ml','para refrescar la garganta',NULL,2);
+(2,1,1000.00,'Cebolla Malbec ','sobre de 5000 semillas','excelente produccion y resistente',NULL,'1709555695538.jpeg',0,0),
+(3,2,4000.00,'Pimiento iguazú','Sobre de 1000 semillas','resistente y productiva',NULL,'1709555792025.jpeg',11,0),
+(4,3,2500.00,'Pimiento canario','sobre de 1000 semillas','excelente produccion y resistente',NULL,'1709555838902.jpeg',21,0),
+(5,1,1000.00,'Repollo megaroon','Sobre de 1000 semillas','Excelente produccion y resistencia.',NULL,'1709555951185.jpeg',0,0),
+(6,2,1500.00,'Tomate Vento','Sobre de 1000 semillas','Excelente calidad',NULL,'1709556265493.jpeg',11,0),
+(7,1,100.00,'','','',NULL,NULL,0,1),
+(8,1,100.00,'licho','akkaj','hola',NULL,'1709927160780.jpeg',11,1);
 /*!40000 ALTER TABLE `Productos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Promociones`
---
-
-DROP TABLE IF EXISTS `Promociones`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Promociones` (
-  `id_promo` int(11) NOT NULL AUTO_INCREMENT,
-  `cod_zona` int(11) NOT NULL,
-  `titulo` varchar(255) NOT NULL,
-  `fecha_expiracion` date NOT NULL,
-  `descripcion` varchar(512) NOT NULL,
-  PRIMARY KEY (`id_promo`),
-  KEY `cod_zona` (`cod_zona`),
-  CONSTRAINT `Promociones_ibfk_1` FOREIGN KEY (`cod_zona`) REFERENCES `Zonas` (`cod_zona`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Promociones`
---
-
-LOCK TABLES `Promociones` WRITE;
-/*!40000 ALTER TABLE `Promociones` DISABLE KEYS */;
-INSERT INTO `Promociones` VALUES
-(1,2,'muy nuevo titulo','2023-08-30','2 x 1 en productos seleccionados'),
-(2,1,'Oferta en el area agricola','2023-08-30','2 x 1 en productos seleccionados');
-/*!40000 ALTER TABLE `Promociones` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -444,13 +473,13 @@ DROP TABLE IF EXISTS `Proveedores`;
 CREATE TABLE `Proveedores` (
   `id_proveedor` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(128) NOT NULL,
-  `photo` varchar(256) NOT NULL,
+  `photo` varchar(256) DEFAULT NULL,
   `ficha_tecnica` varchar(256) DEFAULT NULL,
   `id_linea` int(11) NOT NULL,
   PRIMARY KEY (`id_proveedor`),
   KEY `id_linea` (`id_linea`),
   CONSTRAINT `Proveedores_ibfk_1` FOREIGN KEY (`id_linea`) REFERENCES `LineasNegocio` (`id_linea`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -460,13 +489,9 @@ CREATE TABLE `Proveedores` (
 LOCK TABLES `Proveedores` WRITE;
 /*!40000 ALTER TABLE `Proveedores` DISABLE KEYS */;
 INSERT INTO `Proveedores` VALUES
-(1,'Monsanto','hola_1693515075489.png',NULL,1),
-(2,'hola','hola_1693515294719.png','hola_1693515294718.pdf',1),
-(3,'hola','hola_1694029808993.png',NULL,2),
-(4,'Proveedor de ropa','Proveedor de ropa_1694031204564.png',NULL,2),
-(5,'Proveedor de ropa','1694035224388.png',NULL,2),
-(6,'Proveedor de verduras','1694109927724.png',NULL,2),
-(7,'Proveedor de verduras','1694111052523.png',NULL,2);
+(1,'Proveedor 1','1709555478062.jpg',NULL,1),
+(2,'Proveedor 2','1709555494872.jpg',NULL,2),
+(3,'Proveedor 3','1709555528624.png',NULL,3);
 /*!40000 ALTER TABLE `Proveedores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -481,15 +506,15 @@ CREATE TABLE `Solicitudes` (
   `cod_solicitud` int(11) NOT NULL AUTO_INCREMENT,
   `solicitante` char(10) NOT NULL,
   `solicitado` char(10) NOT NULL,
-  `fecha_creacion` datetime DEFAULT current_timestamp(),
+  `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
   `descripcion` text NOT NULL,
-  `aceptada` tinyint(1) DEFAULT 0,
+  `aceptada` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`cod_solicitud`),
   KEY `solicitante` (`solicitante`),
   KEY `solicitado` (`solicitado`),
   CONSTRAINT `Solicitudes_ibfk_1` FOREIGN KEY (`solicitante`) REFERENCES `Personas` (`cedula`),
   CONSTRAINT `Solicitudes_ibfk_2` FOREIGN KEY (`solicitado`) REFERENCES `Personas` (`cedula`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -499,9 +524,8 @@ CREATE TABLE `Solicitudes` (
 LOCK TABLES `Solicitudes` WRITE;
 /*!40000 ALTER TABLE `Solicitudes` DISABLE KEYS */;
 INSERT INTO `Solicitudes` VALUES
-(1,'392142823','492183214','2023-09-13 16:18:46','Estoy cansado jefe, necesito unas vacaciones',1),
-(2,'392142823','492183214','2023-09-29 10:21:34','Estoy cansado jefe, necesito unas vacaciones',1),
-(3,'392142823','492183214','2023-09-29 10:59:55','Estoy cansado jefe, necesito unas vacaciones',1);
+(1,'666666','333333','2024-03-04 12:55:08','Hola juan soy carlos y quiero solicitarte algo.',0),
+(2,'666666','333333','2024-03-04 15:53:47','',0);
 /*!40000 ALTER TABLE `Solicitudes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -542,4 +566,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-05 17:25:18
+-- Dump completed on 2024-03-15  2:35:33
