@@ -33,6 +33,9 @@ export class CotizacionProducto extends BaseModel{
     static async bulk_insert(productos: ProductosCotizacion[]){
         return await this._bulk_insert<ProductosCotizacion>(productos);
     }
+    static async remove(nro_cotizacion: number){
+        await this._delete({nro_cotizacion: nro_cotizacion})
+    }
 }
 
 export class Cotizacion extends BaseModel{
@@ -52,7 +55,7 @@ export class Cotizacion extends BaseModel{
     disposiciones: string;
     
     colaborador?: Colaborador;
-    productos?: ProductosCotizacionArchivo[];
+    productos?: ProductosCotizacion[];
     cliente?: Cliente;
 
     constructor(req: ICotizacion){
@@ -70,7 +73,7 @@ export class Cotizacion extends BaseModel{
         this.disposiciones = req.disposiciones;
     }
 
-    static async create(body: CreateCotizacion, productos: ProductosCotizacionArchivo[]): Promise<Cotizacion>{
+    static async create(body: CreateCotizacion, productos: ProductosCotizacion[]): Promise<Cotizacion>{
         const cotizacion = await this._insert<CreateCotizacion & {file: string}, Cotizacion>({
             ...body,
             file: String(Date.now()) + '.pdf'
@@ -84,10 +87,22 @@ export class Cotizacion extends BaseModel{
         cotizacion.productos = productos;
         return cotizacion;
     }
+    
+    async update(body: CreateCotizacion){
+        await Cotizacion._update(body, {
+            nro_cotizacion: this.nro_cotizacion
+        });
+        for (let i in body){
+            let value = body[i as keyof typeof body];
+            this[i as keyof typeof this] = value as never;
+        }
+    }
 
-    static async get_one(nro_cotizacion: number){
+    static async get_one(nro_cotizacion: number, parsePath=true){
         const cotizacion = await this.find_one<ICotizacion, Cotizacion>({nro_cotizacion: nro_cotizacion});
-        cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
+        if (parsePath){
+            cotizacion.file = `${files_url}/${Cotizacion.file_route}/${cotizacion.file}`;
+        }
         return cotizacion;
     }
 

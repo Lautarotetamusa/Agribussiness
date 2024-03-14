@@ -53,6 +53,9 @@ export const createCotizacion = iCotizacion.omit({
     schema.cliente === undefined && schema.cliente_nuevo === undefined
 ), "Una cotizacion necesita al menos un cliente");
 
+export const updateCotizacion = createCotizacion;
+export type UpdateCotizacion = z.infer<typeof updateCotizacion>;
+
 export type ICotizacion = z.infer<typeof iCotizacion>;
 export type CreateCotizacion = z.infer<typeof createCotizacion>;
 export type ProductosCotizacion = z.infer<typeof iproductosCotizacion>;

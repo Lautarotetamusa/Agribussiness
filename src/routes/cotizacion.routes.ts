@@ -17,4 +17,11 @@ router.get('/:nro_cotizacion',
     cotizacionController.get_one
 );
 
+router.put('/:nro_cotizacion',
+	auth,
+	check_rol([roles.colaborador]),
+    valid_param("nro_cotizacion"),
+	cotizacionController.update
+);
+
 export default router;
