@@ -3,6 +3,7 @@ import { sql } from '../db';
 import { 
     BuildProducto, 
     CreateProducto, 
+    FilterProducto, 
     ListProducto, 
     UpdateProducto 
 } from '../schemas/producto.schema';
@@ -106,9 +107,28 @@ export class Producto extends BaseModel{
         return prod;
     }
 
-    static async get_all(): Promise<ListProducto[]>{ 
+    static async get_all(filter?: FilterProducto): Promise<ListProducto[]>{ 
         const portadaPath = `${files_url}/${Imagen.image_route}/`;
         const fichaPath = `${files_url}/${this.fichaTecnicaPath}/`;
+
+        let queryFilter = '';
+        if (filter && Object.keys(filter).length > 0){
+            queryFilter += 'AND ' + Object.keys(filter).map(k => {
+                const value = filter[k as keyof typeof filter];
+                if (typeof(value) == 'string' ){
+                    switch(value){
+                        case 'null':
+                            return `Prod.${k} IS NULL`;
+                        case 'notnull':
+                            return `Prod.${k} IS NOT NULL`;
+                        default:
+                            return `Prod.${k} LIKE '%${filter[k as keyof typeof filter]}%'`;
+                    }
+                }else{
+                    return `Prod.${k} = ${filter[k as keyof typeof filter]}`
+                }
+            }).join(' AND ');
+        }
 
         const query = `
             SELECT Prod.*, Prov.nombre as nombre_proveedor,
@@ -118,6 +138,7 @@ export class Producto extends BaseModel{
             INNER JOIN ${Proveedor.table_name} Prov
                 ON Prod.id_proveedor = Prov.id_proveedor
             WHERE Prod.is_deleted = 0
+            ${queryFilter}
             ORDER BY Prod.id_producto DESC
         ` as const;
 

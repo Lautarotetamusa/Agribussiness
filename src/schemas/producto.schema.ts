@@ -14,6 +14,21 @@ export const updateProducto = createProducto.partial().extend({
     portada: z.string().optional()
 });
 
+export const filterProducto = updateProducto.extend({
+    precio: z.string().transform((val, ctx) => {
+        const parsed = parseInt(val);
+        if (isNaN(parsed)) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "El precio tiene que ser un numero",
+            });
+
+            return z.NEVER;
+        }
+        return parsed;
+    }),
+}).partial();
+
 const buildProducto = createProducto.extend({
     id_producto: z.number(),
     ficha_tecnica: z.string().optional().nullable(),
@@ -28,3 +43,4 @@ export type ListProducto = z.infer<typeof ListProducto>;
 export type CreateProducto = z.infer<typeof createProducto>;
 export type BuildProducto  = z.infer<typeof buildProducto>;
 export type UpdateProducto = z.infer<typeof updateProducto>;
+export type FilterProducto = z.infer<typeof filterProducto>;
