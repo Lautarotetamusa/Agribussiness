@@ -34,10 +34,19 @@ export function handle_errors(err: Error, req: Request, res: Response, next: Nex
     console.log("message: ", err.message);
     console.log("stack: ", err.stack);
     
-    if (err instanceof ZodError) return res.status(400).json({
-        success: false,
-        errors: JSON.parse(err.message) as Array<object>
-    });
+    if (err instanceof ZodError){
+        const errors = err.errors;
+        errors.map(e => {
+            if (e.code == "invalid_type"){
+                e.message = `El campo ${e.path[0]} es obligatorio`
+            }
+        });
+
+        return res.status(400).json({
+            success: false,
+            errors: errors
+        });
+    }
 
     if (err instanceof ApiError) return res.status(err.status).json({
         success: false,
