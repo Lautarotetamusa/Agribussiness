@@ -83,7 +83,6 @@ const create_imagen = (is_portada: boolean) => {
             imagen_path = imagen.path;
         }else{
             let _:void = await producto.update({portada: req.file.filename});
-            imagen_path = `${files_url}/${Imagen.image_route}/${producto.portada as string}`;
         }
     
         broadcastNotification(notifications['producto:imagen:new'](producto.nombre));
