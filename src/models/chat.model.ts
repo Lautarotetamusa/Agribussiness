@@ -37,7 +37,6 @@ export async function get_chat(persona_1: string, persona_2: string): Promise<nu
         const [result] = await sql.query<ResultSetHeader>(query, [persona_1, persona_2]);
         return result.insertId;
     }catch(error: any){
-        console.log("ERROR: ", error);
         return notFound(`La persona con cedula ${persona_1} o ${persona_2} no existe`);
     }
 }

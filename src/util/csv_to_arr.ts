@@ -71,13 +71,8 @@ export function csv2arr<T>(
         position += 1;
     }
     data.shift(); //Remove headers
-
-    console.log(keys);
     
     let cant_optionales = keys.filter(v => v.split('?').length > 1).length;
-
-    console.log(cant_optionales);
-    console.log(faltantes);
 
     if (faltantes.length > cant_optionales)
         throw new ValidationError(`El archivo .csv no contiene las columnas ${faltantes}`);

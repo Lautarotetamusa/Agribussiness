@@ -11,8 +11,6 @@ type NotificationSchema = {
 };
 
 async function pushNotification(payload: Array<NotificationSchema> | NotificationSchema){
-    console.log("noti payload:", payload);
-
     const res = await fetch(expoApi, {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -32,9 +30,7 @@ export function broadcastNotification(noti: BroadCastNotification){
             body: noti.message,
             to: d.token
         }});
-        pushNotification(payload).then((data) => {
-            console.log(data);
-        }).catch((err) => console.error("Error enviando la notificacion", err));
+        pushNotification(payload).catch((err) => console.error("Error enviando la notificacion", err));
     }).catch((err) => console.error("No se pudo obtener los devices", err));
 }
 
@@ -47,8 +43,6 @@ export function directNotification(args: Record<string, string>){
             body: args[d.cedula],
             to: d.token
         }});
-        pushNotification(payload).then((data) => {
-            console.log(data);
-        }).catch((err) => console.error("Error enviando la notificacion", err));
+        pushNotification(payload).catch((err) => console.error("Error enviando la notificacion", err));
     }).catch((err) => console.error("No se pudo obtener los devices", err));
 }

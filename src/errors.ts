@@ -30,9 +30,7 @@ export const validationError = (msg: string): ErrorResponse => {
 }
 
 export function handle_errors(err: Error, req: Request, res: Response, next: NextFunction): Response{
-    console.log("ERROR: ");
-    console.log("message: ", err.message);
-    console.log("stack: ", err.stack);
+    console.error("ERROR: ", err.message);
     
     if (err instanceof ZodError){
         const errors = err.errors;
@@ -57,8 +55,6 @@ export function handle_errors(err: Error, req: Request, res: Response, next: Nex
     });
 
     if (err instanceof MulterError){
-        console.log("ERROR from handle: ", err);
-
         // Esto soluciona un error con multer que al encontrar un error dos veces en el segundo queda una respuesta pendiente sin respuesta
         // https://github.com/expressjs/multer/issues/1193
         if ("storageErrors" in err){

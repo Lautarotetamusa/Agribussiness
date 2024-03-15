@@ -22,7 +22,6 @@ export class Dispositivo extends BaseModel{
     
     //Guardar el dispositivo
     async save(){
-        console.log(this);
         const exists = await Dispositivo._exists(this);
         if (!exists){
             await Dispositivo._insert(this); 

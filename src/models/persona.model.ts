@@ -99,7 +99,6 @@ export class Persona extends BaseModel{
         if (rol){
             query += ' AND rol = ?';
         }
-        console.log(query);
         const [rows] = await sql.query<RowDataPacket[]>(query, [cedula, rol]);
         return rows as CreateColaborador[];
     }

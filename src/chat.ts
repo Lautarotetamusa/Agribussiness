@@ -28,7 +28,6 @@ export function chat(socket: Socket) {
             socket.disconnect();
             return;
         }
-        console.log(sender, "conected");
 
         const chat_id = await get_chat(sender.cedula, data.cedula)
         if (typeof chat_id !== "number"){

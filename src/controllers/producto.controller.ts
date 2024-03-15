@@ -8,13 +8,11 @@ import {
 } from "../schemas/producto.schema";
 import { csv2arr } from "../util/csv_to_arr";
 import { Proveedor } from "../models/proveedor.model";
-import { files_url } from "../server";
 import { broadcastNotification } from "../notifications";
 import { notifications } from "../schemas/notificacion.schema";
 
 const get_all = async (req: Request, res: Response): Promise<Response> => {
     const filters = filterProducto.parse(req.query);
-    console.log(filters);
 
     const productos = await Producto.get_all(filters);
     return res.status(200).json({

@@ -26,6 +26,12 @@ export const files_url  = `http://${host}:${public_port}/files` as const;
 //Path donde se almacenan los archivos estaticos dentro del server
 export const files_path = join(__dirname, "../files");
 
+app.use((req, res, next) => {
+    const message = `[server]: ${req.method} ${req.url}`;
+    console.log(message);
+    next();
+});
+
 //Necesesario para que no tire error de CORS
 app.use(cors());
 
