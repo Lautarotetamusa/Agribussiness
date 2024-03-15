@@ -13,12 +13,11 @@ services:
     volumes:
       - ./db/init:/docker-entrypoint-initdb.d #Crear las tablas automaticamente al iniciar
       - ./mysql:/var/lib/mysql #Mantener la misma data de mi base de datos local
+
   api:
     depends_on:
       mysqldb:
         condition: service_started
-          #rabbitmq:
-          #condition: service_started
     build: 
       dockerfile: ./Dockerfile
     env_file: ./.env
@@ -30,3 +29,25 @@ services:
     volumes:
      - ./src:/app/src
      - ./files:/app/files/
+
+  backups:
+    image: fradelg/mysql-cron-backup
+    depends_on:
+      - mysqldb
+    env_file: ./.env
+    environment:
+      - MYSQL_HOST=mysqldb
+      - MYSQL_USER=$DB_USER
+      - MYSQL_PASS=$DB_PASS
+      - MYSQL_DATABASE=$DB_NAME
+      - MAX_BACKUPS=5
+      - INIT_BACKUP=0
+        # Every day at 03:00
+      - CRON_TIME=0 3 * * *
+        # Make it small
+      - GZIP_LEVEL=9
+        # As of MySQL 8.0.21 this is needed
+      - MYSQLDUMP_OPTS=--no-tablespaces
+    restart: unless-stopped
+    volumes:
+      - ./db/backups:/backup

@@ -1,3 +1,9 @@
+CREATE USER IF NOT EXISTS 'teti'@'%' IDENTIFIED BY 'Lautaro123.';
+GRANT ALL PRIVILEGES ON *.* TO 'teti'@'%' WITH GRANT OPTION;
+
+CREATE DATABASE IF NOT EXISTS Agribussiness;
+USE Agribussiness;
+
 -- MariaDB dump 10.19  Distrib 10.9.4-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: Agribussiness

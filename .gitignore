@@ -10,4 +10,4 @@ files/*
 front_tests/
 tests/
 *.txt
-backups/
+db/backups/*
