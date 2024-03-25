@@ -108,10 +108,12 @@ export class Cotizacion extends BaseModel{
 
     async get_productos(){
         const query = `
-            SELECT P.* FROM ${CotizacionProducto.table_name} CP
+            SELECT P.precio, P.id_producto, CP.cantidad
+            FROM ${CotizacionProducto.table_name} CP
             INNER JOIN ${Producto.table_name} P
                 ON P.id_producto = CP.id_producto
             WHERE CP.nro_cotizacion = ?
+            AND P.is_deleted = 0
         `;
         
         const [productos] = await sql.query<RowDataPacket[]>(query, this.nro_cotizacion);
