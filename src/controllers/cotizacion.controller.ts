@@ -133,7 +133,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
         await conn.commit();
         return res.status(201).json({
             success: true,
-            message: "Cotizacion creada correctamente",
+            message: "Cotizacion actualizada correctamente",
             data: cotizacion
         })
     } catch (error) {

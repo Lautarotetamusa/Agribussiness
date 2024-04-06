@@ -6,9 +6,16 @@ const iSolicitud = z.object({
     solicitado: z.string().min(1, {message: "Debes ingresar un solicitado"}),
     fecha_creacion: z.date(),
     descripcion: z.string().min(1, {message: "La descripcion es obligatoria"}),
+    asunto: z.string(),
+    solucion: z.string(),
     aceptada: z.boolean(),
 });
-export const createSolicitud = iSolicitud.omit({cod_solicitud: true, fecha_creacion: true, aceptada: true});
+
+export const createSolicitud = iSolicitud.omit({
+    cod_solicitud: true, 
+    fecha_creacion: true, 
+    aceptada: true
+});
 const listSolicitudesColaborador = iSolicitud.omit({solicitante: true});
 
 export type ISolicitud = z.infer<typeof iSolicitud>;

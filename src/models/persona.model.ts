@@ -208,7 +208,7 @@ export class Colaborador extends Persona{
         let name_key  = tipoSolicitud  == "enviada" ? "solicitado" : "solicitante";
 
         const query = `
-            SELECT cod_solicitud, solicitante, solicitado, P.nombre as nombre_${name_key}, fecha_creacion, descripcion, aceptada
+            SELECT cod_solicitud, solicitante, solicitado, P.nombre as nombre_${name_key}, fecha_creacion, descripcion, asunto, solucion, aceptada
             FROM ${Solicitud.table_name}
             INNER JOIN ${Persona.table_name} P
                 ON ${name_key} = P.cedula

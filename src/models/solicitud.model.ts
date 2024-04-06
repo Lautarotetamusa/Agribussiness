@@ -15,6 +15,8 @@ export class Solicitud extends BaseModel{
     solicitado: string;
     fecha_creacion: Date;
     descripcion: string;
+    asunto: string;
+    solucion: string;
     aceptada: boolean;
 
     constructor(body: ISolicitud){
@@ -25,6 +27,8 @@ export class Solicitud extends BaseModel{
         this.solicitado = body.solicitado;
         this.fecha_creacion = body.fecha_creacion;
         this.descripcion = body.descripcion;
+        this.asunto = body.asunto;
+        this.solucion = body.solucion;
         this.aceptada = body.aceptada;
     }
 

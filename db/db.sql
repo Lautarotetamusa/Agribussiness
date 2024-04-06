@@ -55,7 +55,6 @@ CREATE TABLE Dispositivos(
 );
 
 
-
 /* El campo ficha_tecnica campo no va mas, pero lo dejamos por ahora por si acaso TODO! */
 CREATE TABLE IF NOT EXISTS Proveedores(
     id_proveedor INT NOT NULL AUTO_INCREMENT,
@@ -92,6 +91,8 @@ CREATE TABLE IF NOT EXISTS Solicitudes(
     solicitado CHAR(10) NOT NULL,
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     descripcion TEXT NOT NULL,
+    asunto TEXT NOT NULL,
+    solucion TEXT NOT NULL,
     aceptada BOOLEAN NOT NULL DEFAULT 0,
 
     PRIMARY KEY(cod_solicitud),
