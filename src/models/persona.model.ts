@@ -119,8 +119,9 @@ export class Persona extends BaseModel{
     }
 
     async get_cotizaciones(){
-        if (this.rol == roles.admin)
+        if (this.rol == roles.admin){
             throw new ValidationError("El administrador no puede tener cotizaciones");
+        }
             
         const query = `
             SELECT CO.*, ${(Cliente.fields.map(f => `C.${f} as ${Cliente.table_name}_${f}`)).join(',')} 
@@ -131,8 +132,7 @@ export class Persona extends BaseModel{
             ORDER BY CO.nro_cotizacion DESC`;
         
         const [rows] = await sql.query<RowDataPacket[]>(query, this.cedula);
-        const field_name = 'cliente_nuevo';
-        if (!(field_name in rows[0])) throw new Error(`Falta el campo '${field_name}' en la consulta`);
+        const clienteNuevo = 'cliente_nuevo';
 
         const cotizaciones = rows.map(row => {
             const cliente: Record<string, any> = {};
@@ -143,9 +143,9 @@ export class Persona extends BaseModel{
                     delete row[key];
                 }
             }
-            if (field_name in row && row[field_name] !== null){
-                cliente.nombre = row[field_name];
-                delete row[field_name];
+            if (clienteNuevo in row && row[clienteNuevo] !== null){
+                cliente.nombre = row[clienteNuevo];
+                delete row[clienteNuevo];
             }
             row.file = `${files_url}/${Cotizacion.file_route}/${row.file}`;
             return {
