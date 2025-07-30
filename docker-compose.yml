@@ -25,7 +25,7 @@ services:
       - $BACK_PUBLIC_PORT:$BACK_PORT
     environment:
       - DB_HOST=mysqldb
-    command: npm run dev
+    command: node dist/server.js
     volumes:
      - ./src:/app/src
      - ./files:/app/files/
